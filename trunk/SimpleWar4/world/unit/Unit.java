@@ -10,8 +10,9 @@ import graphics.Camera;
 public abstract class Unit
 {
 	int life = 10;
+	int magic = 5;
 	protected Location location;
-	String name;
+	protected String name;
 	double movement = 5;
 	protected Controller c;
 	protected Rectangle bounds;
@@ -107,6 +108,22 @@ public abstract class Unit
 	public int getLife()
 	{
 		return life;
+	}
+	public void setMagic(int setter)
+	{
+		magic = setter;
+	}
+	public int getMagic()
+	{
+		return magic;
+	}
+	public void setUnitName(String setter)
+	{
+		name = setter;
+	}
+	public String getUnitName()
+	{
+		return name;
 	}
 	public Rectangle getBounds()
 	{
