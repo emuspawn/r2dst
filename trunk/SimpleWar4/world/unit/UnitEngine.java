@@ -3,6 +3,7 @@ package world.unit;
 import world.pathFinder.*;
 import world.pathFinder.astarv1.AStarV1PF;
 import world.pathFinder.astarv2.AStarV2PF;
+import world.pathFinder.astarv3.*;
 import world.pathFinder.KylePF.KylePF;
 import world.World;
 import java.awt.Point;
@@ -13,8 +14,8 @@ public class UnitEngine
 	Unit[] u = new Unit[30];
 	
 	
-	PathFinder[] pathFinders = new PathFinder[4];
-	int pathFinderUsed = 3;
+	PathFinder[] pathFinders = new PathFinder[5];
+	int pathFinderUsed = 4;
 	
 	public UnitEngine(World w)
 	{
@@ -22,6 +23,7 @@ public class UnitEngine
 		pathFinders[1] = new AStarV1PF(w);
 		pathFinders[2] = new AStarV2PF(w);
 		pathFinders[3] = new KylePF(w);
+		pathFinders[4] = new AStarV3PF(w);
 	}
 	public void registerUnit(Unit unit)
 	{

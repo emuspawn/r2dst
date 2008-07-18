@@ -29,7 +29,7 @@ public class AStarV2PF extends PathFinder
 				//tv1[i][a].determineTileType(w.getTerrain());
 			}
 		}
-		setupTestTiles();
+		//setupTestTiles();
 	}
 	private void setupTestTiles()
 	{

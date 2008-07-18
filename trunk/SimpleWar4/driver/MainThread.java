@@ -18,6 +18,7 @@ public class MainThread
 		c = new Camera();
 		System.out.println("camera instantiated");
 		gf = new GraphicsFinder(w, c);
+		c.setActualScreenDimensions(gf.getWidth(), gf.getHeight());
 		System.out.println("graphics finder instantiated");
 		gd = new GameDrawer(gf, w, c);
 		System.out.println("game drawer instantiated");

@@ -35,18 +35,23 @@ public class GameDrawer
 		Graphics g = gf.getGraphics();
 		int xover = c.getxover();
 		int yover = c.getyover();
-		double zoomLevel = c.getZoomLevel();
 		
 		g.setColor(Color.white);
 		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+		g.setColor(Color.green);
+		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
 		
-		drawGrass(g, xover, yover);
+		//draws map bounds
+		g.setColor(Color.black);
+		int x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).x);
+		int y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).y);
+		g.drawRect(x, y, (int)(w.getMapWidth()*c.getZoomLevel()), (int)(w.getMapHeight()*c.getZoomLevel()));
 		
 		drawTerrain(g, xover, yover);
 		
-		drawUnits(g, xover, yover, zoomLevel);
-		drawTileGrid(g);
-		drawDebugWater(g);
+		drawUnits(g);
+		//drawTileGrid(g);
+		//drawDebugWater(g);
 		drawUnitPaths(g);
 		
 		
@@ -128,10 +133,12 @@ public class GameDrawer
 					{
 						if(l[a] != null)
 						{
+							int x = (int)(c.getVisibleLocation(l[a]).x);
+							int y = (int)(c.getVisibleLocation(l[a]).y);
 							g.setColor(Color.red);
-							g.fillOval((int)l[a].x, (int)l[a].y, 5, 5);
+							g.fillOval(x, y, 5, 5);
 							g.setColor(Color.black);
-							g.drawString(""+(a+1), (int)l[a].x-8, (int)l[a].y+7);
+							g.drawString(""+(a+1), x-8, y+7);
 						}
 					}
 				}
@@ -150,7 +157,7 @@ public class GameDrawer
 			g.drawLine(0, i*20, 1280, i*20);
 		}
 	}
-	private void drawUnits(Graphics g, int xover, int yover, double zoomLevel)
+	private void drawUnits(Graphics g)
 	{
 		Unit[] u = w.getUnitEngine().getUnits();
 		for(int i = 0; i < u.length; i++)
@@ -160,10 +167,5 @@ public class GameDrawer
 				u[i].drawUnit(g);
 			}
 		}
-	}
-	private void drawGrass(Graphics g, int xover, int yover)
-	{
-		g.setColor(Color.green);
-		g.fillRect(0-xover, 0-yover, 500, 500);
 	}
 }

@@ -15,7 +15,7 @@ public abstract class Unit
 	protected String name;
 	double movement = 5;
 	protected Controller c;
-	protected Rectangle bounds;
+	Rectangle bounds;
 	Rectangle visibleBounds;
 	protected boolean highlighted = false;
 	protected Camera camera;
@@ -140,7 +140,9 @@ public abstract class Unit
 	private void setupVisibleUnitBounds()
 	{
 		int tempLength = (int)(length*camera.getZoomLevel());
-		visibleBounds = new Rectangle((int)location.x-(tempLength/2)-camera.getxover(), (int)location.y-(tempLength/2)-camera.getyover(), tempLength, tempLength);
+		int x = (int)(camera.getVisibleLocation(location).x);
+		int y = (int)(camera.getVisibleLocation(location).y);
+		visibleBounds = new Rectangle(x-(tempLength/2), y-(tempLength/2), tempLength, tempLength);
 	}
 	public Rectangle getVisibleBounds()
 	{

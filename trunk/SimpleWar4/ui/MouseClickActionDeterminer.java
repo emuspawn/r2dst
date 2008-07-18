@@ -121,8 +121,19 @@ public class MouseClickActionDeterminer
 	}
 	private void moveHighlightedUnits(Point p)
 	{
+		//because of the zoomLevel in Camera, where the user clicks is not always
+		//the actual location of the click in virtual space
+		
 		System.out.println("order sent to move highlighted units");
-		w.getUnitEngine().findUnitPaths(p);
+		
+		Point point = c.getVirtualPoint(p);
+		if(point.x > 0 && point.x < w.getMapWidth())
+		{
+			if(point.y > 0 && point.y < w.getMapHeight())
+			{
+				w.getUnitEngine().findUnitPaths(c.getVirtualPoint(p));
+			}
+		}
 	}
 	private boolean unhighlightAllUnits()
 	{
