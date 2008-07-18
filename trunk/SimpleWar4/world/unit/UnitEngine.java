@@ -13,7 +13,7 @@ public class UnitEngine
 	Unit[] u = new Unit[30];
 	
 	
-	PathFinder[] pathFinders = new PathFinder[3];
+	PathFinder[] pathFinders = new PathFinder[4];
 	int pathFinderUsed = 3;
 	
 	public UnitEngine(World w)
