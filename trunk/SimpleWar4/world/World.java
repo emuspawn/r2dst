@@ -12,10 +12,11 @@ public class World
 	int mapWidth = 2000;
 	int mapHeight = 2000;
 	Terrain[] terrain = new Terrain[10];
-	boolean editMode = false;
+	boolean editMode;
 	
-	public World()
+	public World(boolean editMode)
 	{
+		this.editMode = editMode;
 		ue = new UnitEngine(this);
 		mce = new MenuCheckEngine(this);
 	}

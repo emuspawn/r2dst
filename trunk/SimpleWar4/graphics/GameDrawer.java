@@ -46,7 +46,13 @@ public class GameDrawer
 		Menu[] m = w.getMenuCheckEngine().getMenus();
 		for(int i = 0; i < m.length; i++)
 		{
-			
+			if(m[i] != null)
+			{
+				if(m[i].getVisible())
+				{
+					m[i].drawMenu(g);
+				}
+			}
 		}
 	}
 	private void drawDebugWater(Graphics g)

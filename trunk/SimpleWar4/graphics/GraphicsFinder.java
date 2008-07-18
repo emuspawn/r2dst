@@ -68,8 +68,8 @@ public class GraphicsFinder implements MouseListener, KeyListener, MouseMotionLi
 		
 		
 		
-		kad = new KeyActionDeterminer(w.getUnitEngine(), c);
-		mcad = new MouseClickActionDeterminer(w.getUnitEngine(), c);
+		kad = new KeyActionDeterminer(w, c);
+		mcad = new MouseClickActionDeterminer(w, c);
 	}
 	private static DisplayMode getBestDisplayMode(GraphicsDevice device) {
         for (int x = 0; x < BEST_DISPLAY_MODES.length; x++) {

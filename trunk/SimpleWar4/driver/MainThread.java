@@ -13,7 +13,7 @@ public class MainThread
 	public MainThread()
 	{
 		System.out.println("program starting");
-		w = new World();
+		w = new World(true);
 		System.out.println("world instantiated");
 		c = new Camera();
 		System.out.println("camera instantiated");

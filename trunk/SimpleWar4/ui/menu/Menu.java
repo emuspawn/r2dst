@@ -8,11 +8,13 @@ public abstract class Menu
 	Button[] b = new Button[1];
 	String name;
 	int id;
+	boolean visible = false;
+	boolean movable = false;
 	
-	int x;
-	int y;
-	int slotWidth;
-	int slotHeight;
+	protected int x;
+	protected int y;
+	protected int slotWidth;
+	protected int slotHeight;
 	
 	public Menu(String name, int x, int y, int slotWidth, int slotHeight, int id)
 	{
@@ -22,6 +24,35 @@ public abstract class Menu
 		this.slotWidth = slotWidth;
 		this.slotHeight = slotHeight;
 		this.id = id;
+	}
+	public Rectangle getHeaderBounds()
+	{
+		return new Rectangle(x, y, slotWidth, slotHeight);
+	}
+	public void setLocation(Point p)
+	{
+		x = p.x;
+		y = p.y;
+	}
+	public boolean getMovable()
+	{
+		return movable;
+	}
+	public void setMovable(boolean setter)
+	{
+		movable = setter;
+	}
+	public int getID()
+	{
+		return id;
+	}
+	public boolean getVisible()
+	{
+		return visible;
+	}
+	public void setVisible(boolean setter)
+	{
+		visible = setter;
 	}
 	public void addButton(Button button)
 	{
@@ -44,7 +75,18 @@ public abstract class Menu
 	public void drawMenu(Graphics g)
 	{
 		g.setColor(Color.lightGray);
-		int height = slotHeight * (b.length-1);
-		g.fillRect(x, y, slotWidth, height);
+		g.fillRect(x, y, slotWidth, slotHeight);
+		g.setColor(Color.black);
+		g.drawRect(x, y, slotWidth, slotHeight);
+		g.drawRect(x, y, slotWidth, slotHeight-1);
+		g.drawString(name, x+3, y+16);
+		
+		for(int i = 0; i < b.length; i++)
+		{
+			if(b[i] != null)
+			{
+				b[i].drawButton(g);
+			}
+		}
 	}
 }

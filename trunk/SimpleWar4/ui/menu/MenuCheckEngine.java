@@ -21,6 +21,20 @@ public class MenuCheckEngine
 	{
 		return m;
 	}
+	public Menu getMenu(int id)
+	{
+		for(int i = 0; i < m.length; i++)
+		{
+			if(m[i] != null)
+			{
+				if(m[i].getID() == id)
+				{
+					return m[i];
+				}
+			}
+		}
+		return null;
+	}
 	private void registerEditMenus()
 	{
 		registerMenu(new MainEditMenu(1));

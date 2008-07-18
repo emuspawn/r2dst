@@ -4,28 +4,32 @@ import java.awt.event.*;
 import world.unit.*;
 import java.awt.Point;
 import graphics.Camera;
+import ui.menu.*;
+import ui.button.*;
+import world.World;
 
 public class MouseClickActionDeterminer
 {
-	UnitEngine ue;
+	World w;
 	Camera c;
 	
-	public MouseClickActionDeterminer(UnitEngine ue, Camera c)
+	public MouseClickActionDeterminer(World w, Camera c)
 	{
-		this.ue = ue;
+		this.w = w;
 		this.c = c;
 	}
 	public void performMouseActions(MouseEvent e, int button)
 	{
-		boolean leftClick = false;
 		boolean actionPerformed = false;
 		if(button == e.BUTTON1)
 		{
-			leftClick = true;
-			actionPerformed = testForUnitClicked(e.getPoint());
+			//left click
+			actionPerformed = testForButtonClicked(e.getPoint());
+			actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
 		}
-		if(!leftClick)
+		if(button == e.BUTTON1)
 		{
+			//right click
 			actionPerformed = unhighlightAllUnits();
 		}
 		if(!actionPerformed)
@@ -33,14 +37,41 @@ public class MouseClickActionDeterminer
 			moveHighlightedUnits(e.getPoint());
 		}
 	}
+	private boolean testForButtonClicked(Point p)
+	{
+		Menu[] m = w.getMenuCheckEngine().getMenus();
+		Button[] b;
+		for(int i = 0; i < m.length; i++)
+		{
+			if(m[i] != null)
+			{
+				if(m[i].getVisible())
+				{
+					b = m[i].getButtons();
+					for(int a = 0; a < b.length; a++)
+					{
+						if(b[a] != null)
+						{
+							if(b[a].getBounds().contains(p))
+							{
+								b[a].setClicked(true);
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 	private void moveHighlightedUnits(Point p)
 	{
 		System.out.println("order sent to move highlighted units");
-		ue.findUnitPaths(p);
+		w.getUnitEngine().findUnitPaths(p);
 	}
 	private boolean unhighlightAllUnits()
 	{
-		Unit[] u = ue.getUnits();
+		Unit[] u = w.getUnitEngine().getUnits();
 		for(int i = 0; i < u.length; i++)
 		{
 			if(u[i] != null)
@@ -53,21 +84,28 @@ public class MouseClickActionDeterminer
 		}
 		return true;
 	}
-	private boolean testForUnitClicked(Point p)
+	private boolean testForUnitClicked(Point p, boolean actionPerformed)
 	{
-		Unit[] u = ue.getUnits();
-		for(int i = 0; i < u.length; i++)
+		if(!actionPerformed)
 		{
-			if(u[i] != null)
+			Unit[] u = w.getUnitEngine().getUnits();
+			for(int i = 0; i < u.length; i++)
 			{
-				if(u[i].getBounds().contains(p))
+				if(u[i] != null)
 				{
-					System.out.println("unit highlighted");
-					u[i].setHighlighted(true);
-					return true;
+					if(u[i].getBounds().contains(p))
+					{
+						System.out.println("unit highlighted");
+						u[i].setHighlighted(true);
+						return true;
+					}
 				}
 			}
+			return false;
 		}
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 }
