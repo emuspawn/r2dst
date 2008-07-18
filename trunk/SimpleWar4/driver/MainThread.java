@@ -2,6 +2,7 @@ package driver;
 
 import graphics.*;
 import world.World;
+import editor.*;
 
 public class MainThread
 {
@@ -9,9 +10,13 @@ public class MainThread
 	GameDrawer gd;
 	World w;
 	Camera c;
+	Editor e;
 	
-	public MainThread(boolean editMode)
+	boolean editMode; //whether or not the game is in the editing mode
+	
+	public MainThread(boolean editMode, Editor e)
 	{
+		this.editMode = editMode;
 		System.out.println("program starting");
 		w = new World(editMode);
 		System.out.println("world instantiated");
@@ -24,11 +29,16 @@ public class MainThread
 		System.out.println("game drawer instantiated");
 		System.out.println();
 		
+		if(editMode)
+		{
+			this.e = e;
+		}
+		
 		performGameFunctions();
 	}
 	public static void main(String [] args)
 	{
-		new MainThread(false);
+		new MainThread(false, null);
 	}
 	public World getWorld()
 	{
@@ -41,6 +51,11 @@ public class MainThread
 		{
 			gd.performGameDrawFunctions();
 			w.performWorldFunctions();
+			
+			if(editMode)
+			{
+				e.performEditorFunctions();
+			}
 			
 			try
 			{

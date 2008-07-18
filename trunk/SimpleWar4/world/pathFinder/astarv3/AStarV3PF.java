@@ -7,7 +7,7 @@ import utilities.Location;
 import world.World;
 import java.awt.Point;
 
-//like AStarV2PF but not accounts for edge tiles
+//like AStarV2PF but now accounts for edge tiles and doesnt spit out errors when they are clicked
 
 public class AStarV3PF extends PathFinder
 {
