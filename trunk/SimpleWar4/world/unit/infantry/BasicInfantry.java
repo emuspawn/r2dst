@@ -4,7 +4,6 @@ import world.unit.*;
 import java.awt.Graphics;
 import utilities.Location;
 import world.controller.*;
-import java.awt.Polygon;
 import java.awt.Color;
 import graphics.Camera;
 

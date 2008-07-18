@@ -8,9 +8,10 @@ public abstract class Terrain
 	int type;
 	protected Polygon p;
 	
-	public Terrain(int type)
+	public Terrain(int type, Polygon p)
 	{
 		this.type = type;
+		this.p = p;
 	}
 	public int getType()
 	{
@@ -20,5 +21,5 @@ public abstract class Terrain
 	{
 		return p;
 	}
-	public abstract void drawTerrain(Graphics g);
+	public abstract void drawTerrain(Graphics g, int xover, int yover);
 }

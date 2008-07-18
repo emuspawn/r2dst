@@ -41,6 +41,7 @@ public class GraphicsFinder implements MouseListener, KeyListener, MouseMotionLi
 	
 	KeyActionDeterminer kad;
 	MouseClickActionDeterminer mcad;
+	public Point mouseLocation = new Point(0, 0);
 	
 	
 	
@@ -151,7 +152,10 @@ public class GraphicsFinder implements MouseListener, KeyListener, MouseMotionLi
 	{
 		kad.performKeyActions(e);
 	}
-	public void mouseMoved(MouseEvent e){}
+	public void mouseMoved(MouseEvent e)
+	{
+		mouseLocation = e.getPoint();
+	}
 	public void mouseDragged(MouseEvent e)
 	{
 	}

@@ -73,10 +73,10 @@ public class UnitEngine
 		{
 			if(u[i] != null)
 			{
-				System.out.println("u["+i+"] location = "+u[i].getLocation().x+", "+u[i].getLocation().y);
+				//System.out.println("u["+i+"] location = "+u[i].getLocation().x+", "+u[i].getLocation().y);
 				if(u[i].getMoving())
 				{
-					System.out.println("u["+i+"] location (moving) = "+u[i].getLocation().x+", "+u[i].getLocation().y);
+					//System.out.println("u["+i+"] location (moving) = "+u[i].getLocation().x+", "+u[i].getLocation().y);
 					//System.out.println();
 					//System.out.println("moving unit "+i);
 					
@@ -89,7 +89,7 @@ public class UnitEngine
 					while(distTraveled > 0)
 					{
 						whileloopiterations++;
-						System.out.println("loop iterations, "+whileloopiterations);
+						//System.out.println("loop iterations, "+whileloopiterations);
 						
 						//System.out.println("dist left to travel = "+distTraveled);
 						
@@ -117,8 +117,8 @@ public class UnitEngine
 						}
 						if(inRange)
 						{
-							System.out.println("in range");
-							System.out.println("location set to "+u[i].getPointMovingTo().x+", "+u[i].getPointMovingTo().y);
+							//System.out.println("in range");
+							//System.out.println("location set to "+u[i].getPointMovingTo().x+", "+u[i].getPointMovingTo().y);
 							//System.out.println("or location at "+(u[i].getPointMovingTo().x*20)+", "+(u[i].getPointMovingTo().y*20));
 							
 							
@@ -153,25 +153,25 @@ public class UnitEngine
 							if(xdist < 0)
 							{
 								//move right
-								System.out.println("right called");
+								//System.out.println("right called");
 								u[i].setLocation(new Location(u[i].getLocation().x + distTraveled, u[i].getLocation().y));
 							}
 							else if(xdist > 0)
 							{
 								//move left
-								System.out.println("left called");
+								//System.out.println("left called");
 								u[i].setLocation(new Location(u[i].getLocation().x - distTraveled, u[i].getLocation().y));
 							}
 							else if(ydist < 0)
 							{
 								//move down
-								System.out.println("down called");
+								//System.out.println("down called");
 								u[i].setLocation(new Location(u[i].getLocation().x, u[i].getLocation().y + distTraveled));
 							}
 							else if(ydist < 0)
 							{
 								//move up
-								System.out.println("up called");
+								//System.out.println("up called");
 								u[i].setLocation(new Location(u[i].getLocation().x, u[i].getLocation().y - distTraveled));
 							}
 							distTraveled = 0;

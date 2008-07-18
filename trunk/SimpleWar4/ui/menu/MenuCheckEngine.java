@@ -3,6 +3,7 @@ package ui.menu;
 import ui.button.*;
 import world.World;
 import ui.menu.editorMenus.*;
+import ui.menu.gameMenus.*;
 
 public class MenuCheckEngine
 {
@@ -15,6 +16,10 @@ public class MenuCheckEngine
 		if(w.getEditMode())
 		{
 			registerEditMenus();
+		}
+		else
+		{
+			registerGameMenus();
 		}
 	}
 	public Menu[] getMenus()
@@ -34,6 +39,10 @@ public class MenuCheckEngine
 			}
 		}
 		return null;
+	}
+	private void registerGameMenus()
+	{
+		registerMenu(new MainGameMenu(1));
 	}
 	private void registerEditMenus()
 	{
@@ -69,6 +78,23 @@ public class MenuCheckEngine
 	public void performMenuCheckFunctions()
 	{
 		performButtonActions();
+		deselectHeadersForNonVisibleMenus();
+	}
+	private void deselectHeadersForNonVisibleMenus()
+	{
+		for(int i = 0; i < m.length; i++)
+		{
+			if(m[i] != null)
+			{
+				if(m[i].getHeaderClicked())
+				{
+					if(!m[i].getVisible())
+					{
+						m[i].setHeaderClicked(false);
+					}
+				}
+			}
+		}
 	}
 	private void performButtonActions()
 	{

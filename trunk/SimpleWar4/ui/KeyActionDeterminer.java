@@ -21,9 +21,16 @@ public class KeyActionDeterminer
 	}
 	public void performKeyActions(KeyEvent e)
 	{
-		if(e.getKeyChar() == e.VK_ESCAPE)
+		if(e.getKeyChar() == e.VK_ESCAPE && !w.getEditMode())
 		{
-			System.exit(0);
+			if(w.getMenuCheckEngine().getMenu(1).getVisible())
+			{
+				w.getMenuCheckEngine().getMenu(1).setVisible(false);
+			}
+			else
+			{
+				w.getMenuCheckEngine().getMenu(1).setVisible(true);
+			}
 		}
 		else if(e.getKeyChar() == 'u')
 		{

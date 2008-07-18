@@ -32,8 +32,12 @@ public class MouseClickActionDeterminer
 				actionPerformed = testForMenuHeaderClicked(e.getPoint(), actionPerformed);
 				actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
 			}
+			else
+			{
+				actionPerformed = moveMenuHeader(e.getPoint());
+			}
 		}
-		if(button == e.BUTTON1)
+		if(button == e.BUTTON3)
 		{
 			//right click
 			actionPerformed = unhighlightAllUnits();
@@ -42,6 +46,24 @@ public class MouseClickActionDeterminer
 		{
 			moveHighlightedUnits(e.getPoint());
 		}
+	}
+	private boolean moveMenuHeader(Point p)
+	{
+		Menu[] m = w.getMenuCheckEngine().getMenus();
+		for(int i = 0; i < m.length; i++)
+		{
+			if(m[i] != null)
+			{
+				if(m[i].getHeaderClicked())
+				{
+					m[i].setLocation(p);
+					m[i].setHeaderClicked(false);
+					menuHeaderClicked = false;
+					break;
+				}
+			}
+		}
+		return true;
 	}
 	private boolean testForMenuHeaderClicked(Point p, boolean actionPerformed)
 	{
@@ -112,6 +134,7 @@ public class MouseClickActionDeterminer
 				if(u[i].getHighlighted())
 				{
 					u[i].setHighlighted(false);
+					System.out.println("unit unhighlighted");
 				}
 			}
 		}

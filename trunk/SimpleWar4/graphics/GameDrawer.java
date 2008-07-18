@@ -5,6 +5,7 @@ import world.World;
 import world.unit.*;
 import ui.menu.Menu;
 import utilities.Location;
+import world.terrain.*;
 
 public class GameDrawer
 {
@@ -29,6 +30,9 @@ public class GameDrawer
 		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
 		
 		drawGrass(g, xover, yover);
+		
+		drawTerrain(g, xover, yover);
+		
 		drawUnits(g, xover, yover, zoomLevel);
 		drawTileGrid(g);
 		drawDebugWater(g);
@@ -41,6 +45,17 @@ public class GameDrawer
 		gf.getBufferStrategy().show();
 		g.dispose();
 	}
+	private void drawTerrain(Graphics g, int xover, int yover)
+	{
+		Terrain[] t = w.getTerrain();
+		for(int i = 0; i < t.length; i++)
+		{
+			if(t[i] != null)
+			{
+				t[i].drawTerrain(g, xover, yover);
+			}
+		}
+	}
 	private void drawGameMenus(Graphics g)
 	{
 		Menu[] m = w.getMenuCheckEngine().getMenus();
@@ -51,6 +66,15 @@ public class GameDrawer
 				if(m[i].getVisible())
 				{
 					m[i].drawMenu(g);
+					if(m[i].getHeaderClicked())
+					{
+						Point p = gf.mouseLocation;
+						Rectangle header = m[i].getHeaderBounds();
+						g.setColor(Color.orange);
+						g.drawRect(p.x, p.y, header.width, header.height);
+						g.drawRect(p.x+1, p.y+1, header.width-2, header.height-2);
+						g.drawRect(p.x+2, p.y+2, header.width-4, header.height-4);
+					}
 				}
 			}
 		}

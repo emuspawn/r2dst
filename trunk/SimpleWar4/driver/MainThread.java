@@ -10,10 +10,10 @@ public class MainThread
 	World w;
 	Camera c;
 	
-	public MainThread()
+	public MainThread(boolean editMode)
 	{
 		System.out.println("program starting");
-		w = new World(true);
+		w = new World(editMode);
 		System.out.println("world instantiated");
 		c = new Camera();
 		System.out.println("camera instantiated");
@@ -27,7 +27,12 @@ public class MainThread
 	}
 	public static void main(String [] args)
 	{
-		new MainThread();
+		new MainThread(false);
+	}
+	public World getWorld()
+	{
+		//called by the editor to get a copy of important game variables
+		return w;
 	}
 	private void performGameFunctions()
 	{
