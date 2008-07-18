@@ -15,7 +15,11 @@ public class MainEditMenu extends Menu
 		int slot = 1;
 		addButton(new EditTerrainButton(x, (y+slotHeight)*slot, slotWidth, slotHeight));
 		slot++;
-		addButton(new ExitButton(x, (y+slotHeight)*slot, slotWidth, slotHeight));
+		addButton(new Separator(x, (y+slotHeight)*slot, slotWidth, slotHeight));
+		slot++;
+		addButton(new Separator(x, (y+slotHeight)*slot, slotWidth, slotHeight));
+		slot++;
+		addButton(new EditEditorDisplayOptions(x, (y+slotHeight)*slot, slotWidth, slotHeight));
 		slot++;
 		addButton(new Separator(x, (y+slotHeight)*slot, slotWidth, slotHeight));
 		slot++;

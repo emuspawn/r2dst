@@ -149,7 +149,7 @@ public class MouseClickActionDeterminer
 			{
 				if(u[i] != null)
 				{
-					if(u[i].getBounds().contains(p))
+					if(u[i].getVisibleBounds().contains(p))
 					{
 						System.out.println("unit highlighted");
 						u[i].setHighlighted(true);

@@ -6,18 +6,29 @@ import world.unit.*;
 import ui.menu.Menu;
 import utilities.Location;
 import world.terrain.*;
+import ui.ViewScrollDeterminer;
+
+//draws game and determines screen scrolling
+
+/*
+ * determination of screen scrolling is done in here because it is regularly updated by the main thread
+ * and it has access to the mouse positon from graphics finder.  Graphics finder was not used because
+ * it is not regulaly updated and only changed when the mouse is moved thus not scrolling
+ */
 
 public class GameDrawer
 {
 	GraphicsFinder gf;
 	Camera c;
 	World w;
+	ViewScrollDeterminer vsd;
 	
 	public GameDrawer(GraphicsFinder gf, World w, Camera c)
 	{
 		this.gf = gf;
 		this.c = c;
 		this.w = w;
+		vsd = new ViewScrollDeterminer(c, gf.getWidth(), gf.getHeight());
 	}
 	public void performGameDrawFunctions()
 	{
@@ -41,6 +52,9 @@ public class GameDrawer
 		
 		drawGameMenus(g);
 		
+		
+		//scroll test
+		vsd.testForScreenScroll(gf.mouseLocation);
 		
 		gf.getBufferStrategy().show();
 		g.dispose();
