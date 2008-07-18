@@ -1,0 +1,23 @@
+#summary To Do List
+#labels Featured,Phase-Requirements,Phase-Design
+
+= Introduction =
+
+This page is a checklst of what needs to be added, fixed, or discussed.
+
+
+
+= Details =
+
+-Pathfinding
+
+-Tech Tree
+
+-Resource System
+
+-Magic System
+
+-AI
+
+-Unit Behavior Scripting System
+
