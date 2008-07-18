@@ -10,6 +10,7 @@ public abstract class Menu
 	int id;
 	boolean visible = false;
 	boolean movable = false;
+	boolean headerClicked = false; //only used when movable
 	
 	protected int x;
 	protected int y;
@@ -25,12 +26,31 @@ public abstract class Menu
 		this.slotHeight = slotHeight;
 		this.id = id;
 	}
+	public void setHeaderClicked(boolean setter)
+	{
+		headerClicked = setter;
+	}
+	public boolean getHeaderClicked()
+	{
+		return headerClicked;
+	}
 	public Rectangle getHeaderBounds()
 	{
 		return new Rectangle(x, y, slotWidth, slotHeight);
 	}
 	public void setLocation(Point p)
 	{
+		int xdiff = p.x - x;
+		int ydiff = p.y - y;
+		
+		for(int i = 0; i < b.length; i++)
+		{
+			if(b[i] != null)
+			{
+				b[i].translateButton(xdiff, ydiff);
+			}
+		}
+		
 		x = p.x;
 		y = p.y;
 	}

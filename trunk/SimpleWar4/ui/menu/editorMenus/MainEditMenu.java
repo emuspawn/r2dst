@@ -10,6 +10,8 @@ public class MainEditMenu extends Menu
 	{
 		super("Main Edit Menu", 0, 0, 130, 20, id);
 		
+		setMovable(true);
+		
 		int slot = 1;
 		addButton(new EditTerrainButton(x, (y+slotHeight)*slot, slotWidth, slotHeight));
 		slot++;

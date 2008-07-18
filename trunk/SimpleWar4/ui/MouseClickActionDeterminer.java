@@ -13,6 +13,8 @@ public class MouseClickActionDeterminer
 	World w;
 	Camera c;
 	
+	boolean menuHeaderClicked = false;
+	
 	public MouseClickActionDeterminer(World w, Camera c)
 	{
 		this.w = w;
@@ -24,8 +26,12 @@ public class MouseClickActionDeterminer
 		if(button == e.BUTTON1)
 		{
 			//left click
-			actionPerformed = testForButtonClicked(e.getPoint());
-			actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
+			if(!menuHeaderClicked)
+			{
+				actionPerformed = testForButtonClicked(e.getPoint());
+				actionPerformed = testForMenuHeaderClicked(e.getPoint(), actionPerformed);
+				actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
+			}
 		}
 		if(button == e.BUTTON1)
 		{
@@ -35,6 +41,33 @@ public class MouseClickActionDeterminer
 		if(!actionPerformed)
 		{
 			moveHighlightedUnits(e.getPoint());
+		}
+	}
+	private boolean testForMenuHeaderClicked(Point p, boolean actionPerformed)
+	{
+		if(!actionPerformed)
+		{
+			Menu[] m = w.getMenuCheckEngine().getMenus();
+			for(int i = 0; i < m.length; i++)
+			{
+				if(m[i] != null)
+				{
+					if(m[i].getVisible())
+					{
+						if(m[i].getMovable())
+						{
+							m[i].setHeaderClicked(true);
+							menuHeaderClicked = true;
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		else
+		{
+			return false;
 		}
 	}
 	private boolean testForButtonClicked(Point p)

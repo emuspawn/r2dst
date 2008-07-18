@@ -24,6 +24,11 @@ public abstract class Button
 		this.height = height;
 		this.name = name;
 	}
+	public void translateButton(int xover, int yover)
+	{
+		x = x + xover;
+		y = y + yover;
+	}
 	public boolean getClicked()
 	{
 		return clicked;
