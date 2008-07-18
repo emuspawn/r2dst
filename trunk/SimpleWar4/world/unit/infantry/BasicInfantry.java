@@ -15,7 +15,7 @@ public class BasicInfantry extends Unit
 		super(camera, c, location);
 		length = 30;
 		setMovement(20);
-		setUnitName("Inf");
+		setName("Inf");
 	}
 	public void drawUnit(Graphics g)
 	{

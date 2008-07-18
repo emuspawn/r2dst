@@ -10,7 +10,7 @@ import graphics.Camera;
 public abstract class Unit
 {
 	int life = 10;
-	int magic = 5;
+	int magic = 0;
 	protected Location location;
 	protected String name;
 	double movement = 5;
@@ -117,11 +117,11 @@ public abstract class Unit
 	{
 		return magic;
 	}
-	public void setUnitName(String setter)
+	public void setName(String setter)
 	{
 		name = setter;
 	}
-	public String getUnitName()
+	public String getName()
 	{
 		return name;
 	}
