@@ -1,4 +1,4 @@
-package ui.button.editButtons.mainEditMenuButtons;
+package ui.button.editButtons.mapEditorV1Buttons.mainEditMenuButtons;
 
 import ui.button.*;
 import world.World;
@@ -11,6 +11,6 @@ public class EditTerrainButton extends Button
 	}
 	public void performAction(World w)
 	{
-		
+		w.getMenuCheckEngine().getMenu(2).setVisible(true);
 	}
 }

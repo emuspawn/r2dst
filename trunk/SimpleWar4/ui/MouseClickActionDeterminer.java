@@ -30,7 +30,17 @@ public class MouseClickActionDeterminer
 			{
 				actionPerformed = testForButtonClicked(e.getPoint());
 				actionPerformed = testForMenuHeaderClicked(e.getPoint(), actionPerformed);
-				actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
+				if(!w.getEditMode())
+				{
+					actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
+				}
+				else
+				{
+					if(!actionPerformed)
+					{
+						w.getEditor().interpretMouseClick(e.getPoint());
+					}
+				}
 			}
 			else
 			{
@@ -40,9 +50,12 @@ public class MouseClickActionDeterminer
 		if(button == e.BUTTON3)
 		{
 			//right click
-			actionPerformed = unhighlightAllUnits();
+			if(!w.getEditMode())
+			{
+				actionPerformed = unhighlightAllUnits();
+			}
 		}
-		if(!actionPerformed)
+		if(!actionPerformed && !w.getEditMode())
 		{
 			moveHighlightedUnits(e.getPoint());
 		}
@@ -94,9 +107,11 @@ public class MouseClickActionDeterminer
 	}
 	private boolean testForButtonClicked(Point p)
 	{
+		//menus evaluated from the back of the array first so the ones apparently on top
+		//due to the draw conditions take priority over those draw behind them
 		Menu[] m = w.getMenuCheckEngine().getMenus();
 		Button[] b;
-		for(int i = 0; i < m.length; i++)
+		for(int i = m.length-1; i >= 0; i--)
 		{
 			if(m[i] != null)
 			{

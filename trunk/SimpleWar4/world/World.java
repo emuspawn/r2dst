@@ -3,22 +3,33 @@ package world;
 import world.unit.*;
 import ui.menu.*;
 import world.terrain.*;
+import editor.Editor;
 
 public class World
 {
 	UnitEngine ue;
 	MenuCheckEngine mce;
+	Editor editor;
 	
 	int mapWidth = 2000;
 	int mapHeight = 2000;
 	Terrain[] terrain = new Terrain[10];
 	boolean editMode;
 	
-	public World(boolean editMode)
+	public World(boolean editMode, Editor editor)
 	{
 		this.editMode = editMode;
+		this.editor = editor;
 		ue = new UnitEngine(this);
 		mce = new MenuCheckEngine(this);
+	}
+	public void setTerrain(Terrain[] t)
+	{
+		terrain = t;
+	}
+	public Editor getEditor()
+	{
+		return editor;
 	}
 	public boolean getEditMode()
 	{

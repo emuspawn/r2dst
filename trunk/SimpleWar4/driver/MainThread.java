@@ -18,7 +18,7 @@ public class MainThread
 	{
 		this.editMode = editMode;
 		System.out.println("program starting");
-		w = new World(editMode);
+		w = new World(editMode, e);
 		System.out.println("world instantiated");
 		c = new Camera();
 		System.out.println("camera instantiated");

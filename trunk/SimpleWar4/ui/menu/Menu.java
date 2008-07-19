@@ -26,6 +26,11 @@ public abstract class Menu
 		this.slotHeight = slotHeight;
 		this.id = id;
 	}
+	public Point getRightSidePoint()
+	{
+		//returns the location of the top right corner of the menu so other menus can start adjacent to it
+		return new Point(x+slotWidth, y);
+	}
 	public void setHeaderClicked(boolean setter)
 	{
 		headerClicked = setter;

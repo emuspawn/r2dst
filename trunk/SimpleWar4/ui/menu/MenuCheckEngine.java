@@ -47,6 +47,9 @@ public class MenuCheckEngine
 	private void registerEditMenus()
 	{
 		registerMenu(new MainEditMenu(1));
+		registerMenu(new TerrainEditMenu(2));
+		registerMenu(new PolygonDrawAcceptMenu(3));
+		registerMenu(new YesNoClearAllEditDataMenu(4));
 	}
 	private void registerMenu(Menu menu)
 	{

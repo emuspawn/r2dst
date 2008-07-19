@@ -8,7 +8,7 @@ public class ViewScrollDeterminer
 	int screenWidth;
 	int screenHeight;
 	Camera c;
-	int allowance = 10; //how far from the edge of the screen before scrolling
+	int allowance = 3; //how far from the edge of the screen before scrolling
 	int over = 10; //how far over to move the screen
 	
 	public ViewScrollDeterminer(Camera c, int screenWidth, int screenHeight)

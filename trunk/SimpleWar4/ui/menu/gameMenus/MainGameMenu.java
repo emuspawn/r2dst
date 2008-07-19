@@ -2,7 +2,7 @@ package ui.menu.gameMenus;
 
 import ui.menu.*;
 import ui.button.*;
-import ui.button.editButtons.mainEditMenuButtons.ExitButton;;
+import ui.button.editButtons.mapEditorV1Buttons.mainEditMenuButtons.*;
 
 public class MainGameMenu extends Menu
 {

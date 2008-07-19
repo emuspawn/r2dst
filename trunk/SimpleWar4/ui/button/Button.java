@@ -44,7 +44,14 @@ public abstract class Button
 	public abstract void performAction(World w);
 	public void drawButton(Graphics g)
 	{
-		g.setColor(Color.lightGray);
+		if(clicked)
+		{
+			g.setColor(Color.orange);
+		}
+		else
+		{
+			g.setColor(Color.lightGray);
+		}
 		g.fillRect(x, y, width, height);
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
