@@ -62,6 +62,7 @@ public class MainThread
 				Thread.sleep(20);
 			}
 			catch(InterruptedException e){}
+			//System.out.println("main thread iteration completed");
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package world.unit;
 
 import utilities.*;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import world.controller.*;
 import java.awt.Rectangle;
@@ -13,14 +15,23 @@ public abstract class Unit
 	int magic = 0;
 	protected Location location;
 	protected String name;
-	double movement = 5;
+	protected double movement = 5;
 	protected Controller c;
 	Rectangle bounds;
-	Rectangle visibleBounds;
 	protected boolean highlighted = false;
 	protected Camera camera;
 	protected int length; //how long one side of the square representing the unit is on a zoom level of 100%
 	int movementType = 0; //specifies what type of ground the unit can move across
+	protected int unitType = 1;
+	
+	/*
+	 * unit type:
+	 * 1=unit
+	 * 2=building
+	 */
+	
+	//building variables
+	
 	
 	//path finding variables
 	Path path;
@@ -40,6 +51,10 @@ public abstract class Unit
 		this.c = c;
 		this.camera = camera;
 		//setupUnitBounds();
+	}
+	public int getUnitType()
+	{
+		return unitType;
 	}
 	public Location getDestination()
 	{
@@ -137,18 +152,22 @@ public abstract class Unit
 	{
 		bounds = new Rectangle((int)location.x-(length/2), (int)location.y-(length/2), length, length);
 	}
-	private void setupVisibleUnitBounds()
+	public void drawUnitVisibleBounds(Graphics g)
 	{
-		int tempLength = (int)(length*camera.getZoomLevel());
-		int x = (int)(camera.getVisibleLocation(location).x);
-		int y = (int)(camera.getVisibleLocation(location).y);
-		visibleBounds = new Rectangle(x-(tempLength/2), y-(tempLength/2), tempLength, tempLength);
+		Rectangle r = getVisibleBounds();
+		if(r != null)
+		{
+			g.setColor(Color.cyan);
+			g.drawRect(r.x, r.y, r.width, r.height);
+		}
 	}
 	public Rectangle getVisibleBounds()
 	{
 		//the bounds as they appear to the user, for actions such as selecting the unit
-		setupVisibleUnitBounds();
-		return visibleBounds;
+		int tempLength = (int)(length*camera.getZoomLevel());
+		int x = (int)(camera.getVisibleLocation(location).x);
+		int y = (int)(camera.getVisibleLocation(location).y);
+		return new Rectangle(x-(tempLength/2), y-(tempLength/2), tempLength, tempLength);
 	}
 	public Path getPath()
 	{

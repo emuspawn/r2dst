@@ -88,8 +88,9 @@ public class Camera
 	{
 		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen
 		//returns regardless of onscreen position, could be offscreen, used to draw map bounds and such
-		double percentxOver = (l.x-xover)/dsw;
-		double percentyOver = (l.y-yover)/dsh;
+		//absolute values must be taken because l.x-xover could return a negate value giving the incorrect location
+		double percentxOver = Math.abs((l.x-xover)/dsw);
+		double percentyOver = Math.abs((l.y-yover)/dsh);
 		return new Location(percentxOver*screenWidth, percentyOver*screenHeight);
 	}
 }

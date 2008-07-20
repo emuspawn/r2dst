@@ -1,10 +1,11 @@
 package ui;
 
 import java.awt.event.*;
+import world.unit.building.*;
+import world.unit.building.testTeam1Buildings.*;
 import world.World;
 import utilities.Location;
 import graphics.Camera;
-import world.unit.*;
 import world.unit.infantry.*;
 import world.controller.*;
 import java.awt.Color;
@@ -36,10 +37,18 @@ public class KeyActionDeterminer
 		{
 			w.getUnitEngine().registerUnit(new BasicInfantry(c, new Controller(1, Color.red), new Location(90, 110)));
 		}
+		else if(e.getKeyChar() == 'd')
+		{
+			w.getUnitEngine().registerUnit(new DivineAnchor(c, new Controller(1, Color.red), new Location(300, 300)));
+			w.getUnitEngine().registerUnit(new Castle(c, new Controller(1, Color.red), new Location(700, 500)));
+		}
 		else if(e.getKeyChar() == 'w')
 		{
-			c.setZoomLevel(c.getZoomLevel()+.05);
-			System.out.println("zoom level = "+c.getZoomLevel());
+			if(c.getZoomLevel() < 1.51)
+			{
+				c.setZoomLevel(c.getZoomLevel()+.05);
+				System.out.println("zoom level = "+c.getZoomLevel());
+			}
 		}
 		else if(e.getKeyChar() == 's')
 		{

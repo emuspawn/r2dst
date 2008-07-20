@@ -14,7 +14,7 @@ public class BasicInfantry extends Unit
 	{
 		super(camera, c, location);
 		length = 30;
-		setMovement(20);
+		movement = 20;
 		setName("Inf");
 	}
 	public void drawUnit(Graphics g)
@@ -24,15 +24,14 @@ public class BasicInfantry extends Unit
 		if(x != -1 && y != -1)
 		{
 			double zoomLevel = camera.getZoomLevel();
-			int over = (int)(length * camera.getZoomLevel());
-			g.setColor(Color.black);
-			g.drawRect(x-(over/2), y-(over/2), over, over);
+			int over = (int)(length * zoomLevel);
 			g.setColor(c.getPlayerColor());
 			g.fillRect(x-(over/2), y-(over/2), over, over);
 			g.setColor(Color.black);
+			g.drawRect(x-(over/2), y-(over/2), over, over);
 			g.drawString(name, x-(over/4), y);
 			
-			//draws the unit bounds
+//			draws the units visible bounds
 			Rectangle r = getVisibleBounds();
 			if(r != null)
 			{

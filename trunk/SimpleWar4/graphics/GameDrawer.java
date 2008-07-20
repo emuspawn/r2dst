@@ -22,6 +22,7 @@ public class GameDrawer
 	Camera c;
 	World w;
 	ViewScrollDeterminer vsd;
+	boolean drawUnitVisibleBounds = true;
 	
 	public GameDrawer(GraphicsFinder gf, World w, Camera c)
 	{
@@ -41,11 +42,7 @@ public class GameDrawer
 		g.setColor(Color.green);
 		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
 		
-		//draws map bounds
-		g.setColor(Color.black);
-		int x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).x);
-		int y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).y);
-		g.drawRect(x, y, (int)(w.getMapWidth()*c.getZoomLevel()), (int)(w.getMapHeight()*c.getZoomLevel()));
+		drawMapBounds(g);
 		
 		drawTerrain(g, xover, yover);
 		
@@ -63,6 +60,35 @@ public class GameDrawer
 		
 		gf.getBufferStrategy().show();
 		g.dispose();
+	}
+	private void drawMapBounds(Graphics g)
+	{
+		//draws one point at each corner (if visible)
+		g.setColor(Color.black);
+		int x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).x);
+		int y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).y);
+		if(x != -1 && y != -1)
+		{
+			g.drawRect(x, y, 5, 5);
+		}
+		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), 0)).x);
+		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), 0)).y);
+		if(x != -1 && y != -1)
+		{
+			g.drawRect(x, y, 5, 5);
+		}
+		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, w.getMapHeight())).x);
+		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, w.getMapHeight())).y);
+		if(x != -1 && y != -1)
+		{
+			g.drawRect(x, y, 5, 5);
+		}
+		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), w.getMapHeight())).x);
+		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), w.getMapHeight())).y);
+		if(x != -1 && y != -1)
+		{
+			g.drawRect(x, y, 5, 5);
+		}
 	}
 	private void drawTerrain(Graphics g, int xover, int yover)
 	{
@@ -165,6 +191,10 @@ public class GameDrawer
 			if(u[i] != null)
 			{
 				u[i].drawUnit(g);
+				if(drawUnitVisibleBounds)
+				{
+					u[i].drawUnitVisibleBounds(g);
+				}
 			}
 		}
 	}

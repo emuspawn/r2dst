@@ -138,10 +138,10 @@ public class MouseClickActionDeterminer
 	{
 		//because of the zoomLevel in Camera, where the user clicks is not always
 		//the actual location of the click in virtual space
-		
-		System.out.println("order sent to move highlighted units");
-		
 		Point point = c.getVirtualPoint(p);
+		
+		System.out.println("order sent, move highlighted units to "+point);
+		
 		if(point.x > 0 && point.x < w.getMapWidth())
 		{
 			if(point.y > 0 && point.y < w.getMapHeight())
