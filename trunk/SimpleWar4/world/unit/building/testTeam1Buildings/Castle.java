@@ -21,11 +21,14 @@ public class Castle extends Unit
 		double zoomLevel = camera.getZoomLevel();
 		int over = (int)(length * zoomLevel);
 		//subtracts from x and y are to accomidate the units location as the center
-		int x = (int)(camera.getVisibleLocation(location).x-(over/2.0));
-		int y = (int)(camera.getVisibleLocation(location).y-(over/2.0));
+		int x = (int)(camera.getVisibleLocation(location).x);
+		int y = (int)(camera.getVisibleLocation(location).y);
 		if(x != -1 && y != -1)
 		{
+			x = (int)(x-(over/2.0));
+			y = (int)(y-(over/2.0));
 			
+			System.out.println(x+", "+y);
 			g.setColor(c.getPlayerColor());
 			g.fillRect(x, y, over, over);
 			

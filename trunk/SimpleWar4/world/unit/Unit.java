@@ -155,10 +155,14 @@ public abstract class Unit
 	public void drawUnitVisibleBounds(Graphics g)
 	{
 		Rectangle r = getVisibleBounds();
+		int tempLength = (int)(length*camera.getZoomLevel());
 		if(r != null)
 		{
-			g.setColor(Color.cyan);
-			g.drawRect(r.x, r.y, r.width, r.height);
+			if((int)(r.x+(tempLength/2)) != -1 && (int)(r.y+(tempLength/2)) != -1)
+			{
+				g.setColor(Color.cyan);
+				g.drawRect(r.x, r.y, r.width, r.height);
+			}
 		}
 	}
 	public Rectangle getVisibleBounds()

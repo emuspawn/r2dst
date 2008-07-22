@@ -2,7 +2,7 @@ package ui.menu;
 
 import ui.button.*;
 import world.World;
-import ui.menu.editorMenus.*;
+import ui.menu.editorMenus.mapEditorV1Menus.*;
 import ui.menu.gameMenus.*;
 
 public class MenuCheckEngine

@@ -20,10 +20,13 @@ public class DivineAnchor extends Unit
 	{
 		double zoomLevel = camera.getZoomLevel();
 		int over = (int)(length * zoomLevel);
-		int x = (int)(camera.getVisibleLocation(location).x-(over/2.0));
-		int y = (int)(camera.getVisibleLocation(location).y-(over/2.0));
+		int x = (int)(camera.getVisibleLocation(location).x);
+		int y = (int)(camera.getVisibleLocation(location).y);
 		if(x != -1 && y != -1)
 		{
+			x = (int)(x-(over/2.0));
+			y = (int)(y-(over/2.0));
+			
 			g.setColor(c.getPlayerColor());
 			g.fillRect(x, y, over, over);
 			g.setColor(Color.black);

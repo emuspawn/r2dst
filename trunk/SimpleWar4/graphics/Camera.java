@@ -1,6 +1,7 @@
 package graphics;
 
 import utilities.Location;
+import world.unit.*;
 import java.awt.Rectangle;
 import java.awt.Point;
 
@@ -84,6 +85,18 @@ public class Camera
 		}
 		return new Location(-1, -1);
 	}
+	/*public Location getVisibleLocation(Unit u)
+	{
+		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen
+		Rectangle sBounds = new Rectangle(xover, yover, (int)dsw, (int)dsh); //screen bounds
+		if(sBounds.intersects(u.getVisibleBounds()))
+		{
+			double percentxOver = (l.x-xover)/dsw;
+			double percentyOver = (l.y-yover)/dsh;
+			return new Location(percentxOver*screenWidth, percentyOver*screenHeight);
+		}
+		return new Location(-1, -1);
+	}*/
 	public Location getVisibleLocationRegardlessOnscreen(Location l)
 	{
 		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen
