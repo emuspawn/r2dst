@@ -37,7 +37,8 @@ public class KylePF extends PathFinder
 
 	private Point getPointDir(Point p, int dir)
 	{
-		Point end;
+		// This function just gets the point in the direction
+		Point end = new Point(0,0);
 		switch (dir)
 		{
 			case 0:
@@ -62,6 +63,7 @@ public class KylePF extends PathFinder
 	
 	private double getFScore(Point p, Point dest, boolean[][] checkedTiles)
 	{
+		// Just like yours >.< I just needed a quick estimate to use.
 		double term1 = dest.x - p.x;
 		double term2 = dest.y - p.y;
 		double fscore = Math.sqrt((term1*term1)+(term2*term2));
@@ -70,11 +72,13 @@ public class KylePF extends PathFinder
 
 	private Path backTrackPath(Point start, Point dest, int[][] tileDirections)
 	{
-		Point[] pathPoints;
+		//This follows the "arrows" back to the start
+		//No diagonals yet
 		int nodes = 1;
+		Point[] pathPoints = new Point[140];
 		boolean done = false;
 		Point curPoint;
-		Path goodPath;
+		Path goodPath = new Path();
 		Location loc;
 		
 		pathPoints[1] = getPointDir(dest, tileDirections[dest.x][dest.y]);
@@ -92,7 +96,6 @@ public class KylePF extends PathFinder
 			loc = new Location((pathPoints[i].x*tileLength)+tileLength/2,(pathPoints[i].y*tileLength)+tileLength/2);
 			goodPath.addLocationToPath(loc);
 		}
-		
 		return goodPath;
 	}
 
@@ -117,10 +120,13 @@ public class KylePF extends PathFinder
 			}
 		}
 		
-		Point[] evalTile;
+		Point[] evalTile = new Point[3];
 		
-		while (!foundpath)
+		while (!foundpath) //Basic Loop
 		{
+			/* No diagonals yet, basic Up/down/left/right
+			Once assigned, "arrows" aren't un- or re-assigned. */
+			
 			//up
 			evalTile[0] = new Point(curTile.x, curTile.y-1);
 			if (tileDirections[curTile.x][curTile.y-1] == -1) tileDirections[curTile.x][curTile.y-1] = 0;
