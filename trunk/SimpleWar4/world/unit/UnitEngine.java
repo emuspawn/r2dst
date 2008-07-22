@@ -15,9 +15,11 @@ import world.unit.unitMover.*;
 public class UnitEngine
 {
 	Unit[] u = new Unit[30];
+	boolean[] findPath = new boolean[u.length];
+	Location[] destinations = new Location[u.length];
 	
 	PathFinder[] pathFinders = new PathFinder[10];
-	int pathFinderUsed = 6;
+	int pathFinderUsed = 3;
 	
 	UnitMover[] um = new UnitMover[5];
 	int unitMoverUsed = 1;
@@ -26,6 +28,11 @@ public class UnitEngine
 	{
 		setupPathFinders(w);
 		setupUnitMovers();
+		
+		for(int i = 0; i < findPath.length; i++)
+		{
+			findPath[i] = false;
+		}
 	}
 	private void setupUnitMovers()
 	{
@@ -53,21 +60,25 @@ public class UnitEngine
 			}
 		}
 	}
-	public synchronized void findUnitPaths(Point p)
+	public synchronized void flagUnitsForFindPath(Point p)
 	{
-		Location destination = new Location(p);
+		/*
+		 * units must be flagged because the mouse listener runs off
+		 * a separate thread and it can update a units path while the
+		 * unit is moving giving strange results from the unit mover
+		 * 
+		 * a flag system merely marks the units that a path should be
+		 * found for then calculates it once it has already moved them
+		 */
+		
 		for(int i = 0; i < u.length; i++)
 		{
 			if(u[i] != null)
 			{
 				if(u[i].getHighlighted())
 				{
-					System.out.println("path finder used = "+pathFinderUsed);
-					u[i].setPointMovingTo(null);
-					//u[i].setDestination(destination);
-					System.out.println("order sent to find path");
-					u[i].setPath(pathFinders[pathFinderUsed].findPath(destination, u[i]));
-					u[i].setMoving(true);
+					findPath[i] = true;
+					destinations[i] = new Location(p);
 				}
 			}
 		}
@@ -80,6 +91,29 @@ public class UnitEngine
 	{
 		testForUnitDeaths();
 		um[unitMoverUsed].moveUnits(u);
+		findUnitPaths();
+	}
+	private void findUnitPaths()
+	{
+		for(int i = 0; i < u.length; i++)
+		{
+			if(u[i] != null)
+			{
+				if(u[i].getHighlighted())
+				{
+					if(findPath[i] == true)
+					{
+						findPath[i] = false;
+						//System.out.println("path finder used = "+pathFinderUsed);
+						u[i].setPointMovingTo(null);
+						//u[i].setDestination(destination);
+						//System.out.println("order sent to find path");
+						u[i].setPath(pathFinders[pathFinderUsed].findPath(destinations[i], u[i]));
+						u[i].setMoving(true);
+					}
+				}
+			}
+		}
 	}
 	private void testForUnitDeaths()
 	{

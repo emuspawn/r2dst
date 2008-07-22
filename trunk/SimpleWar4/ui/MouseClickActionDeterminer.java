@@ -140,13 +140,13 @@ public class MouseClickActionDeterminer
 		//the actual location of the click in virtual space
 		Point point = c.getVirtualPoint(p);
 		
-		System.out.println("order sent, move highlighted units to "+point);
+		//System.out.println("order sent, move highlighted units to "+point);
 		
 		if(point.x > 0 && point.x < w.getMapWidth())
 		{
 			if(point.y > 0 && point.y < w.getMapHeight())
 			{
-				w.getUnitEngine().findUnitPaths(c.getVirtualPoint(p));
+				w.getUnitEngine().flagUnitsForFindPath(c.getVirtualPoint(p));
 			}
 		}
 	}
@@ -160,7 +160,7 @@ public class MouseClickActionDeterminer
 				if(u[i].getHighlighted())
 				{
 					u[i].setHighlighted(false);
-					System.out.println("unit unhighlighted");
+					//System.out.println("unit unhighlighted");
 				}
 			}
 		}
@@ -177,7 +177,7 @@ public class MouseClickActionDeterminer
 				{
 					if(u[i].getVisibleBounds().contains(p))
 					{
-						System.out.println("unit highlighted");
+						//System.out.println("unit highlighted");
 						u[i].setHighlighted(true);
 						return true;
 					}

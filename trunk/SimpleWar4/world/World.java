@@ -1,6 +1,7 @@
 package world;
 
 import world.unit.*;
+import world.map.*;
 import ui.menu.*;
 import world.terrain.*;
 import editor.Editor;
@@ -11,8 +12,9 @@ public class World
 	MenuCheckEngine mce;
 	Editor editor;
 	
-	int mapWidth = 605;
-	int mapHeight = 600;
+	Map m;
+	int mapWidth = 900;
+	int mapHeight = 900;
 	Terrain[] terrain = new Terrain[10];
 	boolean editMode;
 	

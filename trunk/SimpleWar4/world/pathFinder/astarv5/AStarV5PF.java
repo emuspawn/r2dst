@@ -47,7 +47,7 @@ public class AStarV5PF extends PathFinder
 		 * would reside outside of the matrix bounds
 		 */
 		
-		System.out.println("destination = ("+destination.x+", "+destination.y+")");
+		//System.out.println("destination = ("+destination.x+", "+destination.y+")");
 		if(destination.x >= tileLength*matrixWidth)
 		{
 			destination.x = tileLength*matrixWidth-1;
@@ -56,7 +56,7 @@ public class AStarV5PF extends PathFinder
 		{
 			destination.y = tileLength*matrixHeight-1;
 		}
-		System.out.println("destination = ("+destination.x+", "+destination.y+")");
+		//System.out.println("destination = ("+destination.x+", "+destination.y+")");
 		
 		
 		Path path = new Path();
@@ -158,7 +158,7 @@ public class AStarV5PF extends PathFinder
 				datp = true;
 			}
 		}
-		System.out.println("path found and returned");
+		//System.out.println("path found and returned");
 		return path;
 	}
 }

@@ -10,12 +10,13 @@ public class KylePF extends PathFinder
 {
 	World w;
 	int tileLength = 20;
-	int[][] tv1 = new int[w.getMapWidth()][w.getMapHeight()];
+	int[][] tv1;
 	
 
 	public KylePF(World w)
 	{
 		this.w = w;
+		tv1 = new int[w.getMapWidth()][w.getMapHeight()];
 		for(int i = 0; i < (w.getMapWidth()/tileLength); i++)
 		{
 			for(int a = 0; a < (w.getMapHeight()/tileLength); a++)

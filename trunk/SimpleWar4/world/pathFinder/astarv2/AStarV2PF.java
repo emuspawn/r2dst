@@ -19,7 +19,6 @@ public class AStarV2PF extends PathFinder
 	}
 	private void setupTileMatrix()
 	{
-		System.out.println("here 4");
 		tv1 = new TileV2[w.getMapWidth()][w.getMapHeight()];
 		for(int i = 0; i < (w.getMapWidth()/tileLength); i++)
 		{
