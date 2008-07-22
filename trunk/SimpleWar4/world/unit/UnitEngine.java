@@ -5,6 +5,7 @@ import world.pathFinder.astarv1.AStarV1PF;
 import world.pathFinder.astarv2.AStarV2PF;
 import world.pathFinder.astarv3.AStarV3PF;
 import world.pathFinder.astarv4.AStarV4PF;
+import world.pathFinder.astarv5.AStarV5PF;
 import world.pathFinder.KylePF.KylePF;
 import world.World;
 import java.awt.Point;
@@ -16,10 +17,10 @@ public class UnitEngine
 	Unit[] u = new Unit[30];
 	
 	PathFinder[] pathFinders = new PathFinder[10];
-	int pathFinderUsed = 5;
+	int pathFinderUsed = 6;
 	
 	UnitMover[] um = new UnitMover[5];
-	int unitMoverUsed = 0;
+	int unitMoverUsed = 1;
 	
 	public UnitEngine(World w)
 	{
@@ -29,6 +30,7 @@ public class UnitEngine
 	private void setupUnitMovers()
 	{
 		um[0] = new MoverseV1();
+		um[1] = new MoverseV2();
 	}
 	private void setupPathFinders(World w)
 	{
@@ -38,6 +40,7 @@ public class UnitEngine
 		pathFinders[3] = new KylePF(w);
 		pathFinders[4] = new AStarV3PF(w);
 		pathFinders[5] = new AStarV4PF(w);
+		pathFinders[6] = new AStarV5PF(w);
 	}
 	public void registerUnit(Unit unit)
 	{
@@ -61,7 +64,7 @@ public class UnitEngine
 				{
 					System.out.println("path finder used = "+pathFinderUsed);
 					u[i].setPointMovingTo(null);
-					u[i].setDestination(destination);
+					//u[i].setDestination(destination);
 					System.out.println("order sent to find path");
 					u[i].setPath(pathFinders[pathFinderUsed].findPath(destination, u[i]));
 					u[i].setMoving(true);

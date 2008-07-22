@@ -14,16 +14,16 @@ public class DivineAnchor extends Unit
 		super(camera, c, location);
 		unitType = 2;
 		length = 60;
-		movement = 20;
+		movement = 25;
 	}
 	public void drawUnit(Graphics g)
 	{
-		double zoomLevel = camera.getZoomLevel();
-		int over = (int)(length * zoomLevel);
-		int x = (int)(camera.getVisibleLocation(location).x);
-		int y = (int)(camera.getVisibleLocation(location).y);
+		int x = (int)(camera.getVisibleLocation(this).x);
+		int y = (int)(camera.getVisibleLocation(this).y);
 		if(x != -1 && y != -1)
 		{
+			double zoomLevel = camera.getZoomLevel();
+			int over = (int)(length * zoomLevel);
 			x = (int)(x-(over/2.0));
 			y = (int)(y-(over/2.0));
 			

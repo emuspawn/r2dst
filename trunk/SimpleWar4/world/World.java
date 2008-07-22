@@ -11,8 +11,8 @@ public class World
 	MenuCheckEngine mce;
 	Editor editor;
 	
-	int mapWidth = 2000;
-	int mapHeight = 2000;
+	int mapWidth = 605;
+	int mapHeight = 600;
 	Terrain[] terrain = new Terrain[10];
 	boolean editMode;
 	

@@ -42,7 +42,8 @@ public class GameDrawer
 		g.setColor(Color.green);
 		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
 		
-		drawMapBounds(g);
+		//drawMapBounds(g);
+		drawMapBounds2(g);
 		
 		drawTerrain(g, xover, yover);
 		
@@ -50,7 +51,6 @@ public class GameDrawer
 		//drawTileGrid(g);
 		//drawDebugWater(g);
 		drawUnitPaths(g);
-		
 		
 		drawGameMenus(g);
 		
@@ -61,30 +61,30 @@ public class GameDrawer
 		gf.getBufferStrategy().show();
 		g.dispose();
 	}
-	private void drawMapBounds(Graphics g)
+	private void drawMapBounds2(Graphics g)
 	{
 		//draws one point at each corner (if visible)
 		g.setColor(Color.black);
-		int x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).x);
-		int y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, 0)).y);
+		int x = (int)(c.getVisibleLocation(new Location(0, 0)).x);
+		int y = (int)(c.getVisibleLocation(new Location(0, 0)).y);
 		if(x != -1 && y != -1)
 		{
 			g.drawRect(x, y, 5, 5);
 		}
-		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), 0)).x);
-		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), 0)).y);
+		x = (int)(c.getVisibleLocation(new Location(w.getMapWidth(), 0)).x);
+		y = (int)(c.getVisibleLocation(new Location(w.getMapWidth(), 0)).y);
 		if(x != -1 && y != -1)
 		{
 			g.drawRect(x, y, 5, 5);
 		}
-		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, w.getMapHeight())).x);
-		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(0, w.getMapHeight())).y);
+		x = (int)(c.getVisibleLocation(new Location(0, w.getMapHeight())).x);
+		y = (int)(c.getVisibleLocation(new Location(0, w.getMapHeight())).y);
 		if(x != -1 && y != -1)
 		{
 			g.drawRect(x, y, 5, 5);
 		}
-		x = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), w.getMapHeight())).x);
-		y = (int)(c.getVisibleLocationRegardlessOnscreen(new Location(w.getMapWidth(), w.getMapHeight())).y);
+		x = (int)(c.getVisibleLocation(new Location(w.getMapWidth(), w.getMapHeight())).x);
+		y = (int)(c.getVisibleLocation(new Location(w.getMapWidth(), w.getMapHeight())).y);
 		if(x != -1 && y != -1)
 		{
 			g.drawRect(x, y, 5, 5);

@@ -35,9 +35,13 @@ public abstract class Unit
 	
 	//path finding variables
 	Path path;
-	Location pointMovingTo;
+	
+	//the point the unit is currently moving to, part of the waypoint path returned when a path is found, 
+	//point going to in a string of points to get to the destination
+	Location pointMovingTo; 
+	
 	boolean moving = false;
-	Location destination;
+	//Location destination; //where the unit is ultimately moving to
 	
 	/*
 	 * movement type:
@@ -56,10 +60,10 @@ public abstract class Unit
 	{
 		return unitType;
 	}
-	public Location getDestination()
+	/*public Location getDestination()
 	{
 		return destination;
-	}
+	}*/
 	public void setMovementType(int setter)
 	{
 		movementType = setter;
@@ -76,10 +80,10 @@ public abstract class Unit
 	{
 		return pointMovingTo;
 	}
-	public void setDestination(Location l)
+	/*public void setDestination(Location l)
 	{
 		destination = l;
-	}
+	}*/
 	public void setHighlighted(boolean setter)
 	{
 		highlighted = setter;

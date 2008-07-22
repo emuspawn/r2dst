@@ -77,6 +77,13 @@ public class Camera
 	{
 		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen
 		Rectangle sBounds = new Rectangle(xover, yover, (int)dsw, (int)dsh); //screen bounds
+		
+		/*
+		 * the screen bounds are in virtual game space and if a rectangle were to be drawn to
+		 * the screen using the specifications above it would not result in an accurate
+		 * depiction of where the screen is in the viewing of the game
+		 */
+		
 		if(sBounds.contains((int)l.x, (int)l.y))
 		{
 			double percentxOver = (l.x-xover)/dsw;
@@ -85,18 +92,28 @@ public class Camera
 		}
 		return new Location(-1, -1);
 	}
-	/*public Location getVisibleLocation(Unit u)
+	public Location getVisibleLocation(Unit u)
 	{
 		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen
 		Rectangle sBounds = new Rectangle(xover, yover, (int)dsw, (int)dsh); //screen bounds
-		if(sBounds.intersects(u.getVisibleBounds()))
+		
+		/*
+		 * the screen bounds are in virtual game space and if a rectangle were to be drawn to
+		 * the screen using the specifications above it would not result in an accurate
+		 * depiction of where the screen is in the viewing of the game
+		 * 
+		 * as such, the actual bounds of a unit must be used to test for intersection with the
+		 * screen bounds, not the units visible bounds
+		 */
+		
+		if(sBounds.intersects(u.getBounds()))
 		{
-			double percentxOver = (l.x-xover)/dsw;
-			double percentyOver = (l.y-yover)/dsh;
+			double percentxOver = (u.getLocation().x-xover)/dsw;
+			double percentyOver = (u.getLocation().y-yover)/dsh;
 			return new Location(percentxOver*screenWidth, percentyOver*screenHeight);
 		}
 		return new Location(-1, -1);
-	}*/
+	}
 	public Location getVisibleLocationRegardlessOnscreen(Location l)
 	{
 		//returns the location of where the Location in virtual spcae should be on the screen, (-1, -1) if offscreen

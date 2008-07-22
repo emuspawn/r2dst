@@ -14,13 +14,13 @@ public class BasicInfantry extends Unit
 	{
 		super(camera, c, location);
 		length = 30;
-		movement = 20;
+		movement = 5;
 		setName("Inf");
 	}
 	public void drawUnit(Graphics g)
 	{
-		int x = (int)camera.getVisibleLocation(location).x;
-		int y = (int)camera.getVisibleLocation(location).y;
+		int x = (int)(camera.getVisibleLocation(this).x);
+		int y = (int)(camera.getVisibleLocation(this).y);
 		if(x != -1 && y != -1)
 		{
 			double zoomLevel = camera.getZoomLevel();
