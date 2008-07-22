@@ -9,108 +9,156 @@ import java.awt.Point;
 public class KylePF extends PathFinder
 {
 	World w;
-	TileKyle[][] tv1;
 	int tileLength = 20;
+	int[][] tv1 = new int[w.getMapWidth()][w.getMapHeight()];
 	
+
 	public KylePF(World w)
 	{
 		this.w = w;
-		setupTileMatrix();
-	}
-	private void setupTileMatrix()
-	{
-		System.out.println("here 4");
-		tv1 = new TileKyle[w.getMapWidth()][w.getMapHeight()];
 		for(int i = 0; i < (w.getMapWidth()/tileLength); i++)
 		{
 			for(int a = 0; a < (w.getMapHeight()/tileLength); a++)
 			{
-				tv1[i][a] = new TileKyle(i, a, tileLength);
-				//tv1[i][a].determineTileType(w.getTerrain());
+				tv1[i][a] = 1;
 			}
+		}
+		setTiles();
+	}
+
+	private void setTiles()
+	{
+		//wall
+		for (int i=15; i<24; i++)
+		{
+			tv1[20][i] = 2;
 		}
 	}
-	public Path findPath(Location destination, Unit u)
+
+	private Point getPointDir(Point p, int dir)
+	{
+		Point end;
+		switch (dir)
 		{
-			Path path = new Path();
-			
-			//System.out.println("tileLength = "+tileLength);
-			//System.out.println("u.getLocation().x = "+u.getLocation().x);
-			//System.out.println("u.getLocation().y = "+u.getLocation().y);
-			
-	//		current tile evaluating
-			Point cte = new Point((int)(u.getLocation().x / tileLength), (int)(u.getLocation().y / tileLength));
-			//destination tile index
-			Point dti = new Point((int)(destination.x) / tileLength, (int)(destination.y) / tileLength);
-			
-			//System.out.println("cte = "+cte);
-			//System.out.println("dti = "+dti);
-			
-			//System.out.println();
-			//System.out.println();
-			
-			boolean[][] checkedTiles = new boolean[w.getMapWidth()][w.getMapHeight()];
-			for(int i = 0; i < w.getMapWidth(); i++)
-			{
-				for(int a = 0; a < w.getMapHeight(); a++)
-				{
-					checkedTiles[i][a] = false;
-				}
-			}
-			
-			boolean datp = false; //destination added to path
-			TileKyle[] tbc = new TileKyle[4]; //tiles being checked
-			Point[] fsMatrixIndexes = new Point[4]; //f score matrix indexes
-			double lfs = 99999999; //lowest f score
-			while(!datp)
-			{
-				tbc[0] = tv1[cte.x][cte.y-1];
-				tbc[1] = tv1[cte.x][cte.y+1];
-				tbc[2] = tv1[cte.x-1][cte.y];
-				tbc[3] = tv1[cte.x+1][cte.y];
-				fsMatrixIndexes[0] = new Point(cte.x, cte.y-1);
-				fsMatrixIndexes[1] = new Point(cte.x, cte.y+1);
-				fsMatrixIndexes[2] = new Point(cte.x-1, cte.y);
-				fsMatrixIndexes[3] = new Point(cte.x+1, cte.y);
-				lfs = tbc[0].getFScore(dti, u, checkedTiles);
-				int lfsIndex = 0;
-				//System.out.println("0 = "+fsMatrixIndexes[0]);
-				//System.out.println("1 = "+fsMatrixIndexes[1]);
-				//System.out.println("2 = "+fsMatrixIndexes[2]);
-				//System.out.println("3 = "+fsMatrixIndexes[3]);
-				for(int i = 1; i < 4; i++)
-				{
-					//System.out.println("i = "+i);
-					if(tbc[i].getFScore(dti, u, checkedTiles) < lfs)
-					{
-						lfs = tbc[i].getFScore(dti, u, checkedTiles);
-						lfsIndex = i;
-					}
-				}
-				
-				path.addLocationToPath(tbc[lfsIndex].getCenter());
-				//System.out.println("center = "+tbc[lfsIndex].getCenter().x+", "+tbc[lfsIndex].getCenter().y);
-				cte = fsMatrixIndexes[lfsIndex];
-				checkedTiles[fsMatrixIndexes[lfsIndex].x][fsMatrixIndexes[lfsIndex].y] = true;
-				
-				//System.out.println("CHOOSES "+cte);
-				//System.out.println();
-				
-				if(cte.x == dti.x && cte.y == dti.y)
-				{
-					datp = true;
-				}
-			}
-			
-			/*if(path == null)
-			{
-				System.out.println("path is null");
-			}
-			else
-			{
-				System.out.println("path is NOT null");
-			}*/
-			System.out.println("path found and returned");
-			return path;
+			case 0:
+			end.y = p.y+1;
+			break;
+
+			case 1:
+			end.y = p.y-1;
+			break;
+
+			case 2:
+			end.x = p.x+1;
+			break;
+
+			case 3:
+			end.x = p.x-1;
+			break;
 		}
+
+		return end;
+	}
+	
+	private double getFScore(Point p, Point dest, boolean[][] checkedTiles)
+	{
+		double term1 = dest.x - p.x;
+		double term2 = dest.y - p.y;
+		double fscore = Math.sqrt((term1*term1)+(term2*term2));
+		return fscore;
+	}
+
+	private Path backTrackPath(Point start, Point dest, int[][] tileDirections)
+	{
+		Point[] pathPoints;
+		int nodes = 1;
+		boolean done = false;
+		Point curPoint;
+		Path goodPath;
+		Location loc;
+		
+		pathPoints[1] = getPointDir(dest, tileDirections[dest.x][dest.y]);
+
+		while (!done)
+		{
+			if (pathPoints[nodes] == start) {done = false; break;}
+			curPoint = pathPoints[nodes];
+			nodes++;
+			pathPoints[nodes] = getPointDir(curPoint, tileDirections[curPoint.x][curPoint.y]);
+		}
+
+		for (int i = nodes; i > 0; i--)
+		{
+			loc = new Location((pathPoints[i].x*tileLength)+tileLength/2,(pathPoints[i].y*tileLength)+tileLength/2);
+			goodPath.addLocationToPath(loc);
+		}
+		
+		return goodPath;
+	}
+
+	public Path findPath(Location destination, Unit u)
+	{
+		//Declare variables
+		Path path = new Path();
+		Point curTile = new Point((int)(u.getLocation().x / tileLength), (int)(u.getLocation().y / tileLength));
+		Point startTile = curTile;
+		Point destTile = new Point((int)(destination.x) / tileLength, (int)(destination.y) / tileLength);
+		boolean[][] checkedTiles = new boolean[w.getMapWidth()][w.getMapHeight()];
+		int[][] tileDirections = new int[w.getMapWidth()][w.getMapHeight()];
+		int a, i, j, lownum;
+		double lowscore, tscore;
+		boolean foundpath = false;
+		for(i = 0; i < w.getMapWidth(); i++)
+		{
+			for(a = 0; a < w.getMapHeight(); a++)
+			{
+					checkedTiles[i][a] = false;
+					tileDirections[i][a] =-1;
+			}
+		}
+		
+		Point[] evalTile;
+		
+		while (!foundpath)
+		{
+			//up
+			evalTile[0] = new Point(curTile.x, curTile.y-1);
+			if (tileDirections[curTile.x][curTile.y-1] == -1) tileDirections[curTile.x][curTile.y-1] = 0;
+			//down
+			evalTile[1] = new Point(curTile.x, curTile.y+1);
+			if (tileDirections[curTile.x][curTile.y+1] == -1) tileDirections[curTile.x][curTile.y+1] = 1;
+			//left
+			evalTile[2] = new Point(curTile.x-1, curTile.y);
+			if (tileDirections[curTile.x-1][curTile.y] == -1) tileDirections[curTile.x-1][curTile.y] = 2;
+			//right
+			evalTile[3] = new Point(curTile.x+1, curTile.y);
+			if (tileDirections[curTile.x+1][curTile.y] == -1) tileDirections[curTile.x+1][curTile.y] = 3;
+			
+			lowscore = getFScore(evalTile[0], destTile, checkedTiles);
+			lownum = 0;
+			for (i=1; i<4; i++)
+			{
+				tscore = getFScore(evalTile[i], destTile, checkedTiles);
+				if ((tscore < lowscore) && (tv1[evalTile[i].x][evalTile[i].y] != 2))
+				{
+					lowscore = tscore;
+					lownum = i;
+				}
+				if (evalTile[i] == destTile)
+				{
+					lowscore = 0;
+					lownum = i;
+					foundpath = true;
+				}
+			}
+			curTile = evalTile[lownum];
+		}
+
+		path = backTrackPath(startTile, destTile, tileDirections);
+		return path;
+	}
+
 }
+
+
+
