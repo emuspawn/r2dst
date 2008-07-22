@@ -38,7 +38,7 @@ public class KylePF extends PathFinder
 	private Point getPointDir(Point p, int dir)
 	{
 		// This function just gets the point in the direction
-		Point end = new Point(0,0);
+		Point end = new Point(p.x,p.y);
 		switch (dir)
 		{
 			case 0:
