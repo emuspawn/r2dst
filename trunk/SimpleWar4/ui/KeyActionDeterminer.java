@@ -22,7 +22,7 @@ public class KeyActionDeterminer
 	}
 	public void performKeyActions(KeyEvent e)
 	{
-		if(e.getKeyChar() == e.VK_ESCAPE && !w.getEditMode())
+		if(e.getKeyChar() == e.VK_ESCAPE && w.getRunSpecification().getMode() == 2)
 		{
 			if(w.getMenuCheckEngine().getMenu(1).getVisible())
 			{
@@ -35,12 +35,12 @@ public class KeyActionDeterminer
 		}
 		else if(e.getKeyChar() == 'u')
 		{
-			w.getUnitEngine().registerUnit(new BasicInfantry(c, new Controller(1, Color.red), new Location(90, 110)));
+			w.getUnitEngine().registerUnit(new BasicInfantry(c, new Controller(1, Color.red, null), new Location(90, 110)));
 		}
 		else if(e.getKeyChar() == 'd')
 		{
-			w.getUnitEngine().registerUnit(new DivineAnchor(c, new Controller(1, Color.red), new Location(300, 300)));
-			w.getUnitEngine().registerUnit(new Castle(c, new Controller(1, Color.red), new Location(700, 500)));
+			w.getUnitEngine().registerUnit(new DivineAnchor(c, new Controller(1, Color.red, null), new Location(300, 300)));
+			w.getUnitEngine().registerUnit(new Castle(c, new Controller(1, Color.red, null), new Location(700, 500)));
 		}
 		else if(e.getKeyChar() == 'w')
 		{
@@ -58,7 +58,7 @@ public class KeyActionDeterminer
 				System.out.println("zoom level = "+c.getZoomLevel());
 			}
 		}
-		else if(e.getKeyChar() == 'q' && w.getEditMode())
+		else if(e.getKeyChar() == 'q' && w.getRunSpecification().getMode() == 1)
 		{
 			if(w.getMenuCheckEngine().getMenu(1).getVisible())
 			{

@@ -37,26 +37,33 @@ public class GameDrawer
 		int xover = c.getxover();
 		int yover = c.getyover();
 		
-		g.setColor(Color.white);
-		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
-		g.setColor(Color.green);
-		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+		int rm = w.getRunSpecification().getMode(); //run mode
 		
-		//drawMapBounds(g);
-		drawMapBounds2(g);
-		
-		drawTerrain(g, xover, yover);
-		
-		drawUnits(g);
-		//drawTileGrid(g);
-		//drawDebugWater(g);
-		drawUnitPaths(g);
+		if(rm == 2)
+		{
+			g.setColor(Color.green);
+			g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+			
+//			drawMapBounds(g);
+			drawMapBounds2(g);
+			
+			drawTerrain(g, xover, yover);
+			
+			drawUnits(g);
+			//drawTileGrid(g);
+			//drawDebugWater(g);
+			drawUnitPaths(g);
+			
+			//scroll test
+			vsd.testForScreenScroll(gf.mouseLocation);
+		}
+		else if(rm == 3)
+		{
+			g.setColor(Color.lightGray);
+			g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+		}
 		
 		drawGameMenus(g);
-		
-		
-		//scroll test
-		vsd.testForScreenScroll(gf.mouseLocation);
 		
 		gf.getBufferStrategy().show();
 		g.dispose();

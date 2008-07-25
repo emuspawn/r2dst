@@ -13,9 +13,9 @@ public class MenuCheckEngine
 	public MenuCheckEngine(World w)
 	{
 		this.w = w;
-		if(w.getEditMode())
+		if(w.getRunSpecification().getMode() == 1)
 		{
-			registerEditMenus();
+			registerMapEditorV2Menus();
 		}
 		else
 		{
@@ -44,7 +44,7 @@ public class MenuCheckEngine
 	{
 		registerMenu(new MainGameMenu(1));
 	}
-	private void registerEditMenus()
+	private void registerMapEditorV2Menus()
 	{
 		registerMenu(new MainEditMenu(1));
 		registerMenu(new TerrainEditMenu(2));

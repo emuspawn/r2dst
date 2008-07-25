@@ -67,8 +67,6 @@ public class GraphicsFinder implements MouseListener, KeyListener, MouseMotionLi
 		mainFrame.addMouseMotionListener(this);
 		
 		
-		
-		
 		kad = new KeyActionDeterminer(w, c);
 		mcad = new MouseClickActionDeterminer(w, c);
 	}

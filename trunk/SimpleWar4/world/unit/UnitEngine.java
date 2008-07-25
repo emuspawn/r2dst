@@ -19,7 +19,7 @@ public class UnitEngine
 	Location[] destinations = new Location[u.length];
 	
 	PathFinder[] pathFinders = new PathFinder[10];
-	int pathFinderUsed = 3;
+	int pathFinderUsed = 6;
 	
 	UnitMover[] um = new UnitMover[5];
 	int unitMoverUsed = 1;

@@ -1,6 +1,7 @@
 package world;
 
 import world.unit.*;
+import driver.runSpecification.*;
 import world.map.*;
 import ui.menu.*;
 import world.terrain.*;
@@ -11,6 +12,7 @@ public class World
 	UnitEngine ue;
 	MenuCheckEngine mce;
 	Editor editor;
+	RunSpecification rs;
 	
 	Map m;
 	int mapWidth = 900;
@@ -18,24 +20,44 @@ public class World
 	Terrain[] terrain = new Terrain[10];
 	boolean editMode;
 	
+	public World(RunSpecification rs)
+	{
+		this.rs = rs;
+		ue = new UnitEngine(this);
+		mce = new MenuCheckEngine(this);
+		
+		if(rs.getMode() == 2)
+		{
+			setupGame();
+			System.out.println("game setup");
+		}
+	}
 	public World(boolean editMode, Editor editor)
 	{
 		this.editMode = editMode;
 		this.editor = editor;
 		ue = new UnitEngine(this);
 		mce = new MenuCheckEngine(this);
+		
+		if(!editMode)
+		{
+			setupGame();
+		}
+	}
+	private void setupGame()
+	{
+		m = new TestMap();
+		mapWidth = m.getMapWidth();
+		mapHeight = m.getMapHeight();
+		terrain = m.getTerrain();
 	}
 	public void setTerrain(Terrain[] t)
 	{
 		terrain = t;
 	}
-	public Editor getEditor()
+	public RunSpecification getRunSpecification()
 	{
-		return editor;
-	}
-	public boolean getEditMode()
-	{
-		return editMode;
+		return rs;
 	}
 	public UnitEngine getUnitEngine()
 	{

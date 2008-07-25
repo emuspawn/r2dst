@@ -30,7 +30,7 @@ public class MouseClickActionDeterminer
 			{
 				actionPerformed = testForButtonClicked(e.getPoint());
 				actionPerformed = testForMenuHeaderClicked(e.getPoint(), actionPerformed);
-				if(!w.getEditMode())
+				if(w.getRunSpecification().getMode() == 2)
 				{
 					actionPerformed = testForUnitClicked(e.getPoint(), actionPerformed);
 				}
@@ -38,7 +38,11 @@ public class MouseClickActionDeterminer
 				{
 					if(!actionPerformed)
 					{
-						w.getEditor().interpretMouseClick(e.getPoint());
+						int mode = w.getRunSpecification().getMode();
+						if(mode == 1)
+						{
+							w.getRunSpecification().getMapEditorV2().interpretMouseClick(e.getPoint());
+						}
 					}
 				}
 			}
@@ -50,12 +54,12 @@ public class MouseClickActionDeterminer
 		if(button == e.BUTTON3)
 		{
 			//right click
-			if(!w.getEditMode())
+			if(w.getRunSpecification().getMode() == 2)
 			{
 				actionPerformed = unhighlightAllUnits();
 			}
 		}
-		if(!actionPerformed && !w.getEditMode())
+		if(!actionPerformed && w.getRunSpecification().getMode() == 2)
 		{
 			moveHighlightedUnits(e.getPoint());
 		}

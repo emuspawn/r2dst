@@ -1,6 +1,7 @@
 package driver.gameInitializer;
 
 import java.awt.*;
+import driver.runSpecification.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class GameInitializer extends Frame
 			{
 				Image img = null;
 				String userdir = System.getProperty("user.dir");
-				File f = new File(userdir+"\\driver\\gameInitializer\\simpleWarIntroScreen.png");
+				File f = new File(userdir+"\\driver\\gameInitializer\\simpleWarIntroScreen2.png");
 				try {
 				    img = ImageIO.read(f);
 				    System.out.println("loaded intro pic");
@@ -52,10 +53,34 @@ public class GameInitializer extends Frame
 	{
 		MenuBar mb = new MenuBar();
 		Menu program = setupProgramMenu();
+		Menu edit = setupEditMenu();
 		
 		mb.add(program);
+		mb.add(edit);
 		
 		return mb;
+	}
+	private Menu setupEditMenu()
+	{
+		Menu edit = new Menu("Edit");
+		MenuItem mapEditor = new MenuItem("Map Editor");
+		MenuItem aiEditor = new MenuItem("AI Editor");
+		mapEditor.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				System.out.println("map editor button clicked");
+				new RunSpecification(1).startGame();
+			}
+		});
+		aiEditor.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				
+			}
+		});
+		edit.add(mapEditor);
+		edit.add(aiEditor);
+		return edit;
 	}
 	private Menu setupProgramMenu()
 	{
@@ -67,7 +92,7 @@ public class GameInitializer extends Frame
 		skirmish.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				
+				new RunSpecification(2).startGame();
 			}
 		});
 		aibattle.addActionListener(new ActionListener(){

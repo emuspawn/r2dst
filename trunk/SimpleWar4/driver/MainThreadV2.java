@@ -5,21 +5,20 @@ import driver.runSpecification.*;
 import world.World;
 import editor.*;
 
-public class MainThread
+public class MainThreadV2
 {
 	GraphicsFinder gf;
 	GameDrawer gd;
 	World w;
 	Camera c;
-	Editor e;
 	
-	boolean editMode; //whether or not the game is in the editing mode
+	RunSpecification rs;
 	
-	public MainThread(boolean editMode, Editor e)
+	public MainThreadV2(RunSpecification rs)
 	{
-		this.editMode = editMode;
 		System.out.println("program starting");
-		w = new World(editMode, e);
+		this.rs = rs;
+		w = new World(rs);
 		System.out.println("world instantiated");
 		c = new Camera();
 		System.out.println("camera instantiated");
@@ -30,21 +29,23 @@ public class MainThread
 		System.out.println("game drawer instantiated");
 		System.out.println();
 		
-		if(editMode)
+		if(rs.getMode() != 1)
 		{
-			this.e = e;
+			performGameFunctions();
 		}
-		
-		performGameFunctions();
 	}
 	public static void main(String [] args)
 	{
-		new MainThread(false, null);
+		new MainThreadV2(new RunSpecification(2));
 	}
 	public World getWorld()
 	{
 		//called by the editor to get a copy of important game variables
 		return w;
+	}
+	public void startMainThread()
+	{
+		performGameFunctions();
 	}
 	private void performGameFunctions()
 	{
@@ -53,9 +54,9 @@ public class MainThread
 			gd.performGameDrawFunctions();
 			w.performWorldFunctions();
 			
-			if(editMode)
+			if(rs.getMode() == 1)
 			{
-				e.performEditorFunctions();
+				rs.getMapEditorV2().performEditorFunctions();
 			}
 			
 			try
