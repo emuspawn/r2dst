@@ -21,6 +21,7 @@ public class BasicInfantry extends Unit
 	{
 		int x = (int)(camera.getVisibleLocation(this).x);
 		int y = (int)(camera.getVisibleLocation(this).y);
+		
 		if(x != -1 && y != -1)
 		{
 			double zoomLevel = camera.getZoomLevel();

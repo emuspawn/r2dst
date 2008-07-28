@@ -23,15 +23,15 @@ public class ViewScrollDeterminer
 		{
 			c.setxover(c.getxover()-over);
 		}
-		else if(p.x >= screenWidth-allowance)
+		if(p.x >= screenWidth-allowance)
 		{
 			c.setxover(c.getxover()+over);
 		}
-		else if(p.y <= allowance)
+		if(p.y <= allowance)
 		{
 			c.setyover(c.getyover()-over);
 		}
-		else if(p.y >= screenHeight-allowance)
+		if(p.y >= screenHeight-allowance)
 		{
 			c.setyover(c.getyover()+over);
 		}

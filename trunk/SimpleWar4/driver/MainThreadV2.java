@@ -36,7 +36,7 @@ public class MainThreadV2
 	}
 	public static void main(String [] args)
 	{
-		new MainThreadV2(new RunSpecification(2));
+		new MainThreadV2(new RunSpecification(3));
 	}
 	public World getWorld()
 	{
@@ -58,7 +58,6 @@ public class MainThreadV2
 			{
 				rs.getMapEditorV2().performEditorFunctions();
 			}
-			
 			try
 			{
 				Thread.sleep(20);

@@ -150,6 +150,7 @@ public class MouseClickActionDeterminer
 		{
 			if(point.y > 0 && point.y < w.getMapHeight())
 			{
+				//System.out.println(c.getVirtualPoint(p).x+", "+c.getVirtualPoint(p));
 				w.getUnitEngine().flagUnitsForFindPath(c.getVirtualPoint(p));
 			}
 		}

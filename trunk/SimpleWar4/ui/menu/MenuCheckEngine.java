@@ -4,6 +4,7 @@ import ui.button.*;
 import world.World;
 import ui.menu.editorMenus.mapEditorV1Menus.*;
 import ui.menu.gameMenus.*;
+import ui.menu.gameSetupMenus.*;
 
 public class MenuCheckEngine
 {
@@ -13,14 +14,32 @@ public class MenuCheckEngine
 	public MenuCheckEngine(World w)
 	{
 		this.w = w;
-		if(w.getRunSpecification().getMode() == 1)
+		setupMenuCheckEngine();
+	}
+	public void setupMenuCheckEngine()
+	{
+		int rm = w.getRunSpecification().getMode();
+		m = new Menu[10];
+		if(rm == 1)
 		{
 			registerMapEditorV2Menus();
 		}
-		else
+		else if(rm == 2)
 		{
 			registerGameMenus();
 		}
+		else if(rm == 3)
+		{
+			registerGameSetupMenus();
+		}
+	}
+	private void registerGameSetupMenus()
+	{
+		registerMenu(new GameSetupMenu(1));
+		registerMenu(new SkirmishMenu(2));
+		registerMenu(new NormalSkirmishGameSetupMenu(3));
+		registerMenu(new PlayerAmountMenu(4));
+		registerMenu(new SelectPlayerEditMenu(5));
 	}
 	public Menu[] getMenus()
 	{

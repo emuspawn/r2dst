@@ -1,6 +1,8 @@
 package graphics;
 
 import java.awt.*;
+import world.controller.*;
+import io.ImageLoader;
 import world.World;
 import world.unit.*;
 import ui.menu.Menu;
@@ -24,12 +26,24 @@ public class GameDrawer
 	ViewScrollDeterminer vsd;
 	boolean drawUnitVisibleBounds = true;
 	
+	ImageLoader il = new ImageLoader();
+	Image[] images;
+	
 	public GameDrawer(GraphicsFinder gf, World w, Camera c)
 	{
 		this.gf = gf;
 		this.c = c;
 		this.w = w;
 		vsd = new ViewScrollDeterminer(c, gf.getWidth(), gf.getHeight());
+		
+		loadGameImages();
+	}
+	private void loadGameImages()
+	{
+		images = new Image[10];
+		
+		images[0] = il.loadImage("simpleWarIntroScreen2.png");
+		images[0] = images[0].getScaledInstance(gf.getWidth(), gf.getHeight(), Image.SCALE_SMOOTH);
 	}
 	public void performGameDrawFunctions()
 	{
@@ -44,29 +58,58 @@ public class GameDrawer
 			g.setColor(Color.green);
 			g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
 			
-//			drawMapBounds(g);
 			drawMapBounds2(g);
 			
 			drawTerrain(g, xover, yover);
 			
 			drawUnits(g);
 			//drawTileGrid(g);
-			//drawDebugWater(g);
 			drawUnitPaths(g);
 			
-			//scroll test
+			drawControllerStartLocations(g);
+			
+			//scroll test, scrolls the screen if positive
 			vsd.testForScreenScroll(gf.mouseLocation);
 		}
 		else if(rm == 3)
 		{
-			g.setColor(Color.lightGray);
-			g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+			drawMainScreen(g);
 		}
 		
 		drawGameMenus(g);
 		
 		gf.getBufferStrategy().show();
 		g.dispose();
+	}
+	private void drawControllerStartLocations(Graphics g)
+	{
+		Location l;
+		ControllerStartLocation[] csl = w.getMap().getControllerStartLocations();
+		g.setColor(Color.magenta);
+		for(int i = 0; i < csl.length; i++)
+		{
+			if(csl[i] != null)
+			{
+				l = c.getVisibleLocation(csl[i].getCastleLocation());
+				if(l.x != -1 && l.y != -1)
+				{
+					g.fillOval((int)l.x-10, (int)l.y-10, 20, 20);
+				}
+				l = c.getVisibleLocation(csl[i].getDivineAnchorLocation());
+				if(l.x != -1 && l.y != -1)
+				{
+					g.fillOval((int)l.x-10, (int)l.y-10, 20, 20);
+				}
+			}
+		}
+	}
+	private void drawMainScreen(Graphics g)
+	{
+		//aka the game setup screen
+		g.setColor(Color.lightGray);
+		g.fillRect(0, 0, gf.getWidth(), gf.getHeight());
+		
+		g.drawImage(images[0], 0, 0, null);
 	}
 	private void drawMapBounds2(Graphics g)
 	{
@@ -130,26 +173,6 @@ public class GameDrawer
 				}
 			}
 		}
-	}
-	private void drawDebugWater(Graphics g)
-	{
-		g.setColor(Color.blue);
-		g.fillRect(400, 300, 20, 180);
-		g.fillRect(400, 100, 20, 180);
-		g.fillRect(420, 100, 180, 20);
-		g.fillRect(440, 140, 20, 180);
-		g.fillRect(440, 340, 180, 20);
-		g.fillRect(420, 500, 180, 20);
-		g.fillRect(480, 440, 180, 20);
-		
-		g.setColor(Color.black);
-		g.drawString("1", 400, 320);
-		g.drawString("2", 400, 120);
-		g.drawString("3", 420, 120);
-		g.drawString("4", 440, 160);
-		g.drawString("5", 440, 360);
-		g.drawString("6", 420, 520);
-		g.drawString("7", 480, 460);
 	}
 	private void drawUnitPaths(Graphics g)
 	{

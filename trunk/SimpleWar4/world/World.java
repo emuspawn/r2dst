@@ -20,17 +20,14 @@ public class World
 	Terrain[] terrain = new Terrain[10];
 	boolean editMode;
 	
+	boolean gameStart = false;
+	
 	public World(RunSpecification rs)
 	{
 		this.rs = rs;
-		ue = new UnitEngine(this);
 		mce = new MenuCheckEngine(this);
-		
-		if(rs.getMode() == 2)
-		{
-			setupGame();
-			System.out.println("game setup");
-		}
+		ue = new UnitEngine(this);
+		setupGame();
 	}
 	public World(boolean editMode, Editor editor)
 	{
@@ -71,9 +68,23 @@ public class World
 	{
 		return mapWidth;
 	}
+	public Map getMap()
+	{
+		return m;
+	}
 	public void performWorldFunctions()
 	{
-		ue.performUnitFunctions();
+		if(!gameStart)
+		{
+			if(rs.getGameStart())
+			{
+				gameStart = true;
+			}
+		}
+		else
+		{
+			ue.performUnitFunctions();
+		}
 		mce.performMenuCheckFunctions();
 	}
 	public Terrain[] getTerrain()
