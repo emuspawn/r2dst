@@ -12,9 +12,14 @@ import world.World;
 import java.awt.Point;
 import utilities.Location;
 import world.unit.unitMover.*;
+import world.controller.*;
+import graphics.Camera;
 
 public class UnitEngine
 {
+	World w;
+	Camera camera;
+	
 	Unit[] u = new Unit[30];
 	boolean[] findPath = new boolean[u.length];
 	Location[] destinations = new Location[u.length];
@@ -25,14 +30,40 @@ public class UnitEngine
 	UnitMover[] um = new UnitMover[5];
 	int unitMoverUsed = 1;
 	
-	public UnitEngine(World w)
+	public UnitEngine(World w, Camera camera)
 	{
+		this.w = w;
+		this.camera = camera;
 		setupPathFinders(w);
 		setupUnitMovers();
 		
 		for(int i = 0; i < findPath.length; i++)
 		{
 			findPath[i] = false;
+		}
+	}
+	public void spawnStartUnits()
+	{
+		//to be run at the start of a new game
+		Controller[] c = w.getControllers();
+		ControllerStartLocation[] csl = w.getMap().getControllerStartLocations();
+		for(int i = 0; i < c.length; i++)
+		{
+			if(c[i] != null)
+			{
+				for(int a = 0; a < csl.length; a++)
+				{
+					if(csl[a] != null)
+					{
+						if(csl[a].getPlayerFor() == c[i].getPlayerNumber())
+						{
+							registerUnit(c[i].getRace().getDivineAnchor(camera, c[i], csl[a].getDivineAnchorLocation()));
+							registerUnit(c[i].getRace().getCastle(camera, c[i], csl[a].getCastleLocation()));
+							System.out.println("start units spawned for player "+(i+1));
+						}
+					}
+				}
+			}
 		}
 	}
 	private void setupUnitMovers()
@@ -42,7 +73,6 @@ public class UnitEngine
 	}
 	private void setupPathFinders(World w)
 	{
-		pathFinders[0] = new DirectMovementPF();
 		pathFinders[1] = new AStarV1PF(w);
 		pathFinders[2] = new AStarV2PF(w);
 		pathFinders[3] = new KylePF(w);
@@ -93,17 +123,22 @@ public class UnitEngine
 	{
 		testForUnitDeaths();
 		um[unitMoverUsed].moveUnits(u);
-		findUnitPaths();
+		//findUnitPaths();
 	}
-	private void findUnitPaths()
+	public void findUnitPaths()
 	{
+		boolean[] temp = new boolean[findPath.length];
+		for(int i = 0; i < findPath.length; i++)
+		{
+			temp[i] = findPath[i];
+		}
 		for(int i = 0; i < u.length; i++)
 		{
 			if(u[i] != null)
 			{
 				if(u[i].getHighlighted())
 				{
-					if(findPath[i] == true)
+					if(temp[i] == true)
 					{
 						findPath[i] = false;
 						//System.out.println("path finder used = "+pathFinderUsed);

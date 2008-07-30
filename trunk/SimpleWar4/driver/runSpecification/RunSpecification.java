@@ -15,6 +15,7 @@ public class RunSpecification
 	
 	//2
 	boolean gStart = false; //true at the start of a game
+	boolean gPaused = false; //game paused
 	
 	//3
 	NormalSkirmishSpecification nss;
@@ -31,6 +32,14 @@ public class RunSpecification
 		this.mode = mode;
 		
 		nss = new NormalSkirmishSpecification();
+	}
+	public boolean getGamePaused()
+	{
+		return gPaused;
+	}
+	public void setGamePaused(boolean setter)
+	{
+		gPaused = setter;
 	}
 	public boolean getGameStart()
 	{

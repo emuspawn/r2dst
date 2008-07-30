@@ -18,10 +18,11 @@ public class MainThreadV2
 	{
 		System.out.println("program starting");
 		this.rs = rs;
-		w = new World(rs);
-		System.out.println("world instantiated");
+		System.out.println("run specification chosen");
 		c = new Camera();
 		System.out.println("camera instantiated");
+		w = new World(rs, c);
+		System.out.println("world instantiated");
 		gf = new GraphicsFinder(w, c);
 		c.setActualScreenDimensions(gf.getWidth(), gf.getHeight());
 		System.out.println("graphics finder instantiated");

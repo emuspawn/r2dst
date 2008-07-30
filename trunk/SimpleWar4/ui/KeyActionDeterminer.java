@@ -27,10 +27,12 @@ public class KeyActionDeterminer
 			if(w.getMenuCheckEngine().getMenu(1).getVisible())
 			{
 				w.getMenuCheckEngine().getMenu(1).setVisible(false);
+				w.getRunSpecification().setGamePaused(false);
 			}
 			else
 			{
 				w.getMenuCheckEngine().getMenu(1).setVisible(true);
+				w.getRunSpecification().setGamePaused(true);
 			}
 		}
 		else if(e.getKeyChar() == 'u')
