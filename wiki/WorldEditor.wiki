@@ -1,0 +1,12 @@
+#labels Phase-Implementation
+a world editor
+
+= Introduction =
+
+used to create worlds used by the game
+
+= Details =
+
+load and save worlds
+edit world terrain
+TileSystem used, no longer picture based
