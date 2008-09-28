@@ -7,6 +7,6 @@ used to create worlds used by the game
 
 = Details =
 
-load and save worlds
-edit world terrain
-TileSystem used, no longer picture based
+load and save worlds, 
+edit world terrain, 
+TileSystem used (no longer picture based)
