@@ -10,6 +10,7 @@ public class MenuCheckEngine
 {
 	RPGController rpgc;
 	MapEditorController mec;
+	WorldEditorController wec;
 	
 	MenuGroup[] m = new MenuGroup[10];
 	int gameType;
@@ -30,6 +31,12 @@ public class MenuCheckEngine
 	{
 		this.mec = mec;
 		gameType = 2;
+		mr.registerMenus(this);
+	}
+	public MenuCheckEngine(WorldEditorController wec, MenuRegister mr)
+	{
+		this.wec = wec;
+		gameType = 3;
 		mr.registerMenus(this);
 	}
 	public MenuGroup[] getMenuGroups()
@@ -100,6 +107,10 @@ public class MenuCheckEngine
 				else if(gameType == 2)
 				{
 					m[i].performMenuGroupFunctions(mec);
+				}
+				else if(gameType == 3)
+				{
+					m[i].performMenuGroupFunctions(wec);
 				}
 			}
 		}

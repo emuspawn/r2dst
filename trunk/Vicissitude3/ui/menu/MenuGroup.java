@@ -103,6 +103,32 @@ public class MenuGroup
 	{
 		performButtonActions(c);
 	}
+	public void performMenuGroupFunctions(WorldEditorController c)
+	{
+		performButtonActions(c);
+	}
+	private void performButtonActions(WorldEditorController c)
+	{
+		Button[] b;
+		for(int i = 0; i < m.length; i++)
+		{
+			if(m[i] != null)
+			{
+				b = m[i].getButtons();
+				for(int a = 0; a < b.length; a++)
+				{
+					if(b[a] != null)
+					{
+						if(b[a].getClicked())
+						{
+							b[a].setClicked(false);
+							b[a].performAction(c);
+						}
+					}
+				}
+			}
+		}
+	}
 	private void performButtonActions(MapEditorController c)
 	{
 		Button[] b;

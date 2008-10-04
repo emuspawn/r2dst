@@ -75,6 +75,7 @@ public abstract class Button implements Actionable
 	}
 	public void performAction(RPGController rpgc){} //to be overriden in the extending class
 	public void performAction(MapEditorController mec){}
+	public void performAction(WorldEditorController wec){}
 	public void drawButton(Graphics g)
 	{
 		if(clicked)
