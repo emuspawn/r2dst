@@ -3,8 +3,7 @@ package ui.inputBox;
 import ui.*;
 import java.awt.Graphics;
 import java.awt.Color;
-import controller.MapEditorController;
-import controller.RPGController;
+import controller.*;
 
 public class InputBox extends UserInterface implements Actionable
 {
@@ -63,4 +62,5 @@ public class InputBox extends UserInterface implements Actionable
 	}
 	public void performAction(RPGController rpgc){} //to be overriden in the extending class
 	public void performAction(MapEditorController mec){}
+	public void performAction(WorldEditorController wec){}
 }
