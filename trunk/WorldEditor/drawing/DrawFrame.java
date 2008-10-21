@@ -66,7 +66,7 @@ class DrawCanvas extends Canvas implements FocusListener
 	}
 	public void focusGained(FocusEvent e)
 	{
-		df.requestFocus();
+		//df.requestFocus();
 	}
 	public void focusLost(FocusEvent e){}
 }

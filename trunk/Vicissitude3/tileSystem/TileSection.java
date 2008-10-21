@@ -80,7 +80,10 @@ public class TileSection
 		{
 			if(t[i] != null)
 			{
-				t[i].drawTile(g, c, ttr);
+				if(c.getOnScreen(t[i].getBounds()))
+				{
+					t[i].drawTile(g, c, ttr);
+				}
 			}
 		}
 	}

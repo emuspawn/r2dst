@@ -8,6 +8,7 @@ import network.protocol.*;
 
 public class SubServer extends Frame implements Runnable
 {
+	final static long serialVersionUID = 4;
 	protected int client;
 	protected DataOutputStream dos; //for sending unit locations
 	protected DataInputStream dis;

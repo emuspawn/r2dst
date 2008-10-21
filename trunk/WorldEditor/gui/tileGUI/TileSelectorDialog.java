@@ -56,9 +56,12 @@ public class TileSelectorDialog extends Dialog
 		TileType[] tt = ts.getTileTypeRegistry().getTileTypes();
 		for(int i = 0; i < tt.length; i++)
 		{
-			ta.append("Name: "+tt[i].getName()+"\tType: "+tt[i].getType()+"\t  Color: r="+
-					tt[i].getColor().getRed()+", g="+tt[i].getColor().getGreen()+", b="+
-					tt[i].getColor().getBlue()+"\tImpassable: "+tt[i].getImpassable()+"\n");
+			if(tt[i] != null)
+			{
+				ta.append("Name: "+tt[i].getName()+"\tType: "+tt[i].getType()+"\t  Color: r="+
+						tt[i].getColor().getRed()+", g="+tt[i].getColor().getGreen()+", b="+
+						tt[i].getColor().getBlue()+"\tImpassable: "+tt[i].getImpassable()+"\n");
+			}
 		}
 		
 		Button refresh = new Button("Refresh");
