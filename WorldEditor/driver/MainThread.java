@@ -5,7 +5,6 @@ import tileSystem.*;
 import listener.*;
 import graphics.*;
 import drawing.*;
-import java.awt.Color;
 
 public class MainThread implements WorldEditorController, Runnable
 {
@@ -21,9 +20,22 @@ public class MainThread implements WorldEditorController, Runnable
 	DrawFrame df;
 	DrawData dd;
 	
-	int mapWidth = 700; //the width of the world
-	int mapHeight = 700;
+	String mapName = new String("Untitled");
+	int mapWidth = 1000; //the width of the world
+	int mapHeight = 1000;
 	int editType = 1;
+	
+	/*
+	 * edit type:
+	 * 1=terrain
+	 * 2=roofs
+	 */
+	
+	//for moving the camera
+	public boolean upDown = false;
+	public boolean rightDown = false;
+	public boolean downDown = false;
+	public boolean leftDown = false;
 	
 	public MainThread()
 	{
@@ -35,7 +47,7 @@ public class MainThread implements WorldEditorController, Runnable
 		//gf = new GraphicsFinder(ma, ka, mma);
 		
 		ts = new TileSystem(mapWidth, mapHeight);
-		ts.registerTileType(new TileType(1, "Wall", Color.black, false));
+		//ts.registerTileType(new TileType(1, "Wall", Color.black, false));
 		//ts.setSelectedTileType(1);
 		
 		c = new Camera(200, 200);
@@ -44,6 +56,8 @@ public class MainThread implements WorldEditorController, Runnable
 		//df.addKeyListener(ka);
 		//df.addMouseListener(ma);
 		//df.addMouseMotionListener(mma);
+		
+		//df.getDrawCanvas().addKeyListener(ka);
 		df.getDrawCanvas().addKeyListener(ka);
 		df.getDrawCanvas().addMouseListener(ma);
 		df.getDrawCanvas().addMouseMotionListener(mma);
@@ -52,9 +66,13 @@ public class MainThread implements WorldEditorController, Runnable
 		Thread runner = new Thread(this);
 		runner.start();
 	}
+	public String getMapName()
+	{
+		return mapName;
+	}
 	public void setMapWidth(int setter)
 	{
-		mapWidth = 1000;
+		mapWidth = setter;
 	}
 	public int getMapWidth()
 	{
@@ -62,10 +80,12 @@ public class MainThread implements WorldEditorController, Runnable
 	}
 	public void setMapHeight(int setter)
 	{
+		//ts.setupTileSelectionMatrix(mapWidth, mapHeight);
 		mapHeight = setter;
 	}
 	public int getMapHeight()
 	{
+		//ts.setupTileSelectionMatrix(mapWidth, mapHeight);
 		return mapHeight;
 	}
 	public static void main(String[] args)
@@ -84,11 +104,31 @@ public class MainThread implements WorldEditorController, Runnable
 			c.setHeight(df.getDrawCanvas().getHeight());
 			df.repaintCanvas();
 			df.getDrawCanvas().setSize(df.getWidth(), df.getHeight());
+			moveCamera();
 			try
 			{
 				Thread.sleep(20);
 			}
 			catch(InterruptedException e){}
+		}
+	}
+	private void moveCamera()
+	{
+		if(upDown)
+		{
+			c.translate(0, -8);
+		}
+		if(rightDown)
+		{
+			c.translate(8, 0);
+		}
+		if(downDown)
+		{
+			c.translate(0, 8);
+		}
+		if(leftDown)
+		{
+			c.translate(-8, 0);
 		}
 	}
 	public Camera getCamera()

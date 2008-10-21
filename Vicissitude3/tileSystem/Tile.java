@@ -17,6 +17,13 @@ public class Tile
 		this.type = type;
 		p = new Point(x, y);
 	}
+	public Tile(int type, int x, int y, int width, int height)
+	{
+		this.type = type;
+		p = new Point(x, y);
+		this.width = width;
+		this.height = height;
+	}
 	public Rectangle getBounds()
 	{
 		return new Rectangle(p.x, p.y, 30, 30);
@@ -30,5 +37,17 @@ public class Tile
 	public Point getLocation()
 	{
 		return p;
+	}
+	public int getType()
+	{
+		return type;
+	}
+	public int getWidth()
+	{
+		return width;
+	}
+	public int getHeight()
+	{
+		return height;
 	}
 }

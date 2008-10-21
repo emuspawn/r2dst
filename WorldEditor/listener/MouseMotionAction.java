@@ -4,7 +4,6 @@ import driver.MainThread;
 import java.awt.event.*;
 import inputListener.MouseMotionActionListener;
 import drawing.DrawData;
-import tileSystem.Tile;
 
 public class MouseMotionAction extends MouseMotionActionListener
 {

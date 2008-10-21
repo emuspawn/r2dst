@@ -90,6 +90,13 @@ public class CreateNewTileTypeDialog extends Dialog
 				}
 			}
 		});
+		Button cancel = new Button("Cancel");
+		cancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				dispose();
+			}
+		});
 		
 		setSize(207, 320);
 		setResizable(false);
@@ -102,6 +109,7 @@ public class CreateNewTileTypeDialog extends Dialog
 		add(colorpg);
 		add(colorpb);
 		add(impassablep);
+		add(cancel);
 		add(done);
 		
 		setVisible(true);

@@ -8,10 +8,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
 
 public class Server extends Frame implements Runnable
 {
+	final static long serialVersionUID = 4;
 	int numClients = 10;
 	protected ServerSocket ss = null;
 	protected Socket[] s = new Socket[numClients];

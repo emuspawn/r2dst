@@ -1,11 +1,12 @@
 package controller;
 
-public interface WorldEditorController
+import tileSystem.TileSystem;
+import utilities.Map;
+
+public interface WorldEditorController extends Map
 {
-	public void setMapWidth(int setter);
-	public int getMapWidth();
-	public void setMapHeight(int setter);
-	public int getMapHeight();
 	public void setEditType(int setter);
 	public int getEditType();
+	public String getMapName();
+	public TileSystem getTileSystem();
 }
