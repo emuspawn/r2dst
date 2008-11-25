@@ -13,6 +13,7 @@ public class HQ extends Building
 		super(owner, location, "hq1", 75, 220, 22, 40);
 		ArrayList<String> u = new ArrayList<String>();
 		u.add("worker1");
+		u.add("engineer1");
 		BuildTree tree = new BuildTree(u);
 		bt = tree;
 		isBuilder = true;

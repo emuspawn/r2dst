@@ -43,7 +43,7 @@ public class Starter extends JFrame
 	public Starter(Thread t, Owner owner1, Owner owner2, GameEngineOverlay geo, BuildEngineOverlay beo, PathFinder pf)
 	{
 		super("AI Selector");
-		setSize(300, 280);
+		setSize(500, 500);
 		setLayout(new FlowLayout());
 		String dir = System.getProperty("user.dir")+System.getProperty("file.separator")+"customAI";
 		ccl1 = new CustomClassLoader(dir);
