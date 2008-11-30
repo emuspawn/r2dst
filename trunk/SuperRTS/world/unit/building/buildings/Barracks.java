@@ -13,6 +13,7 @@ public class Barracks extends Building
 		super(owner, location, "barracks1", 65, 250, 15, 60);
 		ArrayList<String> u = new ArrayList<String>();
 		u.add("fighter1");
+		u.add("engineer");
 		BuildTree tree = new BuildTree(u);
 		bt = tree;
 		isBuilder = true;
