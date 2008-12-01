@@ -1,0 +1,5 @@
+in the furture, dont reference workers, hqs, barracks, and fighters, by "worker1", "fighter1", etc. the '1' has been removed and now everything should be referenced by its name alone (ex, "worker", "fighter" etc.)
+
+there will be continued support for any older ais but furture ais should not those units in that way, the new pattern will be just the units names
+
+REMEMBER, WHEN TESTING TO SEE WHAT TYPE OF UNIT A UNIT IS, USE "unit.is(String type)", NOT "unit.getName().equalsIgnoreCas..."
