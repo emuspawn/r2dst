@@ -165,11 +165,14 @@ public class Starter extends JFrame
 	private JList setupList(JList l)
 	{
 		DefaultListModel dlm = new DefaultListModel();
-		for(int i = 0; i < files.length; i++)
+		if (files != null)
 		{
-			if(files[i].endsWith(".class"))
+			for(int i = 0; i < files.length; i++)
 			{
-				dlm.addElement(files[i]);
+				if(files[i].endsWith(".class"))
+				{
+					dlm.addElement(files[i]);
+				}
 			}
 		}
 		l = new JList(dlm);
@@ -178,25 +181,28 @@ public class Starter extends JFrame
 	}
 	private void loadAI(Owner o, ArrayList<AI> ais, CustomClassLoader ccl)
 	{
-		for(int i = 0; i < files.length; i++)
+		if (files != null)
 		{
-			if(files[i].endsWith(".class"))
+			for(int i = 0; i < files.length; i++)
 			{
-				try
+				if(files[i].endsWith(".class"))
 				{
-					System.out.println("loading "+files[i]);
-					Class c = ccl.loadClass(files[i]);
-					Class[] args = new Class[4];
-					args[0] = o.getClass();
-					args[1] = geo.getClass();
-					args[2] = beo.getClass();
-					args[3] = pf.getClass().getSuperclass();
-					//args[3] = null;
-					ais.add((AI)ccl.constructObject(c, args, o, geo, beo, pf));
-				}
-				catch(ClassNotFoundException a)
-				{
-					a.printStackTrace();
+					try
+					{
+						System.out.println("loading "+files[i]);
+						Class c = ccl.loadClass(files[i]);
+						Class[] args = new Class[4];
+						args[0] = o.getClass();
+						args[1] = geo.getClass();
+						args[2] = beo.getClass();
+						args[3] = pf.getClass().getSuperclass();
+						//args[3] = null;
+						ais.add((AI)ccl.constructObject(c, args, o, geo, beo, pf));
+					}
+					catch(ClassNotFoundException a)
+					{
+						a.printStackTrace();
+					}
 				}
 			}
 		}
