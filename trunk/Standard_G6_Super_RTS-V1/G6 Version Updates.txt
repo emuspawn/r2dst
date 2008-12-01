@@ -1,0 +1,4 @@
+-shot engine furter optimized
+-camera now moves if you hold down 'w', 'a', 's', or 'd'; not only if you type it
+-dont pollute the loading screen!
+-fair spawns on any size map (dont change map size in source, use the menu in the startup window)
