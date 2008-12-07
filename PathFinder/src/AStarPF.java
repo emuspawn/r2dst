@@ -62,7 +62,7 @@ public class AStarPF
 						n.hScore = Math.abs(dx2) + Math.abs(dy2);
 						//heavily favors paths in a straight line, speeds things up 
 						//by breaking ties
-						int straightFactor = 10;
+						double straightFactor = 0.1;
 						n.hScore += cross*straightFactor;
 						tentativeIsBetter = true;
 					}
@@ -153,7 +153,7 @@ public class AStarPF
 			return true;
 		if (n.y < 0)
 			return true;
-		if (n.y >= grid.length)
+		if (n.x >= grid[0].length)
 			return true;
 		if (n.y >= grid.length)
 			return true;
