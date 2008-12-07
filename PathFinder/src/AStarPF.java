@@ -19,14 +19,15 @@ public class AStarPF
 		start.gScore = 0;
 		start.hScore = Math.abs(goal.x - start.x) + Math.abs(goal.x - start.x);
 		start.fScore = start.gScore + start.hScore;
-		
+		int tries = 0;
 		while(openList.size() > 0) //while open list has nodes to evaluate
 		{
 			//pick best f-score node in list
 			Node currentNode = getLowestFScore(openList);
-			
+			tries++;
 			if (currentNode.equalTo(goal))
 			{
+				System.out.println(tries);
 				return makePath(currentNode, start); //reconstruct path
 			}
 			
@@ -51,7 +52,7 @@ public class AStarPF
 					//This node's g-score
 					int tentativeGScore = currentNode.gScore + 1;
 				
-					if (!isInList(n, openList))
+					if (!isInList(n, closedList))
 					{	
 						//estimated distance from evaluated node to goal node
 						int dx1 = currentNode.x - goal.x;
@@ -71,7 +72,7 @@ public class AStarPF
 					{
 						n.cameFrom = currentNode;
 						n.gScore = tentativeGScore;
-						n.fScore = n.gScore + n.hScore;
+						n.fScore = n.gScore + n.hScore*0.99;
 						openList.add(n);
 					}
 				}
@@ -85,20 +86,21 @@ public class AStarPF
 		return null;
 	}
 	
-	private Node getLowestFScore(ArrayList<Node> openList)
+	private Node getLowestFScore(ArrayList<Node> list)
 	{
 		Node lowest;
 		int index = 0;
 		double lowCost = 999999;
-		for (int i = 0; i < openList.size(); i++)
+		for (int i = 0; i < list.size(); i++)
 		{
-			if (openList.get(i).fScore < lowCost)
+			Node n = list.get(i);
+			if (n.fScore <= lowCost)
 			{
-				lowCost = openList.get(i).fScore;
+				lowCost = n.fScore;
 				index = i;
 			}
 		}
-		lowest = openList.get(index);
+		lowest = list.get(index);
 		return lowest;
 	}
 	
@@ -118,7 +120,7 @@ public class AStarPF
 	{
 		for (int i = 0; i < list.size(); i++)
 		{
-			if (list.get(i).equalTo(n))
+			if (list.get(i).x == n.x && list.get(i).y == n.y)
 			return true; //is in list
 		}
 		return false; //not in list
