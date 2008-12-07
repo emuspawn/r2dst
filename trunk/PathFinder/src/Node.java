@@ -1,3 +1,4 @@
+//Node class, used by pathfinder
 
 public class Node 
 {
