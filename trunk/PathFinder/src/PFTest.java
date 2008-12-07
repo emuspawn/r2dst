@@ -16,7 +16,7 @@ public class PFTest
 			{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
-			{0,1,1,1,1,1,1,1,0,0,0,0,0,0,0},
+			{0,1,1,1,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -25,21 +25,38 @@ public class PFTest
 		//top left, is 0,0
 		//x horizontal, y vertical
 		Node start = new Node(2,4);
-		Node goal = new Node(7,4);
+		Node goal = new Node(6,4);
 		
 		//Times the length of the operation
 		long time = System.currentTimeMillis();
 		ArrayList<Node> path = astar.findPath(map, start, goal);
-		System.out.println(System.currentTimeMillis()-time);
-		//prints path as a series of points
-		printPath(path);
+		System.out.println("time: "+(System.currentTimeMillis()-time)+"ms");
+		//prints path as grid
+		printPath(map, path, start, goal);
 	}
 	
-	public static void printPath(ArrayList<Node> path)
+	public static void printPath(int[][] grid, ArrayList<Node> path, Node start, Node goal)
 	{
-		for (int i = 0; i < path.size(); i++)
+		for (int i = 0; i < grid.length; i++)
 		{
-			System.out.println(path.get(i));
+			for (int j = 0; j < grid[0].length; j++)
+			{
+				int pathSquare = 0;
+				for (int k = 0; k < path.size(); k++)
+				{
+					if (path.get(k).equalTo(new Node(j,i)))
+						pathSquare = 1;
+				}
+				if (start.equalTo(new Node(j,i)))
+					System.out.print(" S"); //show S for start
+				else if (goal.equalTo(new Node(j,i)))
+					System.out.print(" G"); //show G for goal
+				else if (pathSquare == 1)
+					System.out.print(" X");
+				else
+					System.out.print(" " + grid[i][j]);
+			}
+			System.out.println();
 		}
 	}
 }
