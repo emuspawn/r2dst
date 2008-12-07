@@ -31,10 +31,6 @@ public class AStarPF
 				return makePath(currentNode, start); //reconstruct path
 			}
 			
-			//move current node from open list to closed list
-			removeNodeFromList(currentNode, openList);
-			closedList.add(currentNode);
-			
 			//gets adjacent nodes
 			ArrayList<Node> neighborNodes = new ArrayList<Node>();
 			neighborNodes.add(new Node(currentNode.x, currentNode.y+1)); //up
@@ -46,13 +42,15 @@ public class AStarPF
 			for (int i = 0; i < 4; i++)
 			{
 				Node n = neighborNodes.get(i);
+		        boolean isClosed = isInList(n, closedList);
+
 				if (!nodeOutsideGrid(n, grid) && grid[n.y][n.x] != 1)
 				{
 					boolean tentativeIsBetter = false;
 					//This node's g-score
 					int tentativeGScore = currentNode.gScore + 1;
 				
-					if (!isInList(n, closedList))
+					if (!isClosed)
 					{	
 						//estimated distance from evaluated node to goal node
 						int dx1 = currentNode.x - goal.x;
@@ -72,7 +70,7 @@ public class AStarPF
 					{
 						n.cameFrom = currentNode;
 						n.gScore = tentativeGScore;
-						n.fScore = n.gScore + n.hScore*0.99;
+						n.fScore = n.gScore + n.hScore;
 						openList.add(n);
 					}
 				}
@@ -81,6 +79,9 @@ public class AStarPF
 					closedList.add(n);
 				}
 			}
+			//move current node from open list to closed list
+			removeNodeFromList(currentNode, openList);
+			closedList.add(currentNode);
 		}
 		//no path
 		return null;
