@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+//Pathfinder, uses A* algorithm
 public class AStarPF
 {
 	public AStarPF()
@@ -9,6 +10,7 @@ public class AStarPF
 	
 	public ArrayList<Node> findPath(int[][] grid, Node start, Node goal)
 	{
+		//node lists
 		ArrayList<Node> closedList = new ArrayList<Node>(); //already evaluated
 		ArrayList<Node> openList = new ArrayList<Node>(); //points to evaluate
 		
@@ -20,40 +22,48 @@ public class AStarPF
 		
 		while(openList.size() > 0) //while open list has nodes to evaluate
 		{
+			//pick best f-score node in list
 			Node currentNode = getLowestFScore(openList);
-			//System.out.println(currentNode.toString());
+			
 			if (currentNode.equalTo(goal))
 			{
 				return makePath(currentNode, start); //reconstruct path
 			}
-			//printOpenList(openList);
+			
+			//move current node from open list to closed list
 			removeNodeFromList(currentNode, openList);
 			closedList.add(currentNode);
 			
+			//gets adjacent nodes
 			ArrayList<Node> neighborNodes = new ArrayList<Node>();
 			neighborNodes.add(new Node(currentNode.x, currentNode.y+1)); //up
 			neighborNodes.add(new Node(currentNode.x, currentNode.y-1)); //down
 			neighborNodes.add(new Node(currentNode.x-1, currentNode.y)); //left
 			neighborNodes.add(new Node(currentNode.x+1, currentNode.y)); //right
 
-			
+			//For each neightbor node
 			for (int i = 0; i < 4; i++)
 			{
 				Node n = neighborNodes.get(i);
 				if (!nodeOutsideGrid(n, grid) && grid[n.y][n.x] != 1)
 				{
 					boolean tentativeIsBetter = false;
+					//This node's g-score
 					int tentativeGScore = currentNode.gScore + 1;
 				
 					if (!isInList(n, openList))
 					{	
+						//estimated distance from evaluated node to goal node
 						int dx1 = currentNode.x - goal.x;
 						int dy1 = currentNode.y - goal.y;
 						int dx2 = start.x - goal.x;
 						int dy2 = start.y - goal.y;
 						double cross = Math.abs(dx1*dy2 - dx2*dy1);
 						n.hScore = Math.abs(dx2) + Math.abs(dy2);
-						n.hScore += cross*10;
+						//heavily favors paths in a straight line, speeds things up 
+						//by breaking ties
+						int straightFactor = 10;
+						n.hScore += cross*straightFactor;
 						tentativeIsBetter = true;
 					}
 				
@@ -65,7 +75,7 @@ public class AStarPF
 						openList.add(n);
 					}
 				}
-				else
+				else //do not evaluate squares it can't move to
 				{
 					closedList.add(n);
 				}
@@ -96,9 +106,9 @@ public class AStarPF
 	{
 		for (int i = 0; i < list.size(); i++)
 		{
-			if (list.get(i).equalTo(n))
+			if (list.get(i).equalTo(n)) //find node
 			{
-				list.remove(i);
+				list.remove(i); //remove node
 				break;
 			}
 		}
@@ -138,6 +148,7 @@ public class AStarPF
 	
 	private boolean nodeOutsideGrid(Node n, int[][] grid)
 	{
+		//Split up to improve speed
 		if (n.x < 0)
 			return true;
 		if (n.y < 0)
