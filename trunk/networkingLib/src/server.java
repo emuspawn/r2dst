@@ -3,13 +3,15 @@ import java.net.*;
 import java.io.*;
 
 // TODO: Implement locking for the lists
-public class server extends Thread {
-	ServerSocket serv;
-	ArrayList<Socket> connections;
-	ArrayList<BufferedWriter> streamWr;
-	ArrayList<BufferedReader> streamRd;
+public class server {
+	private ServerSocket serv;
+	private ArrayList<Socket> connections;
+	private ArrayList<BufferedWriter> streamWr;
+	private ArrayList<BufferedReader> streamRd;
 	
-	final boolean debug = true;
+	private Thread connAcc, list;
+	
+	private final boolean debug = true;
 	
 	public server(int listenPort) throws IOException
 	{
@@ -19,14 +21,36 @@ public class server extends Thread {
 		streamWr = new ArrayList<BufferedWriter>();
 		streamRd = new ArrayList<BufferedReader>();
 		
-		start();
+		//This starts the thread which accepts new connections from clients
+		connAcc = new connectionAccepter(serv, streamRd, streamWr, connections, debug);
+		
+		//This starts the thread that removes disconnected clients
+		list = new listCleaner(streamRd, streamWr, connections, debug);
 	}
 	
+	//This will return the number of clients connected
+	public int getClientCount()
+	{
+		return connections.size();
+	}
+	
+	//This will send a string to the first registered client
 	public boolean writeFirst(String str)
 	{
 		return write(0, str);
 	}
 	
+	//This will send a string to all clients registered to this server
+	public boolean writeAll(String str)
+	{
+		int i;
+		for (i = 0; i < streamWr.size(); i++)
+			write(i, str);
+		
+		return !streamWr.isEmpty();
+	}
+	
+	//This will send a string to one client
 	public boolean write(int client, String str)
 	{
 		if (client < 0 || client >= streamWr.size())
@@ -42,11 +66,13 @@ public class server extends Thread {
 		}
 	}
 	
+	//This will read data from the first client
 	public String readFirst()
 	{
 		return read(0);
 	}
 	
+	//This will read data from a specific client
 	public String read(int client)
 	{
 		if (client < 0 || client >= streamRd.size())
@@ -71,32 +97,13 @@ public class server extends Thread {
 		return null;
 	}
 	
-	public void run()
-	{
-		DbgPrint("Listening...");
-		while (!isInterrupted())
-		{
-			Socket newConn;
-			try {
-				newConn = serv.accept();
-			
-				if (newConn != null)
-				{
-					DbgPrint("Got a connection from: "+newConn.getInetAddress());
-					connections.add(newConn);
-					streamWr.add(new BufferedWriter(new OutputStreamWriter(newConn.getOutputStream())));
-					streamRd.add(new BufferedReader(new InputStreamReader(newConn.getInputStream())));
-				}
-			} catch (IOException e) {}
-		}
-		DbgPrint("Connecting thread interrupted!");
-	}
-	
+	//This kills the connection thread and closes all the sockets and streams
 	public void close()
 	{
-		interrupt();
+		connAcc.interrupt();
+		list.interrupt();
 		
-		while (this.isAlive());
+		//while (list.isAlive() || connAcc.isAlive());
 		
 		try {
 			for (BufferedWriter bw : streamWr)
@@ -109,7 +116,101 @@ public class server extends Thread {
 				sc.close();
 		} catch (SocketException e) {} catch (IOException e) {}
 	}
+}
+
+//Accepts new connections
+class connectionAccepter extends Thread
+{
+	private ArrayList<BufferedReader> readerList;
+	private ArrayList<BufferedWriter> writerList;
+	private ArrayList<Socket> socketList;
+	private ServerSocket servSock;
 	
+	boolean debug;
+	
+	public connectionAccepter(ServerSocket serv, ArrayList<BufferedReader> br, ArrayList<BufferedWriter> bw, ArrayList<Socket> sk, boolean dbg)
+	{
+		servSock = serv;
+		readerList = br;
+		writerList = bw;
+		socketList = sk;
+		debug = dbg;
+		
+		start();
+	}
+	
+	public void run()
+	{
+		DbgPrint("Connecting thread started");
+		while (!isInterrupted())
+		{
+			Socket newConn;
+			try {
+				newConn = servSock.accept();
+			
+				if (newConn != null)
+				{
+					DbgPrint("Accepted a connection from: "+newConn.getInetAddress().toString().substring(1));
+					socketList.add(newConn);
+					writerList.add(new BufferedWriter(new OutputStreamWriter(newConn.getOutputStream())));
+					readerList.add(new BufferedReader(new InputStreamReader(newConn.getInputStream())));
+				}
+			} catch (IOException e) {}
+		}
+		DbgPrint("Connecting thread interrupted!");
+	}
+	
+	//This outputs debug info if debug is true
+	private void DbgPrint(String str)
+	{
+		if (debug)
+			System.out.println(str);
+	}
+}
+
+//Removes closed sockets from the list
+class listCleaner extends Thread
+{
+	ArrayList<BufferedReader> readerList;
+	ArrayList<BufferedWriter> writerList;
+	ArrayList<Socket> socketList;
+	
+	boolean debug;
+	
+	public listCleaner(ArrayList<BufferedReader> br, ArrayList<BufferedWriter> bw, ArrayList<Socket> sk, boolean dbg)
+	{
+		readerList = br;
+		writerList = bw;
+		socketList = sk;
+		debug = dbg;
+		
+		start();
+	}
+	
+	public void run()
+	{
+		DbgPrint("List cleaner thread started");
+		while (!isInterrupted())
+		{
+			ArrayList<Integer> rem = new ArrayList<Integer>();
+			for (int i = 0; i < socketList.size(); i++)
+			{
+				if (socketList.get(i).isClosed())
+					rem.add(i);
+			}
+			
+			for (Integer idx : rem)
+			{
+				DbgPrint("Removing client number "+idx);
+				socketList.remove(idx);
+				readerList.remove(idx);
+				writerList.remove(idx);
+			}
+		}
+		DbgPrint("List cleaner thread interrupted!");
+	}
+	
+	//This outputs debug info if debug is true
 	private void DbgPrint(String str)
 	{
 		if (debug)
