@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 
 //Pathfinder, uses A* algorithm
+//It evaluates too many nodes, and seems to be reevaluating some closed ones.
+//This is a bug not yet pinned down
 public class AStarPF
 {
 	public AStarPF()
@@ -8,7 +10,7 @@ public class AStarPF
 		
 	}
 	
-	public ArrayList<Node> findPath(int[][] grid, Node start, Node goal)
+	public ArrayList<Node> findPath(byte[][] grid, Node start, Node goal)
 	{
 		//node lists
 		ArrayList<Node> closedList = new ArrayList<Node>(); //already evaluated
@@ -24,19 +26,20 @@ public class AStarPF
 		{
 			//pick best f-score node in list
 			Node currentNode = getLowestFScore(openList);
-			tries++;
+			tries = closedList.size();
 			if (currentNode.equalTo(goal))
 			{
 				System.out.println(tries);
 				return makePath(currentNode, start); //reconstruct path
 			}
 			
+			//move current node from open list to closed list
+			removeNodeFromList(currentNode, openList);
+			if (!isInList(currentNode, closedList))
+				closedList.add(currentNode);
+			
 			//gets adjacent nodes
-			ArrayList<Node> neighborNodes = new ArrayList<Node>();
-			neighborNodes.add(new Node(currentNode.x, currentNode.y+1)); //up
-			neighborNodes.add(new Node(currentNode.x, currentNode.y-1)); //down
-			neighborNodes.add(new Node(currentNode.x-1, currentNode.y)); //left
-			neighborNodes.add(new Node(currentNode.x+1, currentNode.y)); //right
+			ArrayList<Node> neighborNodes = currentNode.getNeighborNodes();
 
 			//For each neightbor node
 			for (int i = 0; i < 4; i++)
@@ -61,7 +64,7 @@ public class AStarPF
 						n.hScore = Math.abs(dx2) + Math.abs(dy2);
 						//heavily favors paths in a straight line, speeds things up 
 						//by breaking ties
-						double straightFactor = 0.1;
+						double straightFactor = 1;
 						n.hScore += cross*straightFactor;
 						tentativeIsBetter = true;
 					}
@@ -71,17 +74,16 @@ public class AStarPF
 						n.cameFrom = currentNode;
 						n.gScore = tentativeGScore;
 						n.fScore = n.gScore + n.hScore;
-						openList.add(n);
+						if (!isInList(n, openList))
+							openList.add(n);
 					}
 				}
 				else //do not evaluate squares it can't move to
 				{
-					closedList.add(n);
+					if (!isInList(n, closedList))
+						closedList.add(n);
 				}
 			}
-			//move current node from open list to closed list
-			removeNodeFromList(currentNode, openList);
-			closedList.add(currentNode);
 		}
 		//no path
 		return null;
@@ -149,7 +151,7 @@ public class AStarPF
 		return path;
 	}
 	
-	private boolean nodeOutsideGrid(Node n, int[][] grid)
+	private boolean nodeOutsideGrid(Node n, byte[][] grid)
 	{
 		//Split up to improve speed
 		if (n.x < 0)
