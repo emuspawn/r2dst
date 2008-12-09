@@ -17,6 +17,7 @@ public class client {
 		writer = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 	}
 	
+	//Sends a string to the server
 	public boolean write(String str)
 	{
 		try {
@@ -29,6 +30,7 @@ public class client {
 		}
 	}
 	
+	//Reads a string from the server
 	public String read()
 	{
 		try {
@@ -48,5 +50,15 @@ public class client {
 		}
 		
 		return null;
+	}
+	
+	//Closes the socket and streams
+	public void close()
+	{
+		try {
+			reader.close();
+			writer.close();
+			sock.close();
+		} catch (IOException e) {}
 	}
 }
