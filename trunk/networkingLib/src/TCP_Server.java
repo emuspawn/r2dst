@@ -3,7 +3,7 @@ import java.net.*;
 import java.io.*;
 
 // TODO: Implement locking for the lists
-public class server {
+public class TCP_Server {
 	private ServerSocket serv;
 	private ArrayList<Socket> connections;
 	private ArrayList<BufferedWriter> streamWr;
@@ -13,7 +13,7 @@ public class server {
 	
 	private final boolean debug = true;
 	
-	public server(int listenPort) throws IOException
+	public TCP_Server(int listenPort) throws IOException
 	{
 		serv = new ServerSocket(listenPort);
 		
@@ -195,7 +195,7 @@ class listCleaner extends Thread
 			ArrayList<Integer> rem = new ArrayList<Integer>();
 			for (int i = 0; i < socketList.size(); i++)
 			{
-				if (socketList.get(i).isClosed())
+				if (!socketList.get(i).isConnected())
 					rem.add(i);
 			}
 			
