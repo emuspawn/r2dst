@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.net.*;
-import java.nio.CharBuffer;
 import java.io.*;
 
 // TODO: Implement locking for the lists
@@ -43,20 +42,28 @@ public class server extends Thread {
 		}
 	}
 	
-	public String readFirst(int length)
+	public String readFirst()
 	{
-		return read(0, length);
+		return read(0);
 	}
 	
-	public String read(int client, int length)
+	public String read(int client)
 	{
 		if (client < 0 || client >= streamRd.size())
 			return null;
 		
 		try {
-			CharBuffer buff = CharBuffer.allocate(length);
-			streamRd.get(client).read(buff);
-			return new String(buff.array());
+			String data = "";
+			char[] chr = new char[1];
+			
+			while (streamRd.get(client).ready())
+			{
+				streamRd.get(client).read(chr);
+				data = new String(data+chr[0]);
+				chr = new char[1];
+			}
+
+			return data;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
 		}

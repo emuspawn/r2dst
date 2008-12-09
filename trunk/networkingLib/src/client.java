@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.nio.CharBuffer;
 
 
 public class client {
@@ -22,6 +21,7 @@ public class client {
 	{
 		try {
 			writer.write(str);
+			writer.flush();
 			return true;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
@@ -29,12 +29,20 @@ public class client {
 		}
 	}
 	
-	public String read(int length)
+	public String read()
 	{
 		try {
-			CharBuffer buff = CharBuffer.allocate(length);
-			reader.read(buff);
-			return new String(buff.array());
+			String data = "";
+			char[] chr = new char[1];
+			
+			while (reader.ready())
+			{
+				reader.read(chr);
+				data = new String(data+chr[0]);
+				chr = new char[1];
+			}
+
+			return data;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
 		}
