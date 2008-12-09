@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 //Pathfinder, uses A* algorithm
-//It evaluates too many nodes, and seems to be reevaluating some closed ones.
-//This is a bug not yet pinned down
+//It evaluates too many nodes, and seems to be reevaluating 
+//some closed ones. This is a bug not yet pinned down
 public class AStarPF
 {
 	public AStarPF()
@@ -20,7 +20,7 @@ public class AStarPF
 		openList.add(start);
 		start.gScore = 0;
 		start.hScore = Math.abs(goal.x - start.x) + Math.abs(goal.x - start.x);
-		start.fScore = start.gScore + start.hScore;
+		start.fScore = start.hScore;
 		int tries = 0;
 		while(openList.size() > 0) //while open list has nodes to evaluate
 		{
@@ -29,7 +29,7 @@ public class AStarPF
 			tries = closedList.size();
 			if (currentNode.equalTo(goal))
 			{
-				System.out.println(tries);
+				System.out.println("closed list size: " + tries); //prints number of nodes in closed list at end
 				return makePath(currentNode, start); //reconstruct path
 			}
 			
@@ -42,10 +42,11 @@ public class AStarPF
 			ArrayList<Node> neighborNodes = currentNode.getNeighborNodes();
 
 			//For each neightbor node
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < neighborNodes.size(); i++)
 			{
 				Node n = neighborNodes.get(i);
-		        boolean isClosed = isInList(n, closedList);
+		        boolean isOpen = isInList(n, openList);
+		        boolean isClosed = isInList(n, closedList);		        
 
 				if (!nodeOutsideGrid(n, grid) && grid[n.y][n.x] != 1)
 				{
@@ -53,8 +54,9 @@ public class AStarPF
 					//This node's g-score
 					int tentativeGScore = currentNode.gScore + 1;
 				
-					if (!isClosed)
+					if (!isOpen && !isClosed)
 					{	
+						openList.add(n);
 						//estimated distance from evaluated node to goal node
 						int dx1 = currentNode.x - goal.x;
 						int dy1 = currentNode.y - goal.y;
@@ -68,14 +70,16 @@ public class AStarPF
 						n.hScore += cross*straightFactor;
 						tentativeIsBetter = true;
 					}
+					else if (tentativeGScore < n.gScore)
+					{
+						tentativeIsBetter = true;
+					}
 				
 					if (tentativeIsBetter)
 					{
 						n.cameFrom = currentNode;
 						n.gScore = tentativeGScore;
 						n.fScore = n.gScore + n.hScore;
-						if (!isInList(n, openList))
-							openList.add(n);
 					}
 				}
 				else //do not evaluate squares it can't move to
@@ -93,11 +97,11 @@ public class AStarPF
 	{
 		Node lowest;
 		int index = 0;
-		double lowCost = 999999;
+		double lowCost = list.get(0).fScore;
 		for (int i = 0; i < list.size(); i++)
 		{
 			Node n = list.get(i);
-			if (n.fScore <= lowCost)
+			if (n.fScore < lowCost)
 			{
 				lowCost = n.fScore;
 				index = i;
@@ -123,7 +127,7 @@ public class AStarPF
 	{
 		for (int i = 0; i < list.size(); i++)
 		{
-			if (list.get(i).x == n.x && list.get(i).y == n.y)
+			if (list.get(i).equalTo(n))
 			return true; //is in list
 		}
 		return false; //not in list
@@ -132,12 +136,12 @@ public class AStarPF
 	private ArrayList<Node> makePath(Node goal, Node start)
 	{
 		ArrayList<Node> p = new ArrayList<Node>();
-		Node g = goal;
+		Node n = goal;
 		// make path backwards from goal
-		while (g.cameFrom != null)
+		while (n.cameFrom != null)
 		{
-			p.add(g);
-			g = g.cameFrom;
+			p.add(n);
+			n = n.cameFrom;
 		}
 		p.add(start);
 		

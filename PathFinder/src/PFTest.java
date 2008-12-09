@@ -12,11 +12,11 @@ public class PFTest
 		{
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,1,1,1,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
-			{0,0,0,1,1,1,0,0,0,0,0,0,0,0,0},
+			{0,0,0,1,1,1,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,0,1,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,0,1,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,0,1,0,0,1,0,0,0,0,0,0},
+			{0,0,0,1,1,1,0,0,1,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -26,7 +26,7 @@ public class PFTest
 		//top left, is 0,0
 		//x horizontal, y vertical
 		Node start = new Node(2,4);
-		Node goal = new Node(7,4);
+		Node goal = new Node(10,4);
 		
 		
 		//a large test map, to test it moving in large straight paths
@@ -39,8 +39,9 @@ public class PFTest
 			}
 		}
 		//start and end positions for map2
-		Node start2 = new Node(0,0);
-		Node goal2 = new Node(150,150);
+		//Node start2 = new Node(0,0);
+		//Node goal2 = new Node(150,150);
+		
 		
 		//Times the length of the operation
 		long time = System.currentTimeMillis();
