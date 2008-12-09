@@ -26,10 +26,10 @@ public class AStarPF
 		{
 			//pick best f-score node in list
 			Node currentNode = getLowestFScore(openList);
-			tries = closedList.size();
+			tries++;
 			if (currentNode.equalTo(goal))
 			{
-				System.out.println("closed list size: " + tries); //prints number of nodes in closed list at end
+				System.out.println("num of nodes evaluated: " + tries); //prints number of nodes in closed list at end
 				return makePath(currentNode, start); //reconstruct path
 			}
 			
@@ -56,6 +56,7 @@ public class AStarPF
 				
 					if (!isOpen && !isClosed)
 					{	
+						//add this node to open
 						openList.add(n);
 						//estimated distance from evaluated node to goal node
 						int dx1 = currentNode.x - goal.x;
@@ -66,18 +67,20 @@ public class AStarPF
 						n.hScore = Math.abs(dx2) + Math.abs(dy2);
 						//heavily favors paths in a straight line, speeds things up 
 						//by breaking ties
-						double straightFactor = 1;
+						double straightFactor = 0.01;
 						n.hScore += cross*straightFactor;
+						double p = 1/(Math.abs(goal.x - start.x) + Math.abs(goal.y - start.y));
+						n.hScore *= 1.0 + p;
 						tentativeIsBetter = true;
 					}
-					else if (tentativeGScore < n.gScore)
+					else if (tentativeGScore < n.gScore) //if its being reevaluated closer
 					{
 						tentativeIsBetter = true;
 					}
 				
 					if (tentativeIsBetter)
 					{
-						n.cameFrom = currentNode;
+						n.cameFrom = currentNode; //for reconstructing path
 						n.gScore = tentativeGScore;
 						n.fScore = n.gScore + n.hScore;
 					}
