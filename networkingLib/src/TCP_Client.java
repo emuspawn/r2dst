@@ -2,14 +2,14 @@ import java.io.*;
 import java.net.*;
 
 
-public class client {
+public class TCP_Client {
 	Socket sock;
 	BufferedReader reader;
 	BufferedWriter writer;
 	
 	final boolean debug = true;
 	
-	public client(InetAddress addr, int port) throws IOException
+	public TCP_Client(InetAddress addr, int port) throws IOException
 	{
 		sock = new Socket(addr, port);
 		
