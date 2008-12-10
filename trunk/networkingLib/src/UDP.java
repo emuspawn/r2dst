@@ -7,6 +7,7 @@ public class UDP extends Thread {
 	private DatagramSocket sock;
 	private LinkedList<byte[]> dataList;
 	private ArrayList<DatagramPacket> pendingList, recvList;
+	private ArrayList<SocketAddress> peers;
 	private int maxData;
 	private int ackTimeout;
 	
@@ -16,6 +17,8 @@ public class UDP extends Thread {
 	private final static byte flagNormal = 0;
 	private final static byte flagAck = 1;
 	private final static byte flagResend = 2;
+	private final static byte cmdConnect = 3;
+	private final static byte cmdDisconnect = 4;
 	
 	private final static boolean debug = true;
 	private final static boolean testResend = false;
@@ -27,10 +30,46 @@ public class UDP extends Thread {
 		dataList = new LinkedList<byte[]>();
 		pendingList = new ArrayList<DatagramPacket>();
 		recvList = new ArrayList<DatagramPacket>();
+		peers = new ArrayList<SocketAddress>();
 		maxData = maxDatagramSize;
 		ackTimeout = 1500;
 		
 		start();
+	}
+	
+	public boolean connectTo(InetAddress addr, int port)
+	{
+		byte[] buffer = new byte[maxData];
+		buffer[0] = cmdConnect;
+		DatagramPacket datagram = new DatagramPacket(buffer, 1, addr, port);
+		
+		if (sendDatagram(datagram))
+		{
+			peers.add(datagram.getSocketAddress());
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean disconnect(InetAddress addr, int port)
+	{
+		byte[] buffer = new byte[maxData];
+		buffer[0] = cmdDisconnect;
+		DatagramPacket datagram = new DatagramPacket(buffer, 1, addr, port);
+		
+		if (sendDatagram(datagram))
+		{
+			peers.remove(addr);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public ArrayList<SocketAddress> getPeerAddresses()
+	{
+		return new ArrayList<SocketAddress>(peers);
 	}
 	
 	public void setAckTimeout(int timeout)
@@ -51,10 +90,30 @@ public class UDP extends Thread {
 				
 				if (datagram.getData()[0] == flagNormal)
 				{
-					listLock.acquire();
-					dataList.add(datagram.getData());
-					recvList.add(datagram);
-					listLock.release();
+					if (datagram.getData().length > 1)
+					{
+						if (datagram.getData()[1] == cmdConnect)
+						{
+							listLock.acquire();
+							peers.add(datagram.getSocketAddress());
+							recvList.add(datagram);
+							listLock.release();
+						}
+						else if (datagram.getData()[1] == cmdDisconnect)
+						{
+							listLock.acquire();
+							peers.remove(datagram.getSocketAddress());
+							recvList.add(datagram);
+							listLock.release();
+						}
+						else
+						{
+							listLock.acquire();
+							dataList.add(datagram.getData());
+							recvList.add(datagram);
+							listLock.release();
+						}
+					}
 					
 					setupPacket(datagram, flagAck, true);
 					if (!testResend) sock.send(datagram);
@@ -92,13 +151,30 @@ public class UDP extends Thread {
 					//We have never seen this packet so we handle it as a new packet
 					if (!sentNewAck)
 					{
-						listLock.acquire();
-						dataList.add(datagram.getData());
-						recvList.add(datagram);
-						listLock.release();
-						
-						setupPacket(datagram, flagAck, true);
-						sock.send(datagram);
+						if (datagram.getData().length > 1)
+						{
+							if (datagram.getData()[1] == cmdConnect)
+							{
+								listLock.acquire();
+								peers.add(datagram.getSocketAddress());
+								recvList.add(datagram);
+								listLock.release();
+							}
+							else if (datagram.getData()[1] == cmdDisconnect)
+							{
+								listLock.acquire();
+								peers.remove(datagram.getSocketAddress());
+								recvList.add(datagram);
+								listLock.release();
+							}
+							else
+							{
+								listLock.acquire();
+								dataList.add(datagram.getData());
+								recvList.add(datagram);
+								listLock.release();
+							}
+						}
 					}
 				}
 			} catch (IOException e) {}
@@ -138,7 +214,11 @@ public class UDP extends Thread {
 	public boolean sendDatagram(InetAddress addr, int port, byte[] buffer)
 	{
 		DatagramPacket datagram = new DatagramPacket(buffer, buffer.length, addr, port);
-		
+		return sendDatagram(datagram);
+	}
+	
+	public boolean sendDatagram(DatagramPacket datagram)
+	{	
 		setupPacket(datagram, flagNormal, false);
 
 		//dumpPacket(datagram);
@@ -156,6 +236,7 @@ public class UDP extends Thread {
 			{
 				if (System.currentTimeMillis() - startTime >= ackTimeout)
 				{
+					DbgPrint("Resending packet");
 					setupPacket(datagram, flagResend, true);
 					sock.send(datagram);
 					startTime = System.currentTimeMillis();
@@ -215,7 +296,7 @@ public class UDP extends Thread {
 	{
 		if (datagram1.getData().length != datagram2.getData().length)
 		{
-			DbgPrint("Bad length");
+			DbgPrint("Bad length 1:"+datagram1.getData().length+" 2:"+datagram2.getData().length);
 			return false;
 		}
 		
