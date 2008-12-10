@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class TCP_Client {
@@ -15,6 +17,42 @@ public class TCP_Client {
 		
 		reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		writer = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+	}
+	
+	public boolean sendIntArray(int[] intArray)
+	{
+		String ret = "";
+		for (int i = 0; i < intArray.length; i++)
+		{
+			ret += intArray[i]+",";
+		}
+		
+		return write(ret);
+	}
+	
+	public int[] readIntArray()
+	{
+		ArrayList<Integer> intList = new ArrayList<Integer>();
+		String data = read();
+		
+		if (data == null)
+			return null;
+		
+		Scanner scan = new Scanner(data).useDelimiter(",");
+		
+		while (scan.hasNextInt())
+		{
+			intList.add(scan.nextInt());
+		}
+		
+		int[] intArray = new int[intList.size()];
+		
+		for (int i = 0; i < intArray.length; i++)
+		{
+			intArray[i] = intList.get(i);
+		}
+		
+		return intArray;
 	}
 	
 	//Sends a string to the server
