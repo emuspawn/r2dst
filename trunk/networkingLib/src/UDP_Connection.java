@@ -63,7 +63,7 @@ public class UDP_Connection extends Thread {
 	{
 		while (!isInterrupted())
 		{
-			DatagramPacket datagram = new DatagramPacket(new byte[maxBufferSize], maxBufferSize);
+			DatagramPacket datagram = new DatagramPacket(new byte[maxBufferSize+1], maxBufferSize+1);
 			try {
 				sock.receive(datagram);
 			} catch (IOException e) { 
