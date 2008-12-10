@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.net.*;
 import java.io.*;
 
@@ -32,6 +33,42 @@ public class TCP_Server {
 	public int getClientCount()
 	{
 		return connections.size();
+	}
+	
+	public boolean sendIntArray(int client, int[] intArray)
+	{
+		String ret = "";
+		for (int i = 0; i < intArray.length; i++)
+		{
+			ret += intArray[i]+",";
+		}
+		
+		return write(client, ret);
+	}
+	
+	public int[] readIntArray(int client)
+	{
+		ArrayList<Integer> intList = new ArrayList<Integer>();
+		String data = read(client);
+		
+		if (data == null)
+			return null;
+		
+		Scanner scan = new Scanner(data).useDelimiter(",");
+		
+		while (scan.hasNextInt())
+		{
+			intList.add(scan.nextInt());
+		}
+		
+		int[] intArray = new int[intList.size()];
+		
+		for (int i = 0; i < intArray.length; i++)
+		{
+			intArray[i] = intList.get(i);
+		}
+		
+		return intArray;
 	}
 	
 	//This will send a string to the first registered client
