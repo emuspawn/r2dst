@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class UDP extends Thread {
+public class UDP_Lossless extends Thread {
 	private DatagramSocket sock;
 	private LinkedList<byte[]> dataList;
 	private ArrayList<DatagramPacket> pendingList, recvList;
@@ -23,7 +23,7 @@ public class UDP extends Thread {
 	private final static boolean debug = true;
 	private final static boolean testResend = false;
 	
-	public UDP(int port, int maxDatagramSize) throws SocketException
+	public UDP_Lossless(int port, int maxDatagramSize) throws SocketException
 	{
 		listLock = new UDP_Lock(false);
 		sock = new DatagramSocket(port);	
