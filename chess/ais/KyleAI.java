@@ -65,23 +65,20 @@ public class KyleAI implements ChessAI
 						score -= values[b.getPieceAt(currentPoint)] - defBalance;
 					}
 				}
-				else
-					if (b.getColorAt(currentPoint) == 1 - side)
+				else if (b.getColorAt(currentPoint) == 1 - side)
+				{
+					if (arraySum(b.checkAttacked(currentPoint, 1 - side)) > 0)
 					{
-						if (arraySum(b.checkAttacked(currentPoint, 1 - side)) > 0)
-						{
-							int defBalance = sumStuff(b.checkAttacked(currentPoint, 1 - side), b.checkDefended(currentPoint, 1 - side), values);
-							score -= values[b.getPieceAt(currentPoint)] - defBalance;
-						}
+						int defBalance = sumStuff(b.checkAttacked(currentPoint, 1 - side), b.checkDefended(currentPoint, 1 - side), values);
+						score -= values[b.getPieceAt(currentPoint)] - defBalance;
 					}
-					else
-						if (b.getPieceAt(currentPoint) == EMPTY)
-						{
-							score -= (arraySum(b.checkAttacked(currentPoint, side)) - arraySum(b.checkDefended(currentPoint, side))) * spaceValues[i][j] * 4;
-						}
+				}
+				else if (b.getPieceAt(currentPoint) == EMPTY)
+				{
+					score -= (arraySum(b.checkAttacked(currentPoint, side)) - arraySum(b.checkDefended(currentPoint, side))) * spaceValues[i][j] * 4;
+				}
 			}
 		}
-
 		return score;
 	}
 
