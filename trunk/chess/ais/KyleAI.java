@@ -61,7 +61,7 @@ public class KyleAI implements ChessAI
 				{
 					if (arraySum(b.checkAttacked(currentPoint, side)) > 0)
 					{
-						int defBalance = -sumStuff(b.checkAttacked(currentPoint, side), b.checkDefended(currentPoint, side), values);
+						int defBalance = sumStuff(b.checkAttacked(currentPoint, side), b.checkDefended(currentPoint, side), values);
 						score -= values[b.getPieceAt(currentPoint)] - defBalance;
 					}
 				}
@@ -148,13 +148,13 @@ public class KyleAI implements ChessAI
 		int s1 = 0, s2 = 0;
 		for (int i = 0; i < atkArray.length; i++)
 		{
-			s1 += atkArray[i] * values[i] / 2;
+			s1 -= atkArray[i] * values[i] / 2;
 		}
 		for (int i = 0; i < defArray.length; i++)
 		{
-			s2 -= defArray[i] * values[i] / 2;
+			s2 += defArray[i] * values[i] / 2;
 		}
-		if (s1 == 0 && s2 < 0)
+		if (s1 == 0 && s2 > 0)
 			s2 = 0;
 		score = s1 + (s2 / 2);
 		return score;
