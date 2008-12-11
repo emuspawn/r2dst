@@ -45,7 +45,7 @@ public class KyleAI implements ChessAI
 	private int evalBoard(Board b, int side)
 	{
 		//function to evaluate just the position
-		//sucks right now, need to clean up and improve
+		//sucks right now, need to scrap it and improve
 		int score = 0;
 		for (int i = 0; i < 8; i++)
 		{
@@ -74,33 +74,51 @@ public class KyleAI implements ChessAI
 				}
 			}
 		}
-		return score;
+		return -score;
 	}
 	
 	//need to make this a negascout search
-	private int alphaBeta(Board b, int side, int depth, Move bestMove, int alpha, int beta)
+	private int negaScout(Board boardToEvaluate, int side, int depth, Move bestMove, int alpha, int beta)
 	{
-		/* beta represents previous player best choice - doesn't want it if alpha would worsen it */
 		if (depth == 0)
-			return -evalBoard(b, side); //get heuristic value of this position at the final depth
-		b.move(bestMove);
-		ArrayList<Move> possibleMoves = b.getMoves(side);
+			return evalBoard(boardToEvaluate, side); //get heuristic value of this position at the final depth
+		boardToEvaluate.move(bestMove);
+		
+		int a;
+		int b = beta;	/* initial window is (-beta, -alpha) */	
+		
+		ArrayList<Move> possibleMoves = boardToEvaluate.getMoves(side);
 		for (int i = 0; i < possibleMoves.size(); i++)
 		{
 			//recursion stuff
-			alpha = Math.max(alpha, -alphaBeta(b, 1-side, depth-1, possibleMoves.get(i), -beta, -alpha));
-			/* use symmetry, -beta becomes subsequently pruned alpha */
-			if (beta <= alpha) /* Beta cut-off */
-				break;
+			a = -negaScout(boardToEvaluate, 1-side, depth-1, possibleMoves.get(i), -b, -alpha);
+			if (a > alpha)
+				alpha = a;
+			if (alpha >= beta)
+			{
+				boardToEvaluate.undo();
+				return alpha; /* Beta cut-off */
+			}
+			if (alpha >= b) /* check if null-window failed high */
+			{
+				/* full re-search */
+				alpha = -negaScout(boardToEvaluate, 1-side, depth-1, possibleMoves.get(i), -beta, -alpha);
+				if (alpha >= beta)
+				{
+					boardToEvaluate.undo();
+					return alpha; /* Beta cut-off */
+				}
+			}
+			b = alpha+1; /* set new null window */
 		}
-		b.undo(); //undo the move it made
+		boardToEvaluate.undo(); //undo the move it made
 		return alpha;
 		
 	}
 
 	public Move think(Board b, int side)
 	{
-		int depth = 4; //depth to think ahead
+		int depth = 3; //depth to think ahead
 		ArrayList<Move> possible = b.getMoves(side);
 		Move best = possible.get(0);
 		int score = Integer.MIN_VALUE;
@@ -108,7 +126,7 @@ public class KyleAI implements ChessAI
 		{
 			int tscore;
 			//depth search!
-			tscore = -alphaBeta(b, side, depth-1, possible.get(i), Integer.MIN_VALUE, Integer.MAX_VALUE);
+			tscore = -negaScout(b, side, depth-1, possible.get(i), Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 			//picks the "best of all possible moves" (not yet..)
 			if (tscore > score)
@@ -147,6 +165,6 @@ public class KyleAI implements ChessAI
 		if (s1 == 0 && s2 > 0)
 			s2 = 0;
 		score = s1 + (s2 / 2);
-		return -score;
+		return score;
 	}
 }
