@@ -217,7 +217,7 @@ public class Board
 						for (int tempCol = column - 1; tempCol >= 0 && tempCol <= 7; tempCol--)
 						{
 							if (color[row][tempCol] != side)
-								moveList.add(new Move(new Point(row, tempCol), new Point(row, tempCol)));
+								moveList.add(new Move(new Point(row, column), new Point(row, tempCol)));
 							if (color[row][tempCol] != EMPTY)
 								break;
 						}
@@ -225,7 +225,7 @@ public class Board
 						for (int tempCol = column + 1; tempCol >= 0 && tempCol <= 7; tempCol++)
 						{
 							if (color[row][tempCol] != side)
-								moveList.add(new Move(new Point(row, tempCol), new Point(row, tempCol)));
+								moveList.add(new Move(new Point(row, column), new Point(row, tempCol)));
 							if (color[row][tempCol] != EMPTY)
 								break;
 						}
