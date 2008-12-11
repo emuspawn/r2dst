@@ -141,10 +141,10 @@ public class Board
 								moveList.add(new Move(new Point(row, column), new Point(row + 1, column)));
 							// capture right
 							if (column < 7 && row < 7 && color[row + 1][column + 1] == WHITE)
-								moveList.add(new Move(new Point(row, column), new Point(row + 1, column - 1)));
+								moveList.add(new Move(new Point(row, column), new Point(row + 1, column + 1)));
 							// capture left
 							if (column > 0 && row < 7 && color[row + 1][column - 1] == WHITE)
-								moveList.add(new Move(new Point(row, column), new Point(row + 1, column + 1)));
+								moveList.add(new Move(new Point(row, column), new Point(row + 1, column - 1)));
 						}
 						else
 						{
