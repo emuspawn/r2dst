@@ -4,31 +4,22 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class TCP_Client extends Thread {
-	Socket sock;
-	ArrayList<String> recvBuffer, sendBuffer;
-	BufferedReader reader;
-	BufferedWriter writer;
+public class TCP_Client {
+	private Socket sock;
+	private ArrayList<String> recvBuffer, sendBuffer;
+	private BufferedReader reader;
+	private BufferedWriter writer;
 	
-	boolean newData;
-	
-	TCP_Lock lock;
-	
-	final boolean debug = true;
+	private final boolean debug = true;
 	
 	public TCP_Client(InetAddress addr, int port) throws IOException
 	{
 		sock = new Socket(addr, port);
-		newData = false;
 		reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		writer = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 	
 		recvBuffer = new ArrayList<String>();
 		sendBuffer = new ArrayList<String>();
-		
-		lock = new TCP_Lock(false);
-		
-		start();
 	}
 	
 	public ArrayList<String> getRecvBuffer()
@@ -41,45 +32,20 @@ public class TCP_Client extends Thread {
 		return new ArrayList<String>(sendBuffer);
 	}
 	
-	public void run()
-	{
-		while (!isInterrupted())
-		{
-			write();
-			read();
-		}
-	}
-	
 	public void writeDouble(double i)
 	{
-		lock.acquire();
 		sendBuffer.add(i+"");
-		lock.release();
 	}
 	
 	public void writeString(String str)
 	{
-		lock.acquire();
 		sendBuffer.add(str);
-		lock.release();
-	}
-	
-	public Double readDouble(boolean block)
-	{
-		Double ret;
-		if (block)
-			while((ret = readDouble()) == null);
-		else
-			ret = readDouble();
-		
-		return ret;
 	}
 	
 	public Double readDouble()
 	{
 		Double dbl = null;
 		
-		lock.acquire();
 		for (String data : recvBuffer)
 		{		
 			try {
@@ -89,27 +55,14 @@ public class TCP_Client extends Thread {
 			} catch (NumberFormatException e) {
 			}
 		}
-		lock.release();
 
 		return dbl;
-	}
-	
-	public String readString(boolean block)
-	{
-		String ret;
-		if (block)
-			while ((ret = readString()) == null);
-		else
-			ret = readString();
-		
-		return ret;
 	}
 	
 	public String readString()
 	{
 		String str = null;
 		
-		lock.acquire();
 		for (String data : recvBuffer)
 		{
 			try {
@@ -120,7 +73,6 @@ public class TCP_Client extends Thread {
 				break;
 			}
 		}
-		lock.release();
 		
 		return str;
 	}
@@ -130,13 +82,14 @@ public class TCP_Client extends Thread {
 	{
 		String str = "";
 		try {
-			lock.acquire();
 			for (String tmp : sendBuffer)
 			{
 				str += tmp+"`";
 			}
 			sendBuffer.removeAll(sendBuffer);
-			lock.release();
+			
+			if (str == "")
+				return false;
 			
 			writer.write(str);
 			writer.flush();
@@ -149,9 +102,10 @@ public class TCP_Client extends Thread {
 	}
 	
 	//Reads a string from the server
-	public void read()
+	public boolean read()
 	{
 		try {
+			boolean ret = false;
 			String data = "";
 			char[] chr = new char[1];
 			
@@ -164,15 +118,16 @@ public class TCP_Client extends Thread {
 
 			Scanner scan = new Scanner(data).useDelimiter("`");
 			
-			lock.acquire();
 			while (scan.hasNext())
 			{
-				newData = true;
+				ret = true;
 				recvBuffer.add(scan.next());
 			}
-			lock.release();
+			
+			return ret;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
+			return false;
 		}
 	}
 	

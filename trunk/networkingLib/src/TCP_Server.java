@@ -3,20 +3,19 @@ import java.util.Scanner;
 import java.net.*;
 import java.io.*;
 
-public class TCP_Server extends Thread {
-	ServerSocket sock;
-	ArrayList<Socket> connections;
-	ArrayList<ArrayList<String>> recvBuffers, sendBuffers;
-	ArrayList<BufferedWriter> writers;
-	ArrayList<BufferedReader> readers;
+public class TCP_Server {
+	private ServerSocket sock;
+	private ArrayList<Socket> connections;
+	private ArrayList<ArrayList<String>> recvBuffers, sendBuffers;
+	private ArrayList<BufferedWriter> writers;
+	private ArrayList<BufferedReader> readers;
 	
-	TCP_Lock lock;
+	//private TCP_Lock lock;
 	
 	final boolean debug = true;
 	
 	public TCP_Server(int port) throws IOException
 	{
-		lock = new TCP_Lock(false);
 		sock = new ServerSocket(port);
 		connections = new ArrayList<Socket>();
 		recvBuffers = new ArrayList<ArrayList<String>>();
@@ -24,9 +23,7 @@ public class TCP_Server extends Thread {
 		writers = new ArrayList<BufferedWriter>();
 		readers = new ArrayList<BufferedReader>();
 		
-		new AcceptThread(sock, connections, sendBuffers, recvBuffers, writers, readers, lock);
-		
-		start();
+		new AcceptThread(sock, connections, sendBuffers, recvBuffers, writers, readers);
 	}
 	
 	public int getClientCount()
@@ -44,49 +41,20 @@ public class TCP_Server extends Thread {
 		return new ArrayList<String>(sendBuffers.get(client));
 	}
 	
-	public void run()
-	{
-		while (!isInterrupted())
-		{
-			if (!connections.isEmpty())
-				for (int i = 0; i < connections.size(); i++)
-				{
-					write(i);
-					read(i);
-				}
-		}
-	}
-	
 	public void writeDouble(int client, double i)
 	{
-		lock.acquire();
 		sendBuffers.get(client).add(i+"");
-		lock.release();
 	}
 	
 	public void writeString(int client, String str)
 	{
-		lock.acquire();
 		sendBuffers.get(client).add(str);
-		lock.release();
-	}
-	
-	public Double readDouble(int client, boolean block)
-	{
-		Double ret;
-		if (block)
-			while((ret = readDouble(client)) == null);
-		else
-			ret = readDouble(client);
-		
-		return ret;
 	}
 	
 	public Double readDouble(int client)
 	{
 		Double dbl = null;
 		
-		lock.acquire();
 		for (String data : recvBuffers.get(client))
 		{		
 			try {
@@ -96,27 +64,14 @@ public class TCP_Server extends Thread {
 			} catch (NumberFormatException e) {
 			}
 		}
-		lock.release();
 
 		return dbl;
-	}
-	
-	public String readString(int client, boolean block)
-	{
-		String ret;
-		if (block)
-			while ((ret = readString(client)) == null);
-		else
-			ret = readString(client);
-		
-		return ret;
 	}
 	
 	public String readString(int client)
 	{
 		String str = null;
 		
-		lock.acquire();
 		for (String data : recvBuffers.get(client))
 		{
 			try {
@@ -127,7 +82,6 @@ public class TCP_Server extends Thread {
 				break;
 			}
 		}
-		lock.release();
 		
 		return str;
 	}
@@ -137,14 +91,15 @@ public class TCP_Server extends Thread {
 	{
 		String str = "";
 		try {
-			lock.acquire();
 			for (String tmp : sendBuffers.get(client))
 			{
 				str += tmp+"`";
 			}
 			
 			sendBuffers.get(client).removeAll(sendBuffers.get(client));
-			lock.release();
+			
+			if (str == "")
+				return false;
 
 			writers.get(client).write(str);
 			writers.get(client).flush();
@@ -157,13 +112,13 @@ public class TCP_Server extends Thread {
 	}
 	
 	//Reads a string from the server
-	public void read(int client)
+	public boolean read(int client)
 	{
 		try {
+			boolean ret = false;
 			String data = "";
 			char[] chr = new char[1];
 			
-			lock.acquire();
 			while (readers.get(client).ready())
 			{
 				readers.get(client).read(chr);
@@ -175,11 +130,14 @@ public class TCP_Server extends Thread {
 			
 			while (scan.hasNext())
 			{
+				ret = true;
 				recvBuffers.get(client).add(scan.next());
 			}
-			lock.release();
+			
+			return ret;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -201,12 +159,9 @@ class AcceptThread extends Thread
 	ArrayList<BufferedWriter> writers;
 	ArrayList<BufferedReader> readers;
 	
-	TCP_Lock lock;
-	
 	public AcceptThread(ServerSocket servSock, ArrayList<Socket> connects, ArrayList<ArrayList<String>> send, ArrayList<ArrayList<String>> recv,
-						ArrayList<BufferedWriter> bw, ArrayList<BufferedReader> br, TCP_Lock lck)
+						ArrayList<BufferedWriter> bw, ArrayList<BufferedReader> br)
 	{
-		lock = lck;
 		sendBuf = send;
 		recvBuf = recv;
 		connections = connects;
@@ -223,13 +178,11 @@ class AcceptThread extends Thread
 		{
 			try {
 				Socket sock = serv.accept();
-				lock.acquire();
 				writers.add(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())));
 				readers.add(new BufferedReader(new InputStreamReader(sock.getInputStream())));
 				recvBuf.add(new ArrayList<String>());
 				sendBuf.add(new ArrayList<String>());
 				connections.add(sock);
-				lock.release();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
