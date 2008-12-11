@@ -4,63 +4,143 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class TCP_Client {
+public class TCP_Client extends Thread {
 	Socket sock;
+	ArrayList<String> recvBuffer, sendBuffer;
 	BufferedReader reader;
 	BufferedWriter writer;
+	
+	boolean newData;
+	
+	TCP_Lock lock;
 	
 	final boolean debug = true;
 	
 	public TCP_Client(InetAddress addr, int port) throws IOException
 	{
 		sock = new Socket(addr, port);
-		
+		newData = false;
 		reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		writer = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+	
+		recvBuffer = new ArrayList<String>();
+		sendBuffer = new ArrayList<String>();
+		
+		lock = new TCP_Lock(false);
+		
+		start();
 	}
 	
-	public boolean sendIntArray(int[] intArray)
+	public ArrayList<String> getRecvBuffer()
 	{
-		String ret = "";
-		for (int i = 0; i < intArray.length; i++)
-		{
-			ret += intArray[i]+",";
-		}
-		
-		return write(ret);
+		return new ArrayList<String>(recvBuffer);
 	}
 	
-	public int[] readIntArray()
+	public ArrayList<String> getSendBuffer()
 	{
-		ArrayList<Integer> intList = new ArrayList<Integer>();
-		String data = read();
-		
-		if (data == null)
-			return null;
-		
-		Scanner scan = new Scanner(data).useDelimiter(",");
-		
-		while (scan.hasNextInt())
-		{
-			intList.add(scan.nextInt());
-		}
-		
-		int[] intArray = new int[intList.size()];
-		
-		for (int i = 0; i < intArray.length; i++)
-		{
-			intArray[i] = intList.get(i);
-		}
-		
-		return intArray;
+		return new ArrayList<String>(sendBuffer);
 	}
 	
-	//Sends a string to the server
-	public boolean write(String str)
+	public void run()
 	{
+		while (!isInterrupted())
+		{
+			write();
+			read();
+		}
+	}
+	
+	public void writeDouble(double i)
+	{
+		lock.acquire();
+		sendBuffer.add(i+"");
+		lock.release();
+	}
+	
+	public void writeString(String str)
+	{
+		lock.acquire();
+		sendBuffer.add(str);
+		lock.release();
+	}
+	
+	public Double readDouble(boolean block)
+	{
+		Double ret;
+		if (block)
+			while((ret = readDouble()) == null);
+		else
+			ret = readDouble();
+		
+		return ret;
+	}
+	
+	public Double readDouble()
+	{
+		Double dbl = null;
+		
+		lock.acquire();
+		for (String data : recvBuffer)
+		{		
+			try {
+				dbl = Double.parseDouble(data);
+				recvBuffer.remove(data);
+				break;
+			} catch (NumberFormatException e) {
+			}
+		}
+		lock.release();
+
+		return dbl;
+	}
+	
+	public String readString(boolean block)
+	{
+		String ret;
+		if (block)
+			while ((ret = readString()) == null);
+		else
+			ret = readString();
+		
+		return ret;
+	}
+	
+	public String readString()
+	{
+		String str = null;
+		
+		lock.acquire();
+		for (String data : recvBuffer)
+		{
+			try {
+				Double.parseDouble(data);
+			} catch (NumberFormatException e) {
+				str = data;
+				recvBuffer.remove(data);
+				break;
+			}
+		}
+		lock.release();
+		
+		return str;
+	}
+	
+	//Sends data to the server
+	public boolean write()
+	{
+		String str = "";
 		try {
+			lock.acquire();
+			for (String tmp : sendBuffer)
+			{
+				str += tmp+"`";
+			}
+			sendBuffer.removeAll(sendBuffer);
+			lock.release();
+			
 			writer.write(str);
 			writer.flush();
+
 			return true;
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
@@ -69,7 +149,7 @@ public class TCP_Client {
 	}
 	
 	//Reads a string from the server
-	public String read()
+	public void read()
 	{
 		try {
 			String data = "";
@@ -82,20 +162,24 @@ public class TCP_Client {
 				chr = new char[1];
 			}
 
-			return data;
+			Scanner scan = new Scanner(data).useDelimiter("`");
+			
+			lock.acquire();
+			while (scan.hasNext())
+			{
+				newData = true;
+				recvBuffer.add(scan.next());
+			}
+			lock.release();
 		} catch (IOException e) {
 			if (debug) e.printStackTrace();
 		}
-		
-		return null;
 	}
 	
 	//Closes the socket and streams
 	public void close()
 	{
 		try {
-			reader.close();
-			writer.close();
 			sock.close();
 		} catch (IOException e) {}
 	}
