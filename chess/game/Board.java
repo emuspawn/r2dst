@@ -102,7 +102,13 @@ public class Board
 		color[dest.x][dest.y] = color[space.x][space.y];
 		piece[space.x][space.y] = EMPTY;
 		color[space.x][space.y] = EMPTY;
-		moveHist.add(m);
+		if (m.isEnPasant)
+		{
+			piece[space.x][dest.y] = EMPTY;
+			color[space.x][dest.y] = EMPTY;
+		}
+		
+		moveHist.add(m); //promote to queen
 		for (int i = 0; i < 8; i++)
 		{
 			if (piece[7][i] == PAWN)
@@ -145,6 +151,12 @@ public class Board
 							// capture left
 							if (column > 0 && row < 7 && color[row + 1][column - 1] == WHITE)
 								moveList.add(new Move(new Point(row, column), new Point(row + 1, column - 1)));
+							// en pasant right
+							if (row == 4 && column < 7 && color[row][column + 1] == WHITE && piece[row][column + 1] == PAWN && color[row + 1][column + 1] == EMPTY)
+								moveList.add(new Move(new Point(row, column), new Point(row + 1, column + 1), true));
+							// en pasant left
+							if (row == 4 && column > 0 && color[row][column - 1] == WHITE && piece[row][column - 1] == PAWN && color[row + 1][column - 1] == EMPTY)
+								moveList.add(new Move(new Point(row, column), new Point(row + 1, column - 1), true));
 						}
 						else
 						{
@@ -156,6 +168,10 @@ public class Board
 								moveList.add(new Move(new Point(row, column), new Point(row - 1, column + 1)));
 							if (column > 0 && row > 0 && color[row - 1][column - 1] == BLACK)
 								moveList.add(new Move(new Point(row, column), new Point(row - 1, column - 1)));
+							if (row == 3 && column < 7 && color[row][column + 1] == BLACK && piece[row][column + 1] == PAWN && color[row - 1][column + 1] == EMPTY)
+								moveList.add(new Move(new Point(row, column), new Point(row - 1, column + 1), true));
+							if (row == 3 && column > 0 && color[row][column - 1] == BLACK && piece[row][column - 1] == PAWN && color[row - 1][column - 1] == EMPTY)
+								moveList.add(new Move(new Point(row, column), new Point(row - 1, column - 1), true));
 						}
 						break;
 
@@ -291,6 +307,7 @@ public class Board
 		return moveList;
 	}
 
+	//this function tells how many pieces of each type are attacking a position
 	public int[] checkAttacked(Point position, int side)
 	{
 		int col = position.x;
@@ -298,6 +315,7 @@ public class Board
 		int k, y, h;
 		k = col + (row * 8);
 		// converts 2d to 1d, because im too lazy to change all this crap now
+		//if someone else wants to, go ahead
 		int pieces[] = new int[64];
 		for (int a = 0; a < 8; a++)
 		{
@@ -546,12 +564,18 @@ public class Board
 	{
 		if (moveHist.size() > 0)
 		{
-			Point dest = moveHist.get(moveHist.size() - 1).getDest();
-			Point space = moveHist.get(moveHist.size() - 1).getSpace();
-			piece[space.x][space.y] = moveHist.get(moveHist.size() - 1).spacePiece;
-			color[space.x][space.y] = moveHist.get(moveHist.size() - 1).spaceCol;
-			piece[dest.x][dest.y] = moveHist.get(moveHist.size() - 1).destPiece;
-			color[dest.x][dest.y] = moveHist.get(moveHist.size() - 1).destCol;
+			Move m =  moveHist.get(moveHist.size() - 1);
+			Point dest = m.getDest();
+			Point space = m.getSpace();
+			piece[space.x][space.y] = m.spacePiece;
+			color[space.x][space.y] = m.spaceCol;
+			piece[dest.x][dest.y] = m.destPiece;
+			color[dest.x][dest.y] = m.destCol;
+			if (m.isEnPasant)
+			{
+				piece[space.x][dest.y] = PAWN;
+				color[space.x][dest.y] = 1 - m.spaceCol;
+			}
 			moveHist.remove(moveHist.size() - 1);
 		}
 	}

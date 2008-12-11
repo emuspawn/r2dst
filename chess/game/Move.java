@@ -5,11 +5,18 @@ public class Move
 {
 	public int score, spacePiece, spaceCol, destPiece, destCol;
 	public Point space, destination;
+	public boolean isEnPasant;
 
 	public Move(Point s, Point d)
 	{
 		space = s;
 		destination = d;
+	}
+	
+	public Move(Point s, Point d, boolean enPasant)
+	{
+		this(s,d);
+		isEnPasant = enPasant;
 	}
 
 	public boolean identical(Move m)
