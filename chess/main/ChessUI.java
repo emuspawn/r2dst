@@ -39,7 +39,7 @@ public class ChessUI implements Runnable
 			b.move(m);
 			try
 			{
-				Thread.sleep(2000); //wait so the user can see what the comp did
+				Thread.sleep(1000); //wait so the user can see what the comp did
 			}
 			catch (InterruptedException e)
 			{

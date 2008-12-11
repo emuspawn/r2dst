@@ -12,16 +12,20 @@ import game.*;
   */
 public class KyleAI implements ChessAI
 {
-	final static int VALUE_PAWN = 100;
-	final static int VALUE_KNIGHT = 300;
-	final static int VALUE_BISHOP = 300;
-	final static int VALUE_ROOK = 500;
-	final static int VALUE_QUEEN = 900;
-	final static int VALUE_KING = 10000;
+	private final static int VALUE_PAWN = 100;
+	private final static int VALUE_KNIGHT = 300;
+	private final static int VALUE_BISHOP = 300;
+	private final static int VALUE_ROOK = 500;
+	private final static int VALUE_QUEEN = 900;
+	private final static int VALUE_KING = 10000;
+	
+	int values[] =	
+	{VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING, 0};
 
 	public int mySide;
 
-	final static int spaceValues[][] =
+	//center is more important
+	private final static int spaceValues[][] =
 	{
 	{2, 2, 2, 2, 2, 2, 2, 2},
 	{2, 4, 4, 4, 4, 4, 4, 2},
@@ -38,19 +42,10 @@ public class KyleAI implements ChessAI
 		mySide = side;
 	}
 
-	public int[] arrayFlip(int[] array)
+	private int evalBoard(Board b, int side)
 	{
-		int[] array2 = new int[array.length];
-		for (int i = array.length - 1; i >= 0; i--)
-		{
-			array2[i] = array[i - 1 - array.length];
-		}
-		return array2;
-	}
-
-	public int evalBoard(Board b, int side)
-	{
-		int values[] =	{VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING, 0};
+		//function to evaluate just the position
+		//sucks right now, need to clean up and improve
 		int score = 0;
 		for (int i = 0; i < 8; i++)
 		{
@@ -81,48 +76,41 @@ public class KyleAI implements ChessAI
 		}
 		return score;
 	}
-
-	public int getMoveScore(Board b, int side, int depth, Move bestMove)
+	
+	//need to make this a negascout search
+	private int alphaBeta(Board b, int side, int depth, Move bestMove, int alpha, int beta)
 	{
-		bestMove.setScore(Integer.MIN_VALUE);
-		ArrayList<Move> moves = b.getMoves(side);
-		Board tempBoard = new Board(b);
-		Move tempMove;
-		int value;
-		tempBoard.move(bestMove);
-		for (int i = 0; i < 1; i++)
+		/* beta represents previous player best choice - doesn't want it if alpha would worsen it */
+		if (depth == 0)
+			return -evalBoard(b, side); //get heuristic value of this position at the final depth
+		b.move(bestMove);
+		ArrayList<Move> possibleMoves = b.getMoves(side);
+		for (int i = 0; i < possibleMoves.size(); i++)
 		{
-			tempMove = moves.get(i);
-			if (depth - 1 > 0)
-			{
-				value = getMoveScore(tempBoard, 1 - side, depth - 1, tempMove);
-			}
-			else
-			{
-				value = evalBoard(tempBoard, side);
-				tempMove.setScore(value);
-			}
-			if (tempMove.getScore() >= bestMove.getScore())
-			{
-				bestMove.setScore(tempMove.getScore());
-				bestMove = tempMove;
-			}
+			//recursion stuff
+			alpha = Math.max(alpha, -alphaBeta(b, 1-side, depth-1, possibleMoves.get(i), -beta, -alpha));
+			/* use symmetry, -beta becomes subsequently pruned alpha */
+			if (beta <= alpha) /* Beta cut-off */
+				break;
 		}
-		tempBoard.undo();
-		return bestMove.getScore();
+		b.undo(); //undo the move it made
+		return alpha;
+		
 	}
 
 	public Move think(Board b, int side)
 	{
-		int depth = 1; //depth to think ahead, more than 1 doesnt work right now
+		int depth = 4; //depth to think ahead
 		ArrayList<Move> possible = b.getMoves(side);
 		Move best = possible.get(0);
-		int score = -999999;
+		int score = Integer.MIN_VALUE;
 		for (int i = 0; i < possible.size(); i++)
 		{
 			int tscore;
-			tscore = getMoveScore(b, side, depth, possible.get(i));
+			//depth search!
+			tscore = -alphaBeta(b, side, depth-1, possible.get(i), Integer.MIN_VALUE, Integer.MAX_VALUE);
 
+			//picks the "best of all possible moves" (not yet..)
 			if (tscore > score)
 			{
 				score = tscore;
@@ -132,6 +120,7 @@ public class KyleAI implements ChessAI
 		return best;
 	}
 
+	//this should eventually be removed, ugly
 	private int arraySum(int[] array)
 	{
 		int sum = 0;
@@ -142,21 +131,22 @@ public class KyleAI implements ChessAI
 		return sum;
 	}
 
+	//should remove this, too
 	private int sumStuff(int[] atkArray, int[] defArray, int[] values)
 	{
 		int score = 0;
 		int s1 = 0, s2 = 0;
 		for (int i = 0; i < atkArray.length; i++)
 		{
-			s1 -= atkArray[i] * values[i] / 2;
+			s1 -= atkArray[i] * values[i] / 4;
 		}
 		for (int i = 0; i < defArray.length; i++)
 		{
-			s2 += defArray[i] * values[i] / 2;
+			s2 += defArray[i] * values[i] / 4;
 		}
 		if (s1 == 0 && s2 > 0)
 			s2 = 0;
 		score = s1 + (s2 / 2);
-		return score;
+		return -score;
 	}
 }
