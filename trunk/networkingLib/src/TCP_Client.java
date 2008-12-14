@@ -32,19 +32,32 @@ public class TCP_Client {
 		return new ArrayList<String>(sendBuffer);
 	}
 	
-	public void writeDouble(double i)
+	public boolean writeDouble(double i)
 	{
+		if (!sock.isConnected())
+			return false;
+		
 		sendBuffer.add(i+"");
+		
+		return true;
 	}
 	
-	public void writeString(String str)
+	public boolean writeString(String str)
 	{
+		if (!sock.isConnected())
+			return false;
+		
 		sendBuffer.add(str);
+
+		return true;
 	}
 	
 	public Double readDouble()
 	{
 		Double dbl = null;
+		
+		if (!sock.isConnected())
+			return null;
 		
 		for (String data : recvBuffer)
 		{		
@@ -62,6 +75,9 @@ public class TCP_Client {
 	public String readString()
 	{
 		String str = null;
+		
+		if (!sock.isConnected())
+			return null;
 		
 		for (String data : recvBuffer)
 		{
@@ -81,6 +97,10 @@ public class TCP_Client {
 	public boolean write()
 	{
 		String str = "";
+		
+		if (!sock.isConnected())
+			return false;
+		
 		try {
 			for (String tmp : sendBuffer)
 			{
@@ -104,6 +124,9 @@ public class TCP_Client {
 	//Reads a string from the server
 	public boolean read()
 	{
+		if (!sock.isConnected())
+			return false;
+		
 		try {
 			boolean ret = false;
 			String data = "";
