@@ -41,19 +41,32 @@ public class TCP_Server {
 		return new ArrayList<String>(sendBuffers.get(client));
 	}
 	
-	public void writeDouble(int client, double i)
+	public boolean writeDouble(int client, double i)
 	{
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
 		sendBuffers.get(client).add(i+"");
+		
+		return true;
 	}
 	
-	public void writeString(int client, String str)
+	public boolean writeString(int client, String str)
 	{
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
 		sendBuffers.get(client).add(str);
+		
+		return true;
 	}
 	
 	public Double readDouble(int client)
 	{
 		Double dbl = null;
+		
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return null;
 		
 		for (String data : recvBuffers.get(client))
 		{		
@@ -71,6 +84,9 @@ public class TCP_Server {
 	public String readString(int client)
 	{
 		String str = null;
+		
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return null;
 		
 		for (String data : recvBuffers.get(client))
 		{
@@ -90,6 +106,10 @@ public class TCP_Server {
 	public boolean write(int client)
 	{
 		String str = "";
+		
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
 		try {
 			for (String tmp : sendBuffers.get(client))
 			{
@@ -114,6 +134,9 @@ public class TCP_Server {
 	//Reads a string from the server
 	public boolean read(int client)
 	{
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
 		try {
 			boolean ret = false;
 			String data = "";
