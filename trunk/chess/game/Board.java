@@ -502,12 +502,12 @@ public class Board
 
 	public int getPieceAt(Point pos)
 	{
-		return piece[pos.y][pos.x];
+		return piece[pos.x][pos.y];
 	}
 
 	public int getColorAt(Point pos)
 	{
-		return color[pos.y][pos.x];
+		return color[pos.x][pos.y];
 	}
 
 	private int COL(int pos)
