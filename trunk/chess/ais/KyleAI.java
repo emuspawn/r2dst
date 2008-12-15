@@ -44,40 +44,39 @@ public class KyleAI implements ChessAI
 
 	private int evalBoard(Board b, int side)
 	{
-		//function to evaluate just the position
-		//sucks right now, need to scrap it and improve
+		/* New, experimental board evaluation -- in development
+		 * 
+		 * -getting this to generate a good, accurate score is what
+		 * will determine the strength of the ai
+		 */
 		int score = 0;
 		for (int i = 0; i < 8; i++)
 		{
 			for (int j = 0; j < 8; j++)
 			{
 				Point currentPoint = new Point(i, j);
-				if (b.getColorAt(currentPoint) == side)
+				int currentPiece = b.getPieceAt(currentPoint);
+				int currentColor = b.getColorAt(currentPoint);
+				int currentPieceValue = values[currentPiece];
+				int currentSpaceValue = spaceValues[currentPoint.x][currentPoint.y];
+				//adds value of pieces on each side to the score
+				//favors attacking and taking undefended pieces (in theory)
+				if (currentColor == side)
 				{
-					if (arraySum(b.checkAttacked(currentPoint, side)) > 0)
-					{
-						int defBalance = sumStuff(b.checkAttacked(currentPoint, side), b.checkDefended(currentPoint, side), values);
-						score -= values[b.getPieceAt(currentPoint)] - defBalance;
-					}
+					score += sumStuff(b.checkAttacked(currentPoint, side), b.checkDefended(currentPoint, side), values);
+					score += currentPieceValue;
 				}
-				else if (b.getColorAt(currentPoint) == 1 - side)
+				else if (currentColor == 1 - side)
 				{
-					if (arraySum(b.checkAttacked(currentPoint, 1 - side)) > 0)
-					{
-						int defBalance = sumStuff(b.checkAttacked(currentPoint, 1 - side), b.checkDefended(currentPoint, 1 - side), values);
-						score -= values[b.getPieceAt(currentPoint)] - defBalance;
-					}
+					score -= sumStuff(b.checkAttacked(currentPoint, 1-side), b.checkDefended(currentPoint, 1-side), values);
+					score -= currentPieceValue;
 				}
-				else if (b.getPieceAt(currentPoint) == EMPTY)
-				{
-					score -= (arraySum(b.checkAttacked(currentPoint, side)) - arraySum(b.checkDefended(currentPoint, side))) * spaceValues[i][j] * 4;
-				}
+				score += sumStuff(b.checkAttacked(currentPoint, side), b.checkDefended(currentPoint, side), values) - currentSpaceValue;
 			}
 		}
 		return -score;
 	}
 	
-	//need to make this a negascout search
 	private int negaScout(Board boardToEvaluate, int side, int depth, Move bestMove, int alpha, int beta)
 	{
 		if (depth == 0)
@@ -126,10 +125,10 @@ public class KyleAI implements ChessAI
 		{
 			int tscore;
 			//depth search!
-			tscore = -negaScout(b, side, depth-1, possible.get(i), Integer.MIN_VALUE, Integer.MAX_VALUE);
+			tscore = negaScout(b, side, depth-1, possible.get(i), Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 			//picks the "best of all possible moves" (not yet..)
-			if (tscore > score)
+			if (tscore >= score)
 			{
 				score = tscore;
 				best = possible.get(i);
@@ -138,33 +137,25 @@ public class KyleAI implements ChessAI
 		return best;
 	}
 
-	//this should eventually be removed, ugly
-	private int arraySum(int[] array)
-	{
-		int sum = 0;
-		for (int i = 0; i < array.length; i++)
-		{
-			sum += array[i];
-		}
-		return sum;
-	}
-
-	//should remove this, too
+	//for adding up values of defending and attacking pieces, and the piece itself
 	private int sumStuff(int[] atkArray, int[] defArray, int[] values)
 	{
 		int score = 0;
 		int s1 = 0, s2 = 0;
 		for (int i = 0; i < atkArray.length; i++)
 		{
-			s1 -= atkArray[i] * values[i] / 4;
+			s1 += atkArray[i] * values[i];
 		}
 		for (int i = 0; i < defArray.length; i++)
 		{
-			s2 += defArray[i] * values[i] / 4;
+			s2 -= defArray[i] * values[i];
 		}
-		if (s1 == 0 && s2 > 0)
+		if (s1 == 0 && s2 < 0)
 			s2 = 0;
-		score = s1 + (s2 / 2);
+		if (s1 == 0 && s2 == 0)
+			score = 0; //no credit for doing unneeded defense
+		else
+			score = s1 + s2;
 		return score;
 	}
 }
