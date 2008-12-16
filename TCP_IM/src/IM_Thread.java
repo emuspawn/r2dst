@@ -14,10 +14,6 @@ public class IM_Thread extends Thread {
 			//Check if we have data
 			if (cli.read())
 			{
-				//The first string we send is the name
-				String name = cli.readString();
-				System.out.print(name+": ");
-				
 				//This will contain the message part that is currently being processed
 				String str = cli.readString();
 				

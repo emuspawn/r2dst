@@ -32,7 +32,13 @@ public class TCP_IM_Client extends Thread {
 				if (message.equalsIgnoreCase(".quit"))
 					break;
 				
-				cli.writeString(name);
+				for (int i = 0; i < name.length(); i++)
+				{
+					cli.writeString(""+name.charAt(i));
+				}
+				
+				cli.writeString(": ");
+				
 				for (int i = 0; i < message.length(); i++)
 				{
 					cli.writeString(""+message.charAt(i));
