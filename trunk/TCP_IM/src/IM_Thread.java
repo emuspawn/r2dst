@@ -28,6 +28,8 @@ public class IM_Thread extends Thread {
 					
 					str = cli.readString();
 				}
+				
+				System.out.println();
 			}
 		}
 	}
