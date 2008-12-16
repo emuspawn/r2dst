@@ -16,24 +16,18 @@ public class IM_Thread extends Thread {
 			{
 				//The first string we send is the name
 				String name = cli.readString();
-				
-				//This will contain the entire message
-				String fullMessage = "";
+				System.out.print(name+": ");
 				
 				//This will contain the message part that is currently being processed
-				//We'll go ahead and fill the string with the first part of the message
 				String str = cli.readString();
 				
 				//Continue reading until we have cleared the buffer
 				while (str != null)
 				{
-					fullMessage += str;
+					System.out.print(str);
 					
 					str = cli.readString();
 				}
-				
-				//Print the name and the complete message
-				System.out.println(name+": "+fullMessage);
 			}
 		}
 	}

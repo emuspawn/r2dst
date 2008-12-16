@@ -17,31 +17,24 @@ public class TCP_IM_Server extends Thread {
 		{
 			for (int i = 0; i < serv.getClientCount(); i++)
 			{
-				String message = "", userName, str;
+				String str;
 				
 				//See if there is any data. Read() returns false if there is no data
 				if (serv.read(i))
 				{
-					//Get the client's user name
-					userName = serv.readString(i);
-					
-					//Get the message
 					str = serv.readString(i);
 					
 					//Read until the buffer is clear
 					while (str != null)
 					{
-						message += str;
+						//Send it to all connected clients
+						for (int j = 0; j < serv.getClientCount(); j++)
+						{
+							serv.writeString(j, str);
+							serv.write(j);
+						}
 						
 						str = serv.readString(i);
-					}
-					
-					//Send it to all connected clients
-					for (int j = 0; j < serv.getClientCount(); j++)
-					{
-						serv.writeString(j, userName);
-						serv.writeString(j, message);
-						serv.write(j);
 					}
 				}
 			}
