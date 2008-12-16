@@ -31,10 +31,14 @@ public class TCP_IM_Server extends Thread {
 						for (int j = 0; j < serv.getClientCount(); j++)
 						{
 							serv.writeString(j, str);
-							serv.write(j);
 						}
 						
 						str = serv.readString(i);
+					}
+					
+					for (int j = 0; j < serv.getClientCount(); j++)
+					{
+						serv.write(j);
 					}
 				}
 			}
