@@ -32,9 +32,10 @@ public class TCP_IM_Client extends Thread {
 				if (message.equalsIgnoreCase(".quit"))
 					break;
 				
-				//We'll send the name and the message as separate strings
-				cli.writeString(name);
-				cli.writeString(message);
+				for (int i = 0; i < message.length(); i++)
+				{
+					cli.writeString(""+message.charAt(i));
+				}
 				
 				//Call write() to do the actual send
 				cli.write();
