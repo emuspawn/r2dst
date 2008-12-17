@@ -26,6 +26,11 @@ public class TCP_Server {
 		new AcceptThread(sock, connections, sendBuffers, recvBuffers, writers, readers);
 	}
 	
+	public SocketAddress getClientSocketAddress(int client)
+	{
+		return connections.get(client).getRemoteSocketAddress();
+	}
+	
 	public int getClientCount()
 	{
 		return connections.size();
