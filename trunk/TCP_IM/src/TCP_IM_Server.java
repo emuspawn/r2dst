@@ -1,7 +1,5 @@
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 
@@ -59,10 +57,11 @@ public class TCP_IM_Server extends Thread {
 					//Read until the buffer is clear
 					while (str != null)
 					{
-						//Send it to all connected clients
+						//Send it to all connected clients except the one who sent it
 						for (int j = 0; j < serv.getClientCount(); j++)
 						{
-							serv.writeString(j, str);
+							if (j != i)
+								serv.writeString(j, str);
 						}
 						
 						str = serv.readString(i);
@@ -70,7 +69,8 @@ public class TCP_IM_Server extends Thread {
 					
 					for (int j = 0; j < serv.getClientCount(); j++)
 					{
-						serv.write(j);
+						if (j != i)
+							serv.write(j);
 					}
 				}
 			}
