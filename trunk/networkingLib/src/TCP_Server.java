@@ -46,6 +46,57 @@ public class TCP_Server {
 		return new ArrayList<String>(sendBuffers.get(client));
 	}
 	
+	public boolean writeObject(int client, Sendable snd)
+	{
+		String toSend = snd.toSendString();
+		
+		if (writeString(client, "{OBJ-ST}"))
+			if (writeString(client, toSend))
+				if (writeString(client, "{OBJ-EN}"))
+					return true;
+		
+		return false;
+	}
+	
+	public String getObjectString(int client)
+	{
+		boolean isObject = false;
+		String read = "";
+		ArrayList<String> toRemove = new ArrayList<String>();
+		
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return null;
+		
+		for (String str : recvBuffers.get(client))
+		{
+			if (str.equals("{OBJ-EN}"))
+			{
+				toRemove.add(str);
+				break;
+			}
+			
+			if (isObject)
+			{
+				read += str;
+				toRemove.add(str);
+			}
+			
+			if (str.equals("{OBJ-ST}"))
+			{
+				toRemove.add(str);
+				isObject = true;
+			}
+		}
+		
+		for (String str : toRemove)
+			recvBuffers.get(client).remove(str);
+		
+		if (read == "")
+			return null;
+		
+		return read;
+	}
+	
 	public boolean clearSendBuffer(int client)
 	{
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
@@ -109,6 +160,7 @@ public class TCP_Server {
 	public String readString(int client)
 	{
 		String str = null;
+		boolean insideObjStr = false;
 		
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
 			return null;
@@ -118,6 +170,15 @@ public class TCP_Server {
 			try {
 				Double.parseDouble(data);
 			} catch (NumberFormatException e) {
+				
+				if (data.equals("{OBJ-ST}"))
+					insideObjStr = true;
+				else if (data.equals("{OBJ-EN}"))
+					insideObjStr = false;
+				
+				if (insideObjStr)
+					continue;
+				
 				str = data;
 				recvBuffers.get(client).remove(data);
 				break;
