@@ -46,6 +46,26 @@ public class TCP_Server {
 		return new ArrayList<String>(sendBuffers.get(client));
 	}
 	
+	public boolean clearSendBuffer(int client)
+	{
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
+		sendBuffers.get(client).clear();
+		
+		return true;
+	}
+	
+	public boolean clearRecvBuffer(int client)
+	{
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
+		recvBuffers.get(client).clear();
+		
+		return true;
+	}
+	
 	public boolean writeDouble(int client, double i)
 	{
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
@@ -121,7 +141,7 @@ public class TCP_Server {
 				str += tmp+"`";
 			}
 			
-			sendBuffers.get(client).removeAll(sendBuffers.get(client));
+			sendBuffers.get(client).clear();
 			
 			if (str == "")
 				return false;
