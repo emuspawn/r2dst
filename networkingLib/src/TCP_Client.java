@@ -22,6 +22,57 @@ public class TCP_Client {
 		sendBuffer = new ArrayList<String>();
 	}
 	
+	public boolean writeObject(Sendable snd)
+	{
+		String toSend = snd.toSendString();
+		
+		if (writeString("{OBJ-ST}"))
+			if (writeString(toSend))
+				if (writeString("{OBJ-EN}"))
+					return true;
+		
+		return false;
+	}
+	
+	public String getObjectString()
+	{
+		boolean isObject = false;
+		String read = "";
+		ArrayList<String> toRemove = new ArrayList<String>();
+		
+		if (!sock.isConnected())
+			return null;
+		
+		for (String str : recvBuffer)
+		{
+			if (str.equals("{OBJ-EN}"))
+			{
+				toRemove.add(str);
+				break;
+			}
+			
+			if (isObject)
+			{
+				read += str;
+				toRemove.add(str);
+			}
+			
+			if (str.equals("{OBJ-ST}"))
+			{
+				toRemove.add(str);
+				isObject = true;
+			}
+		}
+		
+		for (String str : toRemove)
+			recvBuffer.remove(str);
+		
+		if (read == "")
+			return null;
+		
+		return read;
+	}
+	
 	public void clearRecvBuffer()
 	{
 		recvBuffer.clear();
@@ -85,6 +136,7 @@ public class TCP_Client {
 	public String readString()
 	{
 		String str = null;
+		boolean insideObjStr = false;
 		
 		if (!sock.isConnected())
 			return null;
@@ -94,6 +146,15 @@ public class TCP_Client {
 			try {
 				Double.parseDouble(data);
 			} catch (NumberFormatException e) {
+				
+				if (data.equals("{OBJ-ST}"))
+					insideObjStr = true;
+				else if (data.equals("{OBJ-EN}"))
+					insideObjStr = false;
+				
+				if (insideObjStr)
+					continue;
+				
 				str = data;
 				recvBuffer.remove(data);
 				break;
