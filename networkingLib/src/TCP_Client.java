@@ -22,6 +22,16 @@ public class TCP_Client {
 		sendBuffer = new ArrayList<String>();
 	}
 	
+	public void clearRecvBuffer()
+	{
+		recvBuffer.clear();
+	}
+	
+	public void clearSendBuffer()
+	{
+		sendBuffer.clear();
+	}
+	
 	public ArrayList<String> getRecvBuffer()
 	{
 		return new ArrayList<String>(recvBuffer);
