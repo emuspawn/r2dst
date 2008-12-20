@@ -48,21 +48,26 @@ public class TCP_Server {
 	
 	public boolean writeObject(int client, Sendable snd)
 	{
-		String toSend = snd.toSendString();
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
 		
-		if (writeString(client, "{OBJ-ST}"))
-			if (writeString(client, toSend))
-				if (writeString(client, "{OBJ-EN}"))
-					return true;
+		if (writeString(client, "{OBJ-ST}", true))
+		{
+			for (String str : snd.toSendStringList())
+				if (!writeString(client, str))
+					return false;
+			
+			if (writeString(client, "{OBJ-EN}", true))
+				return true;
+		}
 		
 		return false;
 	}
 	
-	public String getObjectString(int client)
+	public ArrayList<String> readObjectStringList(int client)
 	{
 		boolean isObject = false;
-		String read = "";
-		ArrayList<String> toRemove = new ArrayList<String>();
+		ArrayList<String> toRemove = new ArrayList<String>(), data = new ArrayList<String>();
 		
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
 			return null;
@@ -77,7 +82,7 @@ public class TCP_Server {
 			
 			if (isObject)
 			{
-				read += str;
+				data.add(str);
 				toRemove.add(str);
 			}
 			
@@ -91,10 +96,10 @@ public class TCP_Server {
 		for (String str : toRemove)
 			recvBuffers.get(client).remove(str);
 		
-		if (read == "")
+		if (data.isEmpty())
 			return null;
 		
-		return read;
+		return data;
 	}
 	
 	public boolean clearSendBuffer(int client)
@@ -129,7 +134,18 @@ public class TCP_Server {
 	
 	public boolean writeString(int client, String str)
 	{
+		return writeString(client, str, false);
+	}
+	
+	private boolean writeString(int client, String str, boolean internal)
+	{
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+			return false;
+		
+		//The string must not contain reserved characters/strings
+		if (!internal && (str.contains("{OBJ-EN}") ||
+			str.contains("{OBJ-ST}") ||
+			str.contains("`")))
 			return false;
 		
 		sendBuffers.get(client).add(str);
@@ -140,6 +156,7 @@ public class TCP_Server {
 	public Double readDouble(int client)
 	{
 		Double dbl = null;
+		boolean insideObjStr = false;
 		
 		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
 			return null;
@@ -147,9 +164,20 @@ public class TCP_Server {
 		for (String data : recvBuffers.get(client))
 		{		
 			try {
-				dbl = Double.parseDouble(data);
-				recvBuffers.get(client).remove(data);
-				break;
+				if (data.equals("{OBJ-ST}"))
+					insideObjStr = true;
+				else if (data.equals("{OBJ-EN}"))
+				{
+					insideObjStr = false;
+					continue;
+				}
+				
+				if (!insideObjStr)
+				{
+					dbl = Double.parseDouble(data);
+					recvBuffers.get(client).remove(data);
+					break;
+				}
 			} catch (NumberFormatException e) {
 			}
 		}
@@ -174,14 +202,17 @@ public class TCP_Server {
 				if (data.equals("{OBJ-ST}"))
 					insideObjStr = true;
 				else if (data.equals("{OBJ-EN}"))
+				{
 					insideObjStr = false;
-				
-				if (insideObjStr)
 					continue;
+				}
 				
-				str = data;
-				recvBuffers.get(client).remove(data);
-				break;
+				if (!insideObjStr)
+				{
+					str = data;
+					recvBuffers.get(client).remove(data);
+					break;
+				}
 			}
 		}
 		

@@ -24,21 +24,23 @@ public class TCP_Client {
 	
 	public boolean writeObject(Sendable snd)
 	{
-		String toSend = snd.toSendString();
-		
-		if (writeString("{OBJ-ST}"))
-			if (writeString(toSend))
-				if (writeString("{OBJ-EN}"))
-					return true;
+		if (writeString("{OBJ-ST}", true))
+		{
+			for (String str : snd.toSendStringList())
+				if (!writeString(str))
+					return false;
+			
+			if (writeString("{OBJ-EN}", true))
+				return true;
+		}
 		
 		return false;
 	}
 	
-	public String getObjectString()
+	public ArrayList<String> readObjectStringList()
 	{
 		boolean isObject = false;
-		String read = "";
-		ArrayList<String> toRemove = new ArrayList<String>();
+		ArrayList<String> toRemove = new ArrayList<String>(), data = new ArrayList<String>();
 		
 		if (!sock.isConnected())
 			return null;
@@ -53,7 +55,7 @@ public class TCP_Client {
 			
 			if (isObject)
 			{
-				read += str;
+				data.add(str);
 				toRemove.add(str);
 			}
 			
@@ -67,10 +69,10 @@ public class TCP_Client {
 		for (String str : toRemove)
 			recvBuffer.remove(str);
 		
-		if (read == "")
+		if (data.isEmpty())
 			return null;
 		
-		return read;
+		return data;
 	}
 	
 	public void clearRecvBuffer()
@@ -105,7 +107,18 @@ public class TCP_Client {
 	
 	public boolean writeString(String str)
 	{
+		return writeString(str, false);
+	}
+	
+	private boolean writeString(String str, boolean internal)
+	{
 		if (!sock.isConnected())
+			return false;
+		
+		//The string must not contain reserved characters/strings
+		if (!internal && (str.contains("{OBJ-EN}") ||
+			str.contains("{OBJ-ST}") ||
+			str.contains("`")))
 			return false;
 		
 		sendBuffer.add(str);
@@ -116,6 +129,7 @@ public class TCP_Client {
 	public Double readDouble()
 	{
 		Double dbl = null;
+		boolean insideObjStr = false;
 		
 		if (!sock.isConnected())
 			return null;
@@ -123,9 +137,20 @@ public class TCP_Client {
 		for (String data : recvBuffer)
 		{		
 			try {
-				dbl = Double.parseDouble(data);
-				recvBuffer.remove(data);
-				break;
+				if (data.equals("{OBJ-ST}"))
+					insideObjStr = true;
+				else if (data.equals("{OBJ-EN}"))
+				{
+					insideObjStr = false;
+					continue;
+				}
+				
+				if (!insideObjStr)
+				{
+					dbl = Double.parseDouble(data);
+					recvBuffer.remove(data);
+					break;
+				}
 			} catch (NumberFormatException e) {
 			}
 		}
@@ -150,14 +175,17 @@ public class TCP_Client {
 				if (data.equals("{OBJ-ST}"))
 					insideObjStr = true;
 				else if (data.equals("{OBJ-EN}"))
+				{
 					insideObjStr = false;
-				
-				if (insideObjStr)
 					continue;
+				}
 				
-				str = data;
-				recvBuffer.remove(data);
-				break;
+				if (!insideObjStr)
+				{
+					str = data;
+					recvBuffer.remove(data);
+					break;
+				}
 			}
 		}
 		
