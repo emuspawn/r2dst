@@ -23,6 +23,9 @@ public class Main {
 		new DoubleTest(serv, cli);
 		new ObjectTest(serv, cli);
 		//new ConnectDisconnectTest(serv, cli);
+		
+		cli.close();
+		serv.close();
 	}
 
 }
