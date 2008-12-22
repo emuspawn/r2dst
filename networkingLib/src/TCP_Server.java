@@ -9,6 +9,7 @@ public class TCP_Server {
 	private ArrayList<ArrayList<String>> recvBuffers, sendBuffers;
 	private ArrayList<BufferedWriter> writers;
 	private ArrayList<BufferedReader> readers;
+	private AcceptThread accThread;
 	
 	//private TCP_Lock lock;
 	
@@ -23,7 +24,7 @@ public class TCP_Server {
 		writers = new ArrayList<BufferedWriter>();
 		readers = new ArrayList<BufferedReader>();
 		
-		new AcceptThread(sock, connections, sendBuffers, recvBuffers, writers, readers);
+		accThread = new AcceptThread(sock, connections, sendBuffers, recvBuffers, writers, readers);
 	}
 	
 	public SocketAddress getClientSocketAddress(int client)
@@ -285,6 +286,7 @@ public class TCP_Server {
 	public void close()
 	{
 		try {
+			accThread.interrupt();
 			sock.close();
 		} catch (IOException e) {}
 	}
@@ -324,7 +326,8 @@ class AcceptThread extends Thread
 				sendBuf.add(new ArrayList<String>());
 				connections.add(sock);
 			} catch (IOException e) {
-				e.printStackTrace();
+				if (!isInterrupted())
+					e.printStackTrace();
 			}
 		}
 	}
