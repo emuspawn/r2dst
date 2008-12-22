@@ -46,7 +46,7 @@ public class ObjectTest {
 		send2 = new ExampleSendableClass(objStrList);
 		    
 		if (send2.equals(send1))
-		   	System.out.println("Test passed: send1 == send2");
+		   	System.out.println("Test passed: TCP object send and receive test");
 		else
 		    System.out.println("Test failed: send1 != send2");
 	}
@@ -63,7 +63,7 @@ public class ObjectTest {
 		}
 		
 		if (send1.equals(send2))
-			System.out.println("Test passed: send1 == send2");
+			System.out.println("Test passed: sendable reconstruction test");
 		else
 			System.out.println("Test failed: send1 != send2");
 	}

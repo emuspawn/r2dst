@@ -19,10 +19,14 @@ public class Main {
 			return;
 		}
 		
+		System.out.println("------------ Running string tests -------------\n");
 		new StringTest(serv, cli);
+		System.out.println("\n------------ Running double tests -------------\n");
 		new DoubleTest(serv, cli);
+		System.out.println("\n------------ Running object tests -------------\n");
 		new ObjectTest(serv, cli);
-		//new ConnectDisconnectTest(serv, cli);
+		System.out.println("\n------- Running Connect/Disconnect tests ------\n");
+		new ConnectDisconnectTest();
 		
 		cli.close();
 		serv.close();
