@@ -49,7 +49,7 @@ public class TCP_Server {
 	
 	public boolean writeObject(int client, Sendable snd)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		if (writeString(client, "{OBJ-ST}", true))
@@ -70,7 +70,7 @@ public class TCP_Server {
 		boolean isObject = false;
 		ArrayList<String> toRemove = new ArrayList<String>(), data = new ArrayList<String>();
 		
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return null;
 		
 		for (String str : recvBuffers.get(client))
@@ -105,7 +105,7 @@ public class TCP_Server {
 	
 	public boolean clearSendBuffer(int client)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		sendBuffers.get(client).clear();
@@ -115,7 +115,7 @@ public class TCP_Server {
 	
 	public boolean clearRecvBuffer(int client)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		recvBuffers.get(client).clear();
@@ -125,7 +125,7 @@ public class TCP_Server {
 	
 	public boolean writeDouble(int client, double i)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		sendBuffers.get(client).add(i+"");
@@ -140,7 +140,8 @@ public class TCP_Server {
 	
 	private boolean writeString(int client, String str, boolean internal)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		//The string must not contain reserved characters/strings
@@ -159,7 +160,7 @@ public class TCP_Server {
 		Double dbl = null;
 		boolean insideObjStr = false;
 		
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return null;
 		
 		for (String data : recvBuffers.get(client))
@@ -191,7 +192,7 @@ public class TCP_Server {
 		String str = null;
 		boolean insideObjStr = false;
 		
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return null;
 		
 		for (String data : recvBuffers.get(client))
@@ -225,7 +226,7 @@ public class TCP_Server {
 	{
 		String str = "";
 		
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		try {
@@ -252,7 +253,7 @@ public class TCP_Server {
 	//Reads a string from the server
 	public boolean read(int client)
 	{
-		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected())
+		if (client < 0 || client >= connections.size() || !connections.get(client).isConnected() || connections.get(client).isClosed())
 			return false;
 		
 		try {
@@ -283,12 +284,18 @@ public class TCP_Server {
 	}
 	
 	//Closes the socket and streams
-	public void close()
+	public boolean close()
 	{
+		if (sock.isClosed())
+			return false;
+		
 		try {
 			accThread.interrupt();
 			sock.close();
-		} catch (IOException e) {}
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }
 

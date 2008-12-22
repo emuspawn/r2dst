@@ -42,7 +42,7 @@ public class TCP_Client {
 		boolean isObject = false;
 		ArrayList<String> toRemove = new ArrayList<String>(), data = new ArrayList<String>();
 		
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return null;
 		
 		for (String str : recvBuffer)
@@ -97,7 +97,7 @@ public class TCP_Client {
 	
 	public boolean writeDouble(double i)
 	{
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return false;
 		
 		sendBuffer.add(i+"");
@@ -112,7 +112,7 @@ public class TCP_Client {
 	
 	private boolean writeString(String str, boolean internal)
 	{
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return false;
 		
 		//The string must not contain reserved characters/strings
@@ -131,7 +131,7 @@ public class TCP_Client {
 		Double dbl = null;
 		boolean insideObjStr = false;
 		
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return null;
 		
 		for (String data : recvBuffer)
@@ -163,7 +163,7 @@ public class TCP_Client {
 		String str = null;
 		boolean insideObjStr = false;
 		
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return null;
 		
 		for (String data : recvBuffer)
@@ -197,7 +197,7 @@ public class TCP_Client {
 	{
 		String str = "";
 		
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return false;
 		
 		try {
@@ -223,7 +223,7 @@ public class TCP_Client {
 	//Reads a string from the server
 	public boolean read()
 	{
-		if (!sock.isConnected())
+		if (!sock.isConnected() || sock.isClosed())
 			return false;
 		
 		try {
@@ -254,10 +254,16 @@ public class TCP_Client {
 	}
 	
 	//Closes the socket and streams
-	public void close()
+	public boolean close()
 	{
+		if (sock.isClosed())
+			return false;
+		
 		try {
 			sock.close();
-		} catch (IOException e) {}
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }
