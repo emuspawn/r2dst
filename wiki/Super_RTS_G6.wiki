@@ -5,6 +5,6 @@ Free RTS where users create AIs to battle againts other people's AIs. 1/21/09
 
 = Details =
 
-The current version is G6 V3.1 1/21/09
+G6 V3.1 is currently the latest version of the Super RTS. 1/21/09
 
 Each player starts with a worker and an HQ. The HQ builds more workers and the workers in turn gather resources. In addition, workers can build a barracks which trains more advanced units. The object of the game is to eliminate all other units on the opposing team (buildings count as units). 1/21/09
