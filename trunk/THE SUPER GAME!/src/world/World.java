@@ -53,7 +53,7 @@ public class World implements Runnable
 		u[userIndex].setWidth(width);
 		u[userIndex].setHeight(height);
 	}
-	public void formConnection(DirectConnection dc)
+	public void formConnection(Connection dc)
 	{
 		try
 		{
