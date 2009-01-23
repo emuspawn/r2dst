@@ -1,9 +1,0 @@
-1. the source for the early super game is in "src"
-2. i believe it should work; if not, notify me
-3. the main class used to start the game is in src\cleint\SingleClient.java
-4. the most recent version of vicissitude is included
-
-1. tu eres tonto como juan bobo porque
-2. estas leyendo este estoy seguro; recordate, jugar este
-3. videojuego es muy amazing y no lo olvide
-4. este linea es para nada
