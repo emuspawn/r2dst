@@ -11,4 +11,6 @@ public abstract class Connection
 	public abstract ArrayList<Element> getVisibleElements();
 	public abstract Camera getCamera();
 	public abstract void sendScreenDimensions(int width, int height);
+	public abstract String getUserName();
+	public abstract void setIndex(int setter);
 }
