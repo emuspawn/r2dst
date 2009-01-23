@@ -6,6 +6,8 @@ import world.unit.FriendlyUnitMask;
 import utilities.Location;
 import pathFinder.PathFinder;
 import driver.GameEngineOverlay;
+import driver.GameOverlay;
+
 import java.util.ArrayList;
 
 /*
@@ -14,11 +16,11 @@ import java.util.ArrayList;
 
 public class GatherResource extends ActionList
 {
-	public GatherResource(Owner o, ArrayList<FriendlyUnitMask> fu, FriendlyUnitMask fum, Location location, GameEngineOverlay geo, PathFinder pf)
+	public GatherResource(Owner o, ArrayList<FriendlyUnitMask> fu, FriendlyUnitMask fum, Location location, GameOverlay go, PathFinder pf)
 	{
 		//location is the location the unit is going to before gathering closest in range resource
 		super("gather resource");
-		addActionToList(new HarvestResource(fum, geo, location, pf));
+		addActionToList(new HarvestResource(fum, go, location, pf));
 		addActionToList(new DepositResource(o, fu, fum, pf));
 	}
 }

@@ -24,10 +24,9 @@ public class GameEngine implements Runnable
 	DrawFrame df;
 	Map m;
 	ArrayList<Owner> o;
-	GameEngineOverlay geo;
+	GameOverlay geo;
 	BuildEngine be;
 	ShotEngine se;
-	BuildEngineOverlay beo;
 	PathFinder pf;
 	Starter starter;
 	int threadSpeed = 20;
@@ -45,15 +44,14 @@ public class GameEngine implements Runnable
 		w = new World(m);
 		se = new ShotEngine(ue);
 		df = new DrawFrame(this, w, ue, se, m, c);
-		geo = new GameEngineOverlay(w, ue, m);
 		be = new BuildEngine(ue);
-		beo = new BuildEngineOverlay(be);
+		geo = new GameOverlay(w, ue, m, be);
 		pf = new DirectMovePF(m.getMapWidth(), m.getMapHeight());
 		
 		setupOwners();
 
 		Thread t = new Thread(this);
-		starter = new Starter(t, o.get(0), o.get(1), geo, beo, pf, m);
+		starter = new Starter(t, o.get(0), o.get(1), geo, pf, m);
 		//setupAIThreads();
 		
 		

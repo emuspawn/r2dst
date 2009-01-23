@@ -10,8 +10,7 @@ import ai.*;
 import java.util.ArrayList;
 import owner.Owner;
 import pathFinder.PathFinder;
-import driver.GameEngineOverlay;
-import world.BuildEngineOverlay;
+import driver.GameOverlay;
 
 public class Starter extends JFrame
 {
@@ -36,8 +35,7 @@ public class Starter extends JFrame
 	
 	Owner owner1;
 	Owner owner2;
-	GameEngineOverlay geo;
-	BuildEngineOverlay beo;
+	GameOverlay geo;
 	PathFinder pf;
 	
 	Thread t;
@@ -50,7 +48,7 @@ public class Starter extends JFrame
 	
 	JTextField resources = new JTextField("0", 10); //for sandbox mode
 	
-	public Starter(Thread t, Owner owner1, Owner owner2, GameEngineOverlay geo, BuildEngineOverlay beo, PathFinder pf, Map m)
+	public Starter(Thread t, Owner owner1, Owner owner2, GameOverlay geo, PathFinder pf, Map m)
 	{
 		super("AI Selector");
 		map = m;
@@ -68,7 +66,6 @@ public class Starter extends JFrame
 		this.owner1 = owner1;
 		this.owner2 = owner2;
 		this.geo = geo;
-		this.beo = beo;
 		this.pf = pf;
 		
 		loadAI(owner1, ais1, ccl1);
@@ -144,9 +141,9 @@ public class Starter extends JFrame
 			{
 				if(ailist1.getSelectedIndex() != -1 && ailist2.getSelectedIndex() != -1)
 				{
-					new AIThread(ais1.get(ailist1.getSelectedIndex()));
+					new AIThread(ais1.get(ailist1.getSelectedIndex()), owner1);
 					owner1.setAIUsing(ailist1.getSelectedValue().toString());
-					new AIThread(ais2.get(ailist2.getSelectedIndex()));
+					new AIThread(ais2.get(ailist2.getSelectedIndex()), owner2);
 					owner2.setAIUsing(ailist2.getSelectedValue().toString());
 					map.setMapWidth(mapWidth);
 					map.setMapHeight(mapHeight);
@@ -191,13 +188,9 @@ public class Starter extends JFrame
 					{
 						System.out.println("loading "+files[i]);
 						Class c = ccl.loadClass(files[i]);
-						Class[] args = new Class[4];
-						args[0] = o.getClass();
-						args[1] = geo.getClass();
-						args[2] = beo.getClass();
-						args[3] = pf.getClass().getSuperclass();
-						//args[3] = null;
-						ais.add((AI)ccl.constructObject(c, args, o, geo, beo, pf));
+						Class[] args = new Class[1];
+						args[0] = geo.getClass();
+						ais.add((AI)ccl.constructObject(c, args, geo));
 					}
 					catch(ClassNotFoundException a)
 					{

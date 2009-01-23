@@ -1,9 +1,9 @@
 package world.unit.action.actions;
 
+import driver.GameOverlay;
 import world.unit.action.*;
 import world.unit.Unit;
 import world.unit.FriendlyUnitMask;
-import world.BuildEngineOverlay;
 
 /*
  * builds a unit or building, sends the build requests to the build engine overlay
@@ -15,15 +15,15 @@ public class Build extends Action
 {
 	int counter = 0;
 	int maxCounter;
-	BuildEngineOverlay beo;
+	GameOverlay go;
 	FriendlyUnitMask building;
 	Unit u;
 	boolean constructionStarted = false;
 	
-	public Build(BuildEngineOverlay beo, FriendlyUnitMask building, Unit u)
+	public Build(GameOverlay go, FriendlyUnitMask building, Unit u)
 	{
 		super("Build");
-		this.beo = beo;
+		this.go = go;
 		this.building = building;
 		maxCounter = u.getBuildTime();
 		this.u = u;
@@ -33,7 +33,7 @@ public class Build extends Action
 		if(!constructionStarted)
 		{
 			constructionStarted = true;
-			beo.startUnitConstruction(building.getOwner(), u);
+			go.startUnitConstruction(building.getOwner(), u);
 		}
 		counter++;
 		if(counter == maxCounter)

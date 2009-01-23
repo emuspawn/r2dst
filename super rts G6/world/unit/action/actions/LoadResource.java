@@ -2,6 +2,7 @@ package world.unit.action.actions;
 
 import world.unit.action.*;
 import driver.GameConstants;
+import driver.GameOverlay;
 import world.unit.FriendlyUnitMask;
 import driver.GameEngineOverlay;
 import world.resource.Resource;
@@ -12,13 +13,13 @@ import world.resource.Resource;
 
 public class LoadResource extends Action
 {
-	GameEngineOverlay geo;
+	GameOverlay geo;
 	FriendlyUnitMask fum;
-	public LoadResource(FriendlyUnitMask fum, GameEngineOverlay geo)
+	public LoadResource(FriendlyUnitMask fum, GameOverlay go)
 	{
 		super("load resource");
 		this.fum = fum;
-		this.geo = geo;
+		this.geo = go;
 	}
 	public boolean performAction()
 	{
