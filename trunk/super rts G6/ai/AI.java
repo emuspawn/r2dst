@@ -3,29 +3,25 @@ package ai;
 import world.unit.*;
 import world.unit.action.ActionList;
 import driver.GameConstants;
-import world.BuildEngineOverlay;
 import pathFinder.PathFinder;
+import pathFinder.pathFinders.DirectMovePF;
 import world.unit.action.actions.*;
 import world.unit.building.buildings.*;
 import world.unit.units.*;
 import java.util.ArrayList;
-import driver.GameEngineOverlay;
+import driver.GameOverlay;
 import owner.Owner;
 import utilities.Location;
 
 public abstract class AI
 {
-	protected GameEngineOverlay geo;
+	protected GameOverlay go;
 	protected PathFinder pf;
-	protected Owner o;
-	private BuildEngineOverlay beo;
 	
-	public AI(Owner o, GameEngineOverlay geo, BuildEngineOverlay beo, PathFinder pf)
+	public AI(GameOverlay go)
 	{
-		this.o = o;
-		this.geo = geo;
-		this.beo = beo;
-		this.pf = pf;
+		this.go = go;
+		this.pf = new DirectMovePF(go.getMapWidth(), go.getMapHeight());
 	}
 	protected int gatherClosestResource(FriendlyUnitMask u, ArrayList<Location> l)
 	{
@@ -47,7 +43,7 @@ public abstract class AI
 			}
 			if(index != -1)
 			{
-				u.setAction(this, new GatherResource(u.getOwner(), geo.getFriendlyUnits(u.getOwner()), u, l.get(index), geo, pf));
+				u.setAction(this, new GatherResource(u.getOwner(), go.getFriendlyUnits(u.getOwner()), u, l.get(index), go, pf));
 			}
 		}
 		return index;
@@ -55,7 +51,7 @@ public abstract class AI
 	protected boolean moveUnit(FriendlyUnitMask u, Location destination)
 	{
 		//returns true if the unit was successfully given the order to move
-		if(destination.x >= 0 && destination.x <= geo.getMapWidth() && destination.y >= 0 && destination.y <= geo.getMapHeight())
+		if(destination.x >= 0 && destination.x <= go.getMapWidth() && destination.y >= 0 && destination.y <= go.getMapHeight())
 		{
 			if(u.getAction().getName().equalsIgnoreCase("idle"))
 			{
@@ -78,10 +74,11 @@ public abstract class AI
 	}
 	protected boolean buildAt(String name, FriendlyUnitMask builder, Location l)
 	{
-		if(l.x >= 0 && l.x <= geo.getMapWidth() && l.y >= 0 && l.y <= geo.getMapHeight())
+		if(l.x >= 0 && l.x <= go.getMapWidth() && l.y >= 0 && l.y <= go.getMapHeight())
 		{
 			if(builder.getAction().getName().equalsIgnoreCase("idle"))
 			{
+				Owner o = builder.getOwner();
 				Unit u = getUnit(o, name, l);
 				int pop = o.getUnitCount()+u.getPopulationValue()-u.getPopulationAugment();
 				if(builder.isBuilder() && pop <= o.getCurrentUnitMax() && pop <= GameConstants.maxUnitCount)
@@ -94,7 +91,7 @@ public abstract class AI
 							ActionList al = new ActionList("build at");
 							al.addActionToList(new Move(l, builder, pf, null));
 							//al.addActionToList(new Build(beo, builder, builder.getLocation(), u));
-							al.addActionToList(new Build(beo, builder, u));
+							al.addActionToList(new Build(go, builder, u));
 							builder.setAction(this, al);
 							return true;
 						}
@@ -140,5 +137,5 @@ public abstract class AI
 		}
 		return null;
 	}
-	public abstract void performAIFunctions();
+	public abstract void performAIFunctions(Owner o);
 }

@@ -1,12 +1,16 @@
 package ai;
 
+import owner.Owner;
+
 public class AIThread implements Runnable
 {
 	AI ai;
+	Owner o;
 	
-	public AIThread(AI ai)
+	public AIThread(AI ai, Owner o)
 	{
 		this.ai = ai;
+		this.o = o;
 		new Thread(this).start();
 	}
 	public void run()
@@ -15,7 +19,7 @@ public class AIThread implements Runnable
 		{
 			try
 			{
-				ai.performAIFunctions();
+				ai.performAIFunctions(o);
 			}
 			catch(Exception e)
 			{

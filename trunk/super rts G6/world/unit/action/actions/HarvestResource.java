@@ -3,6 +3,7 @@ package world.unit.action.actions;
 import world.unit.action.ActionList;
 import world.unit.FriendlyUnitMask;
 import driver.GameEngineOverlay;
+import driver.GameOverlay;
 import utilities.Location;
 import pathFinder.PathFinder;
 
@@ -12,10 +13,10 @@ import pathFinder.PathFinder;
 
 public class HarvestResource extends ActionList
 {
-	public HarvestResource(FriendlyUnitMask fum, GameEngineOverlay geo, Location location, PathFinder pf)
+	public HarvestResource(FriendlyUnitMask fum, GameOverlay go, Location location, PathFinder pf)
 	{
 		super("harvest resource");
 		addActionToList(new Move(location, fum, pf, null));
-		addActionToList(new LoadResource(fum, geo));
+		addActionToList(new LoadResource(fum, go));
 	}
 }

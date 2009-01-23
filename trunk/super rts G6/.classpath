@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Vicissitude3"/>
+	<classpathentry kind="lib" path="/Users/apcsa/Desktop/Standard_G6_Super_RTS-V3.1/super rts G6.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

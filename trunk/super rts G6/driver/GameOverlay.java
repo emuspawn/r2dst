@@ -4,6 +4,7 @@ import owner.Owner;
 import map.Map;
 import world.resource.Resource;
 import world.unit.*;
+import world.BuildEngine;
 import world.World;
 import utilities.Location;
 import world.unit.action.Action;
@@ -14,17 +15,26 @@ import java.util.ArrayList;
  * given to the class "AI", a restricted UnitEngine so the AI wont cheat
  */
 
-public class GameEngineOverlay
+public class GameOverlay
 {
 	private UnitEngine ue;
 	private World w;
 	private Map m;
+	private BuildEngine be;
 	
-	public GameEngineOverlay(World w, UnitEngine ue, Map m)
+	
+	public GameOverlay(World w, UnitEngine ue, Map m, BuildEngine be)
 	{
 		this.w = w;
 		this.ue = ue;
 		this.m = m;
+		this.be = be;
+	}
+
+	public int startUnitConstruction(Owner owner, Unit u)
+	{
+		//returns the build time for the unit
+		return be.startUnitConstruction(owner, u);
 	}
 	public ArrayList<FriendlyUnitMask> getFriendlyUnits(Owner o)
 	{
