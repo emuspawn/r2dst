@@ -19,4 +19,7 @@ public class Dirt extends Permanent
 		g.setColor(new Color(132, 66, 0)); //brown
 		g.fillRect(p.x-width/2, p.y-height/2, width, height);
 	}
+	public int getElementType() {
+		return 2;
+	}
 }

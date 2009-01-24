@@ -24,4 +24,8 @@ public class HardStone extends Permanent
 		g.setColor(new Color(140, 140, 140)); //brown
 		g.fillRect(p.x-width/2, p.y-height/2, width, height);
 	}
+	public int getElementType()
+	{
+		return 3;
+	}
 }

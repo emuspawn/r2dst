@@ -30,7 +30,7 @@ public class DirectConnection extends Connection
 		{
 			System.out.println("io exception");
 		}
-		w.formConnection(this);
+		setIndex(w.formConnection(userName));
 	}
 	public String getUserName()
 	{

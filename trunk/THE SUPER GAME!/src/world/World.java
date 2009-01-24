@@ -53,24 +53,26 @@ public class World implements Runnable
 		u[userIndex].setWidth(width);
 		u[userIndex].setHeight(height);
 	}
-	public void formConnection(Connection dc)
+	public int formConnection(String userName)
 	{
 		try
 		{
-			File f = new File(System.getProperty("user.dir")+"\\"+dc.getUserName()+".acc");
+			File f = new File(System.getProperty("user.dir")+"\\"+userName+".acc");
 			FileInputStream fis = new FileInputStream(f);
 			DataInputStream dis = new DataInputStream(fis);
 			int index = registerUser(new User(dis));
-			System.out.println("user "+dc.getUserName()+" registered");
-			System.out.println("direct connection formed successfully");
+			System.out.println("user "+userName+" registered");
+			System.out.println("connection formed successfully");
 			System.out.println("user index = "+index);
-			dc.setIndex(index);
+			return index;
 		}
 		catch(IOException e)
 		{
 			System.out.println("io exception");
 			e.printStackTrace();
 		}
+		
+		return -1;
 	}
 	private int registerUser(User user)
 	{
