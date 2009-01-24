@@ -1,5 +1,7 @@
 package world.environment;
 
+import java.io.Serializable;
+
 import world.Element;
 import world.destructable.Destructable;
 import utilities.Location;
@@ -9,8 +11,9 @@ import utilities.Location;
  * destroyed or times runs out
  */
 
-public abstract class EnvironmentalEffect extends Destructable
+public abstract class EnvironmentalEffect extends Destructable implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	public EnvironmentalEffect(String name, Location l, int width, int height)
 	{
 		super(name, l, width, height);

@@ -1,23 +1,32 @@
 package client;
 
 import javax.swing.*;
+
+import network.NetworkServer;
 import world.*;
 import java.awt.*;
 import connection.*;
+
 import java.util.ArrayList;
 import java.awt.event.*;
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class SingleClient extends JFrame implements Runnable
 {
 	private static final long serialVersionUID = 1L;
 	DrawCanvas drawer;
-	DirectConnection dc;
+	Connection dc;
 	World w;
 	ClientKeyInterpreter cki;
 	KeyMap km;
 	double fps;
 	double afps; //average fps
+	NetworkServer serv;
+	
+	//Set to true to test my network implementation
+	final boolean useNetwork = false;
 	
 	public SingleClient()
 	{
@@ -38,7 +47,24 @@ public class SingleClient extends JFrame implements Runnable
 		catch(IOException e){}
 		w = new World(true);
 		String userName = "test";
-		dc = new DirectConnection(w, userName);
+		
+		if (useNetwork)
+		{
+			System.out.println("Using a network connection for data transfer");
+			try {
+				serv = new NetworkServer(1164, w);
+				dc = new NetworkConnection(InetAddress.getLocalHost(), 1164, userName);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return;
+			}
+		}
+		else
+		{
+			System.out.println("Using a direct connection for data transfer");
+			dc = new DirectConnection(w, userName);
+		}
 		cki = new ClientKeyInterpreter(dc);
 		addKeyListener(cki);
 		drawer = new DrawCanvas(this, dc);
@@ -96,12 +122,12 @@ class DrawCanvas extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	SingleClient sc;
-	DirectConnection dc;
+	Connection dc;
 	
-	public DrawCanvas(SingleClient sc, DirectConnection dc)
+	public DrawCanvas(SingleClient sc, Connection dc2)
 	{
 		this.sc = sc;
-		this.dc = dc;
+		this.dc = dc2;
 	}
 	public void update(Graphics g)
 	{

@@ -6,21 +6,23 @@ import java.awt.Graphics2D;
 import utilities.Location;
 import world.action.actions.Idle;
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 /*
  * the building blocks of the world, all things in the world are elements
  */
 
-public abstract class Element
+public abstract class Element implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	private String name;
 	protected Location l;
 	Action a = new Idle();
 	protected boolean impassable = false;
 	
-	protected Rectangle bounds;
-	protected int width;
-	protected int height;
+	public Rectangle bounds;
+	public int width;
+	public int height;
 	
 	public Element(String name, Location location, int width, int height)
 	{
@@ -56,6 +58,7 @@ public abstract class Element
 		l = new Location(location.x, location.y);
 		updateBounds();
 	}
+	public abstract int getElementType();
 	private void updateBounds()
 	{
 		bounds = new Rectangle((int)l.x-width/2, (int)l.y-height/2, width, height);
