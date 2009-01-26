@@ -20,7 +20,7 @@ This is an attempt to show a tech tree for the game.
 
 
 
-HQ
+*HQ*
 
 Builds:
 -Worker
@@ -30,17 +30,17 @@ Basic gatherer/builder.
 Long vision range and quick movement.
 
 
-Radar
+*Radar*
 
 Builds nothing, but has a large vision range.
 
 
-Defense Turret
+*Defense Turret*
 
 Shoots at stuff.
 
 
-Barracks
+*Barracks*
 
 Builds:
 -Fighter
@@ -53,7 +53,7 @@ More build options than Worker, but cannot gather.
 More expensive and damaging long range unit.
 
 
-Factory
+*Factory*
 
 Builds:
 -Tank
@@ -66,7 +66,7 @@ Long range, slow, high damage.
 Can gather better but not build buildings.
 
 
-Airport
+*Airport*
 
 Builds:
 -Fighter
@@ -79,7 +79,7 @@ Kills everything.
 For transporting stuff.
 
 
-Lab
+*Lab*
 
 Upgrades:
 -Ground unit damage
@@ -88,7 +88,5 @@ Upgrades:
 -Air unit armor
 -Building health
 -Airport tech (need to research it before airport can be built)
-
-
 
 
