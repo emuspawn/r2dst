@@ -32,12 +32,12 @@ public class TCP_Server implements Runnable {
 				
 				if (client != null)
 				{
-					clients.add(client);
 					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
 					//We MUST flush here otherwise our clients will block forever in the TCP_Client contructor
 					out.flush();
 					outStreams.add(out);
 					inStreams.add(new ObjectInputStream(client.getInputStream()));
+					clients.add(client);
 				}
 			} catch (IOException e) {
 				if (!thrd.isInterrupted())
@@ -59,6 +59,9 @@ public class TCP_Server implements Runnable {
 	
 	public SocketAddress getClientSocketAddress(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		return clients.get(client).getRemoteSocketAddress();
 	}
 	
@@ -69,6 +72,9 @@ public class TCP_Server implements Runnable {
 	
 	public int getAvailableBytes(int client)
 	{
+		if (!validateClient(client))
+			return -1;
+		
 		try {
 			return inStreams.get(client).available();
 		} catch (IOException e) {
@@ -78,6 +84,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeObject(int client, Object obj)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeObject(obj);
 			return true;
@@ -88,6 +97,9 @@ public class TCP_Server implements Runnable {
 	
 	public Object readObject(int client) throws ClassNotFoundException
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readObject();
 		} catch (IOException e) {
@@ -97,6 +109,9 @@ public class TCP_Server implements Runnable {
 	
 	public Short readShort(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readShort();
 		} catch (IOException e) {
@@ -106,6 +121,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeShort(int client, Short data)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeShort(data);
 			return true;
@@ -116,6 +134,9 @@ public class TCP_Server implements Runnable {
 	
 	public Integer readInt(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readInt();
 		} catch (IOException e) {
@@ -125,6 +146,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeInt(int client, Integer data)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeInt(data);
 			return true;
@@ -135,6 +159,9 @@ public class TCP_Server implements Runnable {
 	
 	public Byte readByte(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readByte();
 		} catch (IOException e) {
@@ -144,6 +171,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeByte(int client, Byte data)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeByte(data);
 			return true;
@@ -154,6 +184,9 @@ public class TCP_Server implements Runnable {
 	
 	public Double readDouble(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readDouble();
 		} catch (IOException e) {
@@ -163,6 +196,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeDouble(int client, Double dbl)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeDouble(dbl);
 			return true;
@@ -173,6 +209,9 @@ public class TCP_Server implements Runnable {
 	
 	public Character readChar(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readChar();
 		} catch (IOException e) {
@@ -182,6 +221,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeChar(int client, Character chr)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeChar(chr);
 			return true;
@@ -192,6 +234,9 @@ public class TCP_Server implements Runnable {
 	
 	public String readString(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readUTF();
 		} catch (IOException e) {
@@ -201,6 +246,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeString(int client, String str)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeUTF(str);
 			return true;
@@ -211,6 +259,9 @@ public class TCP_Server implements Runnable {
 	
 	public Float readFloat(int client)
 	{
+		if (!validateClient(client))
+			return null;
+		
 		try {
 			return inStreams.get(client).readFloat();
 		} catch (IOException e) {
@@ -220,6 +271,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeFloat(int client, Float flt)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeFloat(flt);
 			return true;
@@ -230,6 +284,9 @@ public class TCP_Server implements Runnable {
 	
 	public Boolean readBool(int client)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			return inStreams.get(client).readBoolean();
 		} catch (IOException e) {
@@ -239,6 +296,9 @@ public class TCP_Server implements Runnable {
 	
 	public boolean writeBool(int client, Boolean bol)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).writeBoolean(bol);
 			return true;
@@ -249,11 +309,22 @@ public class TCP_Server implements Runnable {
 	
 	public boolean flush(int client)
 	{
+		if (!validateClient(client))
+			return false;
+		
 		try {
 			outStreams.get(client).flush();
 			return true;
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	
+	private boolean validateClient(int client)
+	{
+		if (client < 0 || client >= clients.size())
+			return false;
+		
+		return true;
 	}
 }
