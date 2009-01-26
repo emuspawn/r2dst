@@ -13,6 +13,9 @@ Each player starts with a worker and an HQ. The HQ builds more workers and the w
 
 Land grab.
 
+Rush
+
+Turtle
 
 = Tech Tree =
 
