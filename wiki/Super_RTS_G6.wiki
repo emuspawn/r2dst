@@ -75,9 +75,15 @@ Transport Copter: For transporting stuff.
 *Lab*
 
 Upgrades:
+
 -Ground unit damage
+
 -Ground unit armor
+
 -Air unit damage
+
 -Air unit armor
+
 -Building health
+
 -Airport tech (need to research it before airport can be built)
