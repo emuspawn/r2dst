@@ -8,3 +8,87 @@ Free RTS where users create AIs to battle againts other people's AIs. 1/21/09
 G6 V3.1 is currently the latest version of the Super RTS. 1/21/09
 
 Each player starts with a worker and an HQ. The HQ builds more workers and the workers in turn gather resources. In addition, workers can build a barracks which trains more advanced units. The object of the game is to eliminate all other units on the opposing team (buildings count as units). 1/21/09
+
+= Stratergery =
+
+Land grab.
+
+
+= Tech Tree =
+
+This is an attempt to show a tech tree for the game.
+
+
+
+HQ
+
+Builds:
+-Worker
+Basic gatherer/builder.
+
+-Scout
+Long vision range and quick movement.
+
+
+Radar
+
+Builds nothing, but has a large vision range.
+
+
+Defense Turret
+
+Shoots at stuff.
+
+
+Barracks
+
+Builds:
+-Fighter
+Basic cheap fighter unit.
+
+-Engineer
+More build options than Worker, but cannot gather.
+
+-Sniper
+More expensive and damaging long range unit.
+
+
+Factory
+
+Builds:
+-Tank
+Slow but powerful ground unit.
+
+-Artillery
+Long range, slow, high damage.
+
+-Harvester
+Can gather better but not build buildings.
+
+
+Airport
+
+Builds:
+-Fighter
+Air-to-Air only.
+
+-Bomber
+Kills everything.
+
+-Transport Copter
+For transporting stuff.
+
+
+Lab
+
+Upgrades:
+-Ground unit damage
+-Ground unit armor
+-Air unit damage
+-Air unit armor
+-Building health
+-Airport tech (need to research it before airport can be built)
+
+
+
+
