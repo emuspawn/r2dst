@@ -28,16 +28,14 @@ public class World implements Runnable
 		dm = new DynamicMap(1000, 1000);
 		try
 		{
-			File f = new File(System.getProperty("user.dir")+"\\keyMapV1.km");
+			File f = new File(System.getProperty("user.dir")+File.separator+"keyMapV1.km");
 			FileInputStream fis = new FileInputStream(f);
 			DataInputStream dis = new DataInputStream(fis);
 			km = new KeyMap(dis);
 			
 			if(loadWorld)
 			{
-				//f = new File(System.getProperty("user.dir")+"\\testWorld.wrld");
-				//f = new File(System.getProperty("user.dir")+"\\largeTestMap.wrld");
-				f = new File(System.getProperty("user.dir")+"\\largeTestMap.wrld");
+				f = new File(System.getProperty("user.dir")+File.separator+"largeTestMap.wrld");
 				fis = new FileInputStream(f);
 				dis = new DataInputStream(fis);
 				WorldReader.readWorld(this, dis);
@@ -46,6 +44,7 @@ public class World implements Runnable
 		catch(IOException e)
 		{
 			System.out.println("io exception");
+			e.printStackTrace();
 		}
 	}
 	public void updateUserScreenDimensions(int userIndex, int width, int height)
@@ -57,7 +56,7 @@ public class World implements Runnable
 	{
 		try
 		{
-			File f = new File(System.getProperty("user.dir")+"\\"+userName+".acc");
+			File f = new File(System.getProperty("user.dir")+File.separator+userName+".acc");
 			FileInputStream fis = new FileInputStream(f);
 			DataInputStream dis = new DataInputStream(fis);
 			int index = registerUser(new User(dis));
