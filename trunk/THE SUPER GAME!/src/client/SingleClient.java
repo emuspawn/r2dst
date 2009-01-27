@@ -1,8 +1,9 @@
 package client;
 
+import graphics.Camera;
+
 import javax.swing.*;
 
-import network.NetworkServer;
 import world.*;
 import java.awt.*;
 import connection.*;
@@ -10,8 +11,6 @@ import connection.*;
 import java.util.ArrayList;
 import java.awt.event.*;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class SingleClient extends JFrame implements Runnable
 {
@@ -23,10 +22,6 @@ public class SingleClient extends JFrame implements Runnable
 	KeyMap km;
 	double fps;
 	double afps; //average fps
-	NetworkServer serv;
-	
-	//Set to true to test my network implementation
-	final boolean useNetwork = false;
 	
 	public SingleClient()
 	{
@@ -47,24 +42,8 @@ public class SingleClient extends JFrame implements Runnable
 		catch(IOException e){}
 		w = new World(true);
 		String userName = "test";
-		
-		if (useNetwork)
-		{
-			System.out.println("Using a network connection for data transfer");
-			try {
-				serv = new NetworkServer(1164, w);
-				dc = new NetworkConnection(InetAddress.getLocalHost(), 1164, userName);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				return;
-			}
-		}
-		else
-		{
-			System.out.println("Using a direct connection for data transfer");
-			dc = new DirectConnection(w, userName);
-		}
+		System.out.println("Using a direct connection for data transfer");
+		dc = new DirectConnection(w, userName);
 		cki = new ClientKeyInterpreter(dc);
 		addKeyListener(cki);
 		drawer = new DrawCanvas(this, dc);
@@ -82,13 +61,23 @@ public class SingleClient extends JFrame implements Runnable
 		double end;
 		double total = 0;
 		double count = 0;
+		
+		int oldWidth = -1, oldHeight = -1;
 		for(;;)
 		{
 			count++;
 			start = System.currentTimeMillis();
+
+			if (oldWidth != drawer.getWidth() || oldHeight != drawer.getHeight())
+			{
+				dc.sendScreenDimensions(drawer.getWidth(), drawer.getHeight());
+				
+				oldWidth = drawer.getWidth();
+				oldHeight = drawer.getHeight();
+			}
+			
 			drawer.repaint();
-			dc.sendScreenDimensions(drawer.getWidth(), drawer.getHeight());
-			//cki.relayUserActions();
+			
 			try
 			{
 				Thread.sleep(40);
@@ -143,6 +132,7 @@ class DrawCanvas extends JPanel
 	}
 	private void paintOffScreen(Graphics2D g)
 	{
+		Camera cam = dc.getCamera();
 		g.setColor(Color.green);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		ArrayList<Element> e = dc.getVisibleElements();
@@ -152,7 +142,7 @@ class DrawCanvas extends JPanel
 		
 		for(int i = e.size()-1; i >= 0; i--)
 		{
-			e.get(i).drawElementLG(g, dc.getCamera());
+			e.get(i).drawElementLG(g, cam);
 		}
 		
 		g.setColor(Color.blue);
