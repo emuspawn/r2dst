@@ -44,6 +44,8 @@ public class NetworkServer extends Thread {
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 					continue;
+				} catch (ClassCastException e) {
+					continue;
 				}
 
 				if (pack != null)
@@ -62,22 +64,24 @@ public class NetworkServer extends Thread {
 					
 					case 2:
 						ArrayList<Element> els = wrld.getVisibleElements((Integer)pack.data[0]);
-						
+
+						Object[][] data = new Object[els.size()][6];
 						for (int k = 0; k < els.size(); k++)
 						{
-							NetworkPacket newPack = new NetworkPacket();
-							newPack.type = 5;
-							newPack.data = new Object[] {els.get(k).getElementType(), els.get(k).getName(), els.get(k).getLocation(), els.get(k).width, els.get(k).height};
-							serv.writeObject(i, newPack);
-							serv.flush(i);
+							data[k][0] = els.get(k).getElementType();
+							data[k][1] = els.get(k).getName();
+							data[k][2] = els.get(k).getLocation().x;
+							data[k][3] = els.get(k).getLocation().y;
+							data[k][4] = els.get(k).width;
+							data[k][5] = els.get(k).height;
 						}
 						
-						NetworkPacket compPack = new NetworkPacket();
+						NetworkPacket newPack = new NetworkPacket();
 						
-						compPack.type = -1;
-						compPack.data = null;
+						newPack.type = 5;
+						newPack.data = data;
 						
-						serv.writeObject(i, compPack);
+						serv.writeObject(i, newPack);
 						serv.flush(i);
 						
 						break;

@@ -78,6 +78,7 @@ public class NetworkConnection extends Connection implements Serializable {
 	public ArrayList<Element> getVisibleElements()
 	{
 		lck.acquireLock();
+		
 		NetworkPacket pack = new NetworkPacket();
 		
 		pack.type = 2;
@@ -91,29 +92,26 @@ public class NetworkConnection extends Connection implements Serializable {
 		lck.releaseLock();
 		
 		ArrayList<Element> els = new ArrayList<Element>();
-		NetworkPacket recvPacket;
-		for (;;)
-		{
-			recvPacket = (NetworkPacket)getResponse();
+		NetworkPacket recvPacket = (NetworkPacket)getResponse();
+		Object[][] networkData = (Object[][])recvPacket.data;
+		for (int i = 0; i < networkData.length; i++)
+		{	
+			Object[] data = networkData[i];
 			
-			if (recvPacket.type == -1 && recvPacket.data == null)
-			{
-				//System.out.println("Got end packet");
-				break;
-			}
+			Location loc = new Location((Double)data[2], (Double)data[3]);
 			
-			switch ((Integer)recvPacket.data[0])
+			switch ((Integer)data[0])
 			{
 			case 1:
-				els.add(new Unit((String)recvPacket.data[1], (Location)recvPacket.data[2], (Integer)recvPacket.data[3], (Integer)recvPacket.data[4]));
+				els.add(new Unit((String)data[1], loc, (Integer)data[4], (Integer)data[5]));
 				break;
 				
 			case 2:
-				els.add(new Dirt((Location)recvPacket.data[2]));
+				els.add(new Dirt(loc));
 				break;
 				
 			case 3:
-				els.add(new HardStone((Location)recvPacket.data[2]));
+				els.add(new HardStone(loc));
 				break;
 				
 			default:
@@ -162,6 +160,7 @@ public class NetworkConnection extends Connection implements Serializable {
 		cli.writeObject(pack);
 		cli.flush();
 		lck.releaseLock();
+		//throw new IllegalArgumentException();
 	}
 	
 	private Object getResponse()
@@ -170,7 +169,7 @@ public class NetworkConnection extends Connection implements Serializable {
 		
 		lck.acquireLock();
 		try {
-			while ((read = cli.readObject()) == null);
+			while ((read = cli.readObject()) == null) Thread.yield();
 		} catch (ClassNotFoundException e) {
 			read = null;
 		}
