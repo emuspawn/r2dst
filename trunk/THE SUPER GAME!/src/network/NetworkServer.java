@@ -23,11 +23,19 @@ public class NetworkServer extends Thread {
 	
 	public void run()
 	{
+		int lastClientCount = 0;
+		
 		while (serv.getClientCount() == 0);
-		System.out.println("Got a client");
 		
 		while (!isInterrupted())
 		{
+			int diff;
+			if ((diff = serv.getClientCount() - lastClientCount) > 0)
+			{
+				System.out.println(diff + " new client(s) connected");
+				lastClientCount += diff;
+			}
+			
 			for (int i = 0; i < serv.getClientCount(); i++)
 			{
 				NetworkPacket pack;
