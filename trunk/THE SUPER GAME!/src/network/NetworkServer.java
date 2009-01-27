@@ -1,5 +1,7 @@
 package network;
 
+import graphics.Camera;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -73,7 +75,8 @@ public class NetworkServer extends Thread {
 						break;
 						
 					case 3:
-						serv.writeObject(i, wrld.getUserCamera((Integer)pack.data[0]));
+						Camera userCam = wrld.getUserCamera((Integer)pack.data[0]);
+						serv.writeObject(i, new Integer[] {userCam.getWidth(), userCam.getWidth(), userCam.getxover(), userCam.getyover()});
 						serv.flush(i);
 						break;
 						
