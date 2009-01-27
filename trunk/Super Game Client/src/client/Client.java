@@ -1,5 +1,7 @@
 package client;
 
+import graphics.Camera;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -21,7 +23,7 @@ public class Client extends JFrame implements Runnable
 	
 	public Client()
 	{
-		super("SG V1");
+		super("The Super Game Network Client");
 		addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e)
 			{
@@ -64,12 +66,21 @@ public class Client extends JFrame implements Runnable
 		double end;
 		double total = 0;
 		double count = 0;
+		
+		int oldWidth = -1, oldHeight = -1;
+
 		for(;;)
 		{
 			count++;
 			start = System.currentTimeMillis();
+			if (drawer.getWidth() != oldWidth || drawer.getHeight() != oldHeight)
+			{
+				conn.sendScreenDimensions(drawer.getWidth(), drawer.getHeight());
+				oldWidth = drawer.getWidth();
+				oldHeight = drawer.getHeight();
+			}
+			
 			drawer.repaint();
-			conn.sendScreenDimensions(drawer.getWidth(), drawer.getHeight());
 			//cki.relayUserActions();
 			try
 			{
@@ -125,6 +136,8 @@ class DrawCanvas extends JPanel
 	}
 	private void paintOffScreen(Graphics2D g)
 	{
+		//System.out.println("Entered paint");
+		Camera cam = conn.getCamera();
 		g.setColor(Color.green);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		ArrayList<Element> e = conn.getVisibleElements();
@@ -134,7 +147,7 @@ class DrawCanvas extends JPanel
 		
 		for(int i = e.size()-1; i >= 0; i--)
 		{
-			e.get(i).drawElementLG(g, conn.getCamera());
+			e.get(i).drawElementLG(g, cam);
 		}
 		
 		g.setColor(Color.blue);
@@ -143,5 +156,6 @@ class DrawCanvas extends JPanel
 		g.setColor(Color.black);
 		g.drawString("fps: "+sc.getFPS(), 3, 16);
 		g.drawString("average fps: "+sc.getAverageFPS()+"", 3, 32);
+		//System.out.println("Done with paint");
 	}
 }
