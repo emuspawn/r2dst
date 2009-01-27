@@ -2,6 +2,7 @@ package connection;
 
 import graphics.Camera;
 
+import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -124,12 +125,8 @@ public class NetworkConnection extends Connection implements Serializable {
 		return els;
 	}
 	public Camera getCamera()
-	{
-		//This has to be commented out until someone (JACK!!!) makes Camera implement
-		//Serializable so I can send and receive it
-		//The hack I have in place allows us to view some stuff but it's very buggy
-		
-		/*lck.acquireLock();
+	{	
+		lck.acquireLock();
 		
 		NetworkPacket pack = new NetworkPacket();
 		
@@ -143,9 +140,12 @@ public class NetworkConnection extends Connection implements Serializable {
 		
 		lck.releaseLock();
 		
-		return (Camera)getResponse();*/
+		Integer[] ints = (Integer[])getResponse();
 		
-		return new Camera(10, 10);
+		Camera newCam = new Camera(ints[0], ints[1]);
+		newCam.centerOn(new Location(ints[2]+(ints[0]/2), ints[3]+(ints[1]/2)));
+		
+		return newCam;
 	}
 	public void setIndex(int setter)
 	{
