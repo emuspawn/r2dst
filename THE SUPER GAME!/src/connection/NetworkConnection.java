@@ -12,7 +12,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 import network.Lock;
-import network.NetworkPacket;
 
 import permanents.terrain.Dirt;
 import permanents.terrain.HardStone;
@@ -64,14 +63,11 @@ public class NetworkConnection extends Connection implements Serializable {
 	public void relayUserAction(char c)
 	{
 		lck.acquireLock();
-		NetworkPacket pack = new NetworkPacket();
 		
-		pack.type = 1;
-		pack.data = new Object[] {km.getUserActionByte(c), Byte.parseByte(index+"")};
-		
-		//System.out.println("Sending relayUserAction Packet");
-		
-		cli.writeObject(pack);
+		cli.writeInt(1);
+		cli.writeByte(km.getUserActionByte(c));
+		cli.writeByte(Byte.parseByte(index+""));
+
 		cli.flush();
 		lck.releaseLock();
 	}
@@ -79,38 +75,37 @@ public class NetworkConnection extends Connection implements Serializable {
 	{
 		lck.acquireLock();
 		
-		NetworkPacket pack = new NetworkPacket();
+		cli.writeInt(2);
+		cli.writeInt(index);
 		
-		pack.type = 2;
-		pack.data = new Object[] {index};
-		
-		//System.out.println("Sending getVisible Packet");
-		
-		cli.writeObject(pack);
 		cli.flush();
 		
 		lck.releaseLock();
 		
 		ArrayList<Element> els = new ArrayList<Element>();
-		NetworkPacket recvPacket = (NetworkPacket)getResponse();
-		Object[][] networkData = (Object[][])recvPacket.data;
-		for (int i = 0; i < networkData.length; i++)
+		int elementCount = getIntResponse();
+		for (int i = 0; i < elementCount; i++)
 		{	
-			Object[] data = networkData[i];
+			int type = getIntResponse();
+			String name = getStringResponse();
+			Location loc = new Location(getDoubleResponse(), getDoubleResponse());
+			int width = getIntResponse();
+			int height = getIntResponse();
 			
-			Location loc = new Location((Double)data[2], (Double)data[3]);
-			
-			switch ((Integer)data[0])
+			switch (type)
 			{
 			case 1:
-				els.add(new Unit((String)data[1], loc, (Integer)data[4], (Integer)data[5]));
+				//System.out.println("Making new Unit");
+				els.add(new Unit(name, loc, width, height));
 				break;
 				
 			case 2:
+				//System.out.println("Making new Dirt");
 				els.add(new Dirt(loc));
 				break;
 				
 			case 3:
+				//System.out.println("Making new Stone");
 				els.add(new HardStone(loc));
 				break;
 				
@@ -126,22 +121,17 @@ public class NetworkConnection extends Connection implements Serializable {
 	{	
 		lck.acquireLock();
 		
-		NetworkPacket pack = new NetworkPacket();
+		cli.writeInt(3);
+		cli.writeInt(index);
 		
-		pack.type = 3;
-		pack.data = new Object[] {index};
-		
-		//System.out.println("Sending getCamera packet");
-		
-		cli.writeObject(pack);
 		cli.flush();
 		
 		lck.releaseLock();
 		
-		Integer[] ints = (Integer[])getResponse();
+		int width = getIntResponse(), height = getIntResponse(), xover = getIntResponse(), yover = getIntResponse();
 		
-		Camera newCam = new Camera(ints[0], ints[1]);
-		newCam.centerOn(new Location(ints[2]+(ints[0]/2), ints[3]+(ints[1]/2)));
+		Camera newCam = new Camera(width, height);
+		newCam.centerOn(new Location(xover+(width/2), yover+(height/2)));
 		
 		return newCam;
 	}
@@ -152,27 +142,41 @@ public class NetworkConnection extends Connection implements Serializable {
 	public void sendScreenDimensions(int width, int height)
 	{
 		lck.acquireLock();
-		NetworkPacket pack = new NetworkPacket();
 		
-		pack.type = 0;
-		pack.data = new Object[] {index, width, height};
+		cli.writeInt(0);
+		cli.writeInt(index);
+		cli.writeInt(width);
+		cli.writeInt(height);
 		
-		cli.writeObject(pack);
 		cli.flush();
 		lck.releaseLock();
-		//throw new IllegalArgumentException();
 	}
-	
-	private Object getResponse()
+	private Integer getIntResponse()
 	{
-		Object read = null;
+		Integer read = null;
 		
 		lck.acquireLock();
-		try {
-			while ((read = cli.readObject()) == null) Thread.yield();
-		} catch (ClassNotFoundException e) {
-			read = null;
-		}
+		while ((read = cli.readInt()) == null) Thread.yield();
+		lck.releaseLock();
+		
+		return read;
+	}
+	private Double getDoubleResponse()
+	{
+		Double read = null;
+		
+		lck.acquireLock();
+		while ((read = cli.readDouble()) == null) Thread.yield();
+		lck.releaseLock();
+		
+		return read;
+	}
+	private String getStringResponse()
+	{
+		String read = null;
+		
+		lck.acquireLock();
+		while ((read = cli.readString()) == null) Thread.yield();
 		lck.releaseLock();
 		
 		return read;
@@ -181,15 +185,13 @@ public class NetworkConnection extends Connection implements Serializable {
 	private void requestConnection()
 	{
 		lck.acquireLock();
-		NetworkPacket pack = new NetworkPacket();
 		
-		pack.type = 4;
-		pack.data = new Object[] {userName};
+		cli.writeInt(4);
+		cli.writeString(userName);
 		
-		cli.writeObject(pack);
 		cli.flush();
 		lck.releaseLock();
 		
-		setIndex((Integer)getResponse());
+		setIndex(getIntResponse());
 	}
 }
