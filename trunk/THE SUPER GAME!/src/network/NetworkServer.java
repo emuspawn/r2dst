@@ -21,11 +21,38 @@ public class NetworkServer extends Thread {
 		start();
 	}
 	
+	private Integer getIntResponse(int client)
+	{
+		Integer read = null;
+		
+		while ((read = serv.readInt(client)) == null) Thread.yield();
+		
+		return read;
+	}
+	
+	private Byte getByteResponse(int client)
+	{
+		Byte read = null;
+		
+		while ((read = serv.readByte(client)) == null) Thread.yield();
+		
+		return read;
+	}
+	
+	private String getStringResponse(int client)
+	{
+		String read = null;
+			
+		while ((read = serv.readString(client)) == null) Thread.yield();
+			
+		return read;
+	}
+	
 	public void run()
 	{
 		int lastClientCount = 0;
 		
-		while (serv.getClientCount() == 0);
+		while (serv.getClientCount() == 0) Thread.yield();
 		
 		while (!isInterrupted())
 		{
@@ -38,62 +65,51 @@ public class NetworkServer extends Thread {
 			
 			for (int i = 0; i < serv.getClientCount(); i++)
 			{
-				NetworkPacket pack;
-				try {
-					pack = (NetworkPacket)serv.readObject(i);
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					continue;
-				} catch (ClassCastException e) {
-					continue;
-				}
-
-				if (pack != null)
+				Integer type = serv.readInt(i);
+					
+				if (type != null)
 				{
 					//System.out.println("Got packet with type: " +pack.type);
 					
-					switch (pack.type)
+					switch (type)
 					{
 					case 0:
-						wrld.updateUserScreenDimensions((Integer)pack.data[0], (Integer)pack.data[1], (Integer)pack.data[2]);
+						wrld.updateUserScreenDimensions(getIntResponse(i), getIntResponse(i), getIntResponse(i));
 						break;
 						
 					case 1:
-						wrld.interpretUserAction((Byte)pack.data[0], (Byte)pack.data[1]);
+						wrld.interpretUserAction(getByteResponse(i), getByteResponse(i));
 						break;
 					
 					case 2:
-						ArrayList<Element> els = wrld.getVisibleElements((Integer)pack.data[0]);
+						ArrayList<Element> els = wrld.getVisibleElements(getIntResponse(i));
 
-						Object[][] data = new Object[els.size()][6];
+						serv.writeInt(i, els.size());
 						for (int k = 0; k < els.size(); k++)
 						{
-							data[k][0] = els.get(k).getElementType();
-							data[k][1] = els.get(k).getName();
-							data[k][2] = els.get(k).getLocation().x;
-							data[k][3] = els.get(k).getLocation().y;
-							data[k][4] = els.get(k).width;
-							data[k][5] = els.get(k).height;
+							serv.writeInt(i, els.get(k).getElementType());
+							serv.writeString(i, els.get(k).getName());
+							serv.writeDouble(i, els.get(k).getLocation().x);
+							serv.writeDouble(i, els.get(k).getLocation().y);
+							serv.writeInt(i, els.get(k).width);
+							serv.writeInt(i, els.get(k).height);
 						}
 						
-						NetworkPacket newPack = new NetworkPacket();
-						
-						newPack.type = 5;
-						newPack.data = data;
-						
-						serv.writeObject(i, newPack);
 						serv.flush(i);
 						
 						break;
 						
 					case 3:
-						Camera userCam = wrld.getUserCamera((Integer)pack.data[0]);
-						serv.writeObject(i, new Integer[] {userCam.getWidth(), userCam.getWidth(), userCam.getxover(), userCam.getyover()});
+						Camera userCam = wrld.getUserCamera(getIntResponse(i));
+						serv.writeInt(i, userCam.getWidth());
+						serv.writeInt(i, userCam.getHeight());
+						serv.writeInt(i, userCam.getxover());
+						serv.writeInt(i, userCam.getyover());
 						serv.flush(i);
 						break;
 						
 					case 4:
-						serv.writeObject(i, (Integer)wrld.formConnection((String)pack.data[0]));
+						serv.writeInt(i, (Integer)wrld.formConnection(getStringResponse(i)));
 						serv.flush(i);
 						break;
 					}
