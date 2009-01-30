@@ -38,15 +38,13 @@ public class DynamicMap
 	public ArrayList<Element> getVisibleElements(Camera c)
 	{
 		ArrayList<Element> l = new ArrayList<Element>();
-		for(int i = (c.getxover()+c.getWidth())/partitionSize; i >= c.getxover()/partitionSize; i--)
+		int xover = c.getxover() >= 0 ? c.getxover() : 0;
+		int yover = c.getyover() >= 0 ? c.getyover() : 0;
+		for(int i = (xover+c.getWidth())/partitionSize; i >= xover/partitionSize; i--)
 		{
-			for(int a = (c.getyover()+c.getHeight())/partitionSize; a >= c.getyover()/partitionSize; a--)
+			for(int a = (yover+c.getHeight())/partitionSize; a >= yover/partitionSize; a--)
 			{
-				try
-				{
-					l.addAll(e[i][a].getElements());
-				}
-				catch(ArrayIndexOutOfBoundsException e){}
+				l.addAll(e[i][a].getElements());
 			}
 		}
 		for(int i = l.size()-1; i >= 0; i--)
