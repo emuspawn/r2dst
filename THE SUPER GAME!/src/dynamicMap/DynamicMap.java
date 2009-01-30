@@ -13,8 +13,11 @@ public class DynamicMap
 	private int width;
 	private int height;
 	
+	ArrayList<Element> movableUnits;
+	
 	public DynamicMap(int width, int height)
 	{
+		movableUnits = new ArrayList<Element>();
 		setSize(width, height);
 	}
 	public int getWidth()
@@ -28,6 +31,7 @@ public class DynamicMap
 	public void setPartitionSize(int setter)
 	{
 		partitionSize = setter;
+		adjustMap();
 	}
 	public void setSize(int width, int height)
 	{
@@ -35,14 +39,18 @@ public class DynamicMap
 		this.height = height;
 		adjustMap();
 	}
+	public void addMovableElement(Element e)
+	{
+		movableUnits.add(e);
+	}
 	public ArrayList<Element> getVisibleElements(Camera c)
 	{
 		ArrayList<Element> l = new ArrayList<Element>();
-		int xover = c.getxover() >= 0 ? c.getxover() : 0;
-		int yover = c.getyover() >= 0 ? c.getyover() : 0;
-		for(int i = (xover+c.getWidth())/partitionSize; i >= xover/partitionSize; i--)
+		l.addAll(movableUnits);
+		
+		for(int i = (width)/partitionSize; i >= 0; i--)
 		{
-			for(int a = (yover+c.getHeight())/partitionSize; a >= yover/partitionSize; a--)
+			for(int a = (height)/partitionSize; a >= 0; a--)
 			{
 				l.addAll(e[i][a].getElements());
 			}
@@ -65,9 +73,9 @@ public class DynamicMap
 			l = getElements();
 		}
 		e = new Partition[(width/partitionSize)+1][(height/partitionSize)+1];
-		for(int i = (width/partitionSize)+1-1; i >= 0; i--)
+		for(int i = (width/partitionSize); i >= 0; i--)
 		{
-			for(int a = (height/partitionSize)+1-1; a >= 0; a--)
+			for(int a = (height/partitionSize); a >= 0; a--)
 			{
 				e[i][a] = new Partition();
 			}
