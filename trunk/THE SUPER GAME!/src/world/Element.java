@@ -63,5 +63,5 @@ public abstract class Element implements Serializable
 	{
 		bounds = new Rectangle((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
-	public abstract void drawElementLG(Graphics2D g, Camera c); //draws the low graphics representation of the element
+	public abstract void drawElementLG(Graphics2D g); //draws the low graphics representation of the element
 }

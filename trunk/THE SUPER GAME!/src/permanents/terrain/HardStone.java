@@ -18,11 +18,10 @@ public class HardStone extends Permanent
 		super("hard stone", l, 30, 30);
 		impassable = true;
 	}
-	public void drawElementLG(Graphics2D g, Camera c)
+	public void drawElementLG(Graphics2D g)
 	{
-		Point p = c.getScreenLocation(l);
 		g.setColor(new Color(140, 140, 140)); //brown
-		g.fillRect(p.x-width/2, p.y-height/2, width, height);
+		g.fillRect((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
 	public int getElementType()
 	{

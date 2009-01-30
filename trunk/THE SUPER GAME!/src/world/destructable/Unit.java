@@ -1,5 +1,6 @@
 package world.destructable;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.Serializable;
 
@@ -14,9 +15,10 @@ public class Unit extends Destructable implements Serializable
 	{
 		super(name, l, width, height);
 	}
-	public void drawElementLG(Graphics2D g, Camera c)
+	public void drawElementLG(Graphics2D g)
 	{
-		
+		g.setColor(Color.blue);
+		g.fillOval((int)l.x-15, (int)l.y-15, 30, 30);
 	}
 	public void destroy(World w)
 	{
