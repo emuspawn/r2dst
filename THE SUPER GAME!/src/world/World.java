@@ -81,6 +81,7 @@ public class World implements Runnable
 			if(u[i] == null)
 			{
 				u[i] = user;
+				dm.addElement(user.getUnit());
 				return i;
 			}
 		}
@@ -170,10 +171,15 @@ public class World implements Runnable
 	{
 		return u[userIndex].getCamera();
 	}
+	
 	public ArrayList<Element> getVisibleElements(int userIndex)
 	{
 		//used by single clients or server (server breaks down and sends to network clients)
 		return dm.getVisibleElements(u[userIndex].getCamera());
+	}
+	public User getUser(int userIndex)
+	{
+		return u[userIndex];
 	}
 	public DynamicMap getDynamicMap()
 	{

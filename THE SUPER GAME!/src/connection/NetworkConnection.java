@@ -2,7 +2,6 @@ package connection;
 
 import graphics.Camera;
 
-import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -115,6 +114,8 @@ public class NetworkConnection extends Connection implements Serializable {
 			}
 		}
 		
+		System.out.println("getVisibleUnits()");
+		
 		return els;
 	}
 	public Camera getCamera()
@@ -128,12 +129,17 @@ public class NetworkConnection extends Connection implements Serializable {
 		
 		lck.releaseLock();
 		
-		int width = getIntResponse(), height = getIntResponse(), xover = getIntResponse(), yover = getIntResponse();
+		System.out.println("getCamera()");
+		
+		
+		int width = getIntResponse(), height = getIntResponse(), x = getIntResponse(), y = getIntResponse();
 		
 		Camera newCam = new Camera(width, height);
-		newCam.centerOn(new Location(xover+(width/2), yover+(height/2)));
+		newCam.centerOn(new Location(x, y));
 		
-		return newCam;
+		throw new IllegalArgumentException();
+		
+		//return newCam;
 	}
 	public void setIndex(int setter)
 	{

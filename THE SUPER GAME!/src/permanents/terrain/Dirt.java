@@ -13,11 +13,10 @@ public class Dirt extends Permanent
 	{
 		super("dirt", l, 30, 30);
 	}
-	public void drawElementLG(Graphics2D g, Camera c)
+	public void drawElementLG(Graphics2D g)
 	{
-		Point p = c.getScreenLocation(l);
 		g.setColor(new Color(132, 66, 0)); //brown
-		g.fillRect(p.x-width/2, p.y-height/2, width, height);
+		g.fillRect((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
 	public int getElementType() {
 		return 2;

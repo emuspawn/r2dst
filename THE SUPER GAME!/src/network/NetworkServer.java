@@ -100,11 +100,12 @@ public class NetworkServer extends Thread {
 						break;
 						
 					case 3:
-						Camera userCam = wrld.getUserCamera(getIntResponse(i));
+						int userIndex = getIntResponse(i);
+						Camera userCam = wrld.getUserCamera(userIndex);
 						serv.writeInt(i, userCam.getWidth());
 						serv.writeInt(i, userCam.getHeight());
-						serv.writeInt(i, userCam.getxover());
-						serv.writeInt(i, userCam.getyover());
+						serv.writeInt(i, (int)wrld.getUser(userIndex).getUnit().getLocation().x);
+						serv.writeInt(i, (int)wrld.getUser(userIndex).getUnit().getLocation().y);
 						serv.flush(i);
 						break;
 						
