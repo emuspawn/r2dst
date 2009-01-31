@@ -81,7 +81,7 @@ public class World implements Runnable
 			if(u[i] == null)
 			{
 				u[i] = user;
-				dm.addElement(user.getUnit());
+				addDestructable(user.getUnit());
 				return i;
 			}
 		}
@@ -139,12 +139,15 @@ public class World implements Runnable
 	{
 		return de;
 	}
+	public void addDestructable(Destructable d)
+	{
+		de.add(d);
+		dm.addElement(d);
+	}
 	public void addPermanent(Permanent p)
 	{
 		pe.add(p);
-		p.setLocation(new Location(p.getLocation().x+13, p.getLocation().y));
-		dm.addElement(pe.get(pe.size()-1));
-		pe.get(pe.size()-1).setLocation(new Location(p.getLocation().x-13, p.getLocation().y));
+		dm.addElement(p);
 	}
 	public String getName()
 	{
