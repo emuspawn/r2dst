@@ -1,4 +1,6 @@
 #labels Featured
+#Super RTS G6
+
 = Summary =
 
 Free RTS where users create AIs to battle againts other people's AIs. 1/21/09
