@@ -1,0 +1,7 @@
+#summary Super RTS G7
+
+= Introduction =
+
+The G7 Super RTS is currently in development.
+
+= Details =
