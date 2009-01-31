@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import world.Element;
 import world.World;
-import TCPv2.TCP_Server;
+import TCPv3.TCP_Server;
 
 public class NetworkServer extends Thread {
 	TCP_Server serv;
@@ -29,25 +29,6 @@ public class NetworkServer extends Thread {
 		
 		return read;
 	}
-	
-	private Byte getByteResponse(int client)
-	{
-		Byte read = null;
-		
-		while ((read = serv.readByte(client)) == null) Thread.yield();
-		
-		return read;
-	}
-	
-	private String getStringResponse(int client)
-	{
-		String read = null;
-			
-		while ((read = serv.readString(client)) == null) Thread.yield();
-			
-		return read;
-	}
-	
 	public void run()
 	{
 		int lastClientCount = 0;
@@ -69,7 +50,7 @@ public class NetworkServer extends Thread {
 					
 				if (type != null)
 				{
-					//System.out.println("Got packet with type: " +pack.type);
+					//System.out.println("Got packet with type: " +type);
 					
 					switch (type)
 					{
@@ -78,7 +59,7 @@ public class NetworkServer extends Thread {
 						break;
 						
 					case 1:
-						wrld.interpretUserAction(getByteResponse(i), getByteResponse(i));
+						wrld.interpretUserAction(getIntResponse(i).byteValue(), getIntResponse(i).byteValue());
 						break;
 					
 					case 2:
@@ -87,16 +68,18 @@ public class NetworkServer extends Thread {
 						serv.writeInt(i, els.size());
 						for (int k = 0; k < els.size(); k++)
 						{
-							serv.writeInt(i, els.get(k).getElementType());
-							serv.writeString(i, els.get(k).getName());
-							serv.writeDouble(i, els.get(k).getLocation().x);
-							serv.writeDouble(i, els.get(k).getLocation().y);
+							serv.writeInt(i, els.get(k).getShapeType());
+							serv.writeInt(i, els.get(k).getColor().getRed());
+							serv.writeInt(i, els.get(k).getColor().getGreen());
+							serv.writeInt(i, els.get(k).getColor().getBlue());
+							serv.writeInt(i, els.get(k).isImpassable() ? 1 : 0);
+							serv.writeInt(i, (int)els.get(k).getLocation().x);
+							serv.writeInt(i, (int)els.get(k).getLocation().y);
 							serv.writeInt(i, els.get(k).width);
 							serv.writeInt(i, els.get(k).height);
 						}
 						
 						serv.flush(i);
-						
 						break;
 						
 					case 3:
@@ -110,7 +93,7 @@ public class NetworkServer extends Thread {
 						break;
 						
 					case 4:
-						serv.writeInt(i, (Integer)wrld.formConnection(getStringResponse(i)));
+						serv.writeInt(i, (Integer)wrld.formConnection("test"));
 						serv.flush(i);
 						break;
 					}

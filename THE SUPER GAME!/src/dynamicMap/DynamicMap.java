@@ -41,12 +41,13 @@ public class DynamicMap
 	}
 	public void addMovableElement(Element e)
 	{
-		movableUnits.add(e);
+		//movableUnits.add(e);
+		addElement(e);
 	}
 	public ArrayList<Element> getVisibleElements(Camera c)
 	{
 		ArrayList<Element> l = new ArrayList<Element>();
-		l.addAll(movableUnits);
+		//l.addAll(movableUnits);
 		
 		for(int i = (width)/partitionSize; i >= 0; i--)
 		{
@@ -55,6 +56,7 @@ public class DynamicMap
 				l.addAll(e[i][a].getElements());
 			}
 		}
+		
 		for(int i = l.size()-1; i >= 0; i--)
 		{
 			if(!c.getOnScreen(l.get(i).getBounds()))

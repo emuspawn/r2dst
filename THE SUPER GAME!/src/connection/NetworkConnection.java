@@ -2,6 +2,7 @@ package connection;
 
 import graphics.Camera;
 
+import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +20,7 @@ import utilities.Location;
 import world.Element;
 import world.destructable.Unit;
 
-import TCPv2.*;
+import TCPv3.*;
 
 public class NetworkConnection extends Connection implements Serializable {
 
@@ -64,8 +65,8 @@ public class NetworkConnection extends Connection implements Serializable {
 		lck.acquireLock();
 		
 		cli.writeInt(1);
-		cli.writeByte(km.getUserActionByte(c));
-		cli.writeByte(Byte.parseByte(index+""));
+		cli.writeInt(((Byte)km.getUserActionByte(c)).intValue());
+		cli.writeInt(index);
 
 		cli.flush();
 		lck.releaseLock();
@@ -85,36 +86,15 @@ public class NetworkConnection extends Connection implements Serializable {
 		int elementCount = getIntResponse();
 		for (int i = 0; i < elementCount; i++)
 		{	
-			int type = getIntResponse();
-			String name = getStringResponse();
-			Location loc = new Location(getDoubleResponse(), getDoubleResponse());
+			int shapeType = getIntResponse();
+			int R = getIntResponse(), G = getIntResponse(), B = getIntResponse();
+			boolean impassable = getIntResponse() == 1 ? true : false;
+			Location loc = new Location(getIntResponse(), getIntResponse());
 			int width = getIntResponse();
 			int height = getIntResponse();
 			
-			switch (type)
-			{
-			case 1:
-				//System.out.println("Making new Unit");
-				els.add(new Unit(name, loc, width, height));
-				break;
-				
-			case 2:
-				//System.out.println("Making new Dirt");
-				els.add(new Dirt(loc));
-				break;
-				
-			case 3:
-				//System.out.println("Making new Stone");
-				els.add(new HardStone(loc));
-				break;
-				
-			default:
-				System.out.println("BAD TYPE!!!");
-				while(true);
-			}
+			els.add(new Element(shapeType, new Color(R, G, B), impassable, loc, width, height));
 		}
-		
-		System.out.println("getVisibleUnits()");
 		
 		return els;
 	}
@@ -129,17 +109,12 @@ public class NetworkConnection extends Connection implements Serializable {
 		
 		lck.releaseLock();
 		
-		System.out.println("getCamera()");
-		
-		
 		int width = getIntResponse(), height = getIntResponse(), x = getIntResponse(), y = getIntResponse();
 		
 		Camera newCam = new Camera(width, height);
 		newCam.centerOn(new Location(x, y));
 		
-		throw new IllegalArgumentException();
-		
-		//return newCam;
+		return newCam;
 	}
 	public void setIndex(int setter)
 	{
@@ -157,35 +132,9 @@ public class NetworkConnection extends Connection implements Serializable {
 		cli.flush();
 		lck.releaseLock();
 	}
-	private Integer getIntResponse()
+	private int getIntResponse()
 	{
-		Integer read = null;
-		
-		lck.acquireLock();
-		while ((read = cli.readInt()) == null) Thread.yield();
-		lck.releaseLock();
-		
-		return read;
-	}
-	private Double getDoubleResponse()
-	{
-		Double read = null;
-		
-		lck.acquireLock();
-		while ((read = cli.readDouble()) == null) Thread.yield();
-		lck.releaseLock();
-		
-		return read;
-	}
-	private String getStringResponse()
-	{
-		String read = null;
-		
-		lck.acquireLock();
-		while ((read = cli.readString()) == null) Thread.yield();
-		lck.releaseLock();
-		
-		return read;
+		return cli.readInt();
 	}
 	
 	private void requestConnection()
@@ -193,7 +142,7 @@ public class NetworkConnection extends Connection implements Serializable {
 		lck.acquireLock();
 		
 		cli.writeInt(4);
-		cli.writeString(userName);
+		//cli.writeString(userName);
 		
 		cli.flush();
 		lck.releaseLock();
