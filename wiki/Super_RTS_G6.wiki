@@ -1,5 +1,5 @@
+#summary Super RTS G6
 #labels Featured
-#Super RTS G6
 
 = Summary =
 
