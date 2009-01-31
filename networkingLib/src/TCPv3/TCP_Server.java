@@ -38,48 +38,25 @@ public class TCP_Server implements Runnable {
 		}
 	}
 	
-	public byte[] readBytes(int client)
-	{
-		try {
-			byte[] data = new byte[ins.get(client).available()];
-			
-			ins.get(client).read(data);
-			
-			return data;
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
 	public int getClientCount()
 	{
 		return clients.size();
 	}
 	
-	public int getAvailableBytes(int client)
-	{
-		try {
-			return ins.get(client).available();
-		} catch (IOException e) {
-			return -1;
-		}
-	}
-	
 	public Integer readInt(int client)
 	{
 		int data = 0;
-		byte[] bytes = new byte[5];
 		
-		try {
-			ins.get(client).read(bytes);
-		} catch (IOException e) {
-			return null;
-		}
-		
-		for (int i = 0; i < bytes.length; i++)
+		byte nextByte = 0;
+		byte[] tempBuffer;
+		while (nextByte != -128)
 		{
-			data += bytes[i];
-			System.out.println("adding "+bytes[i]);
+			data += nextByte;
+			tempBuffer = new byte[1];
+			try {
+				ins.get(client).read(tempBuffer);
+				nextByte = tempBuffer[0];
+			} catch (IOException e) { return null; }
 		}
 			
 		return data;
@@ -95,11 +72,12 @@ public class TCP_Server implements Runnable {
 			if (data == 0)
 			{
 				outs.get(client).write(0);
+				outs.get(client).write(-128);
 				return true;
 			}
 			
 			if (!isNeg)
-				while (byteCount <= 5)
+				while (num > 0)
 				{
 					byteCount++;
 					if (num > 127) {
@@ -107,47 +85,24 @@ public class TCP_Server implements Runnable {
 						num -= 127;
 					} else if (num > 0) {
 						outs.get(client).write(num);
-					} else {
-						outs.get(client).write(0);
+						num = 0;
 					}
 				}
 			else
-				while (byteCount <= 5)
+				while (num < 5)
 				{
 					byteCount++;
-					if (num < -128) {
-						outs.get(client).write(-128);
-						num += 128;
+					if (num < -127) {
+						outs.get(client).write(-127);
+						num += 127;
 					} else if (num < 0) {
 						outs.get(client).write(num);
-					} else {
-						outs.get(client).write(0);
+						num = 0;
 					}
 				}
 			
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	public Byte readByte(int client)
-	{
-		try {
-			byte[] dat = new byte[1];
+			outs.get(client).write(-128);
 			
-			ins.get(client).read(dat);
-			
-			return dat[0];
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	public boolean writeByte(int client, Byte data)
-	{
-		try {
-			outs.get(client).write(data);
 			return true;
 		} catch (IOException e) {
 			return false;

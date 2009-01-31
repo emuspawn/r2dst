@@ -17,41 +17,21 @@ public class TCP_Client extends Thread {
 		start();
 	}
 	
-	public byte[] readBytes()
-	{
-		try {
-			byte[] data = new byte[in.available()];
-			
-			in.read(data);
-			
-			return data;
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	public int getAvailableBytes()
-	{
-		try {
-			return in.available();
-		} catch (IOException e) {
-			return -1;
-		}
-	}
-	
 	public Integer readInt()
 	{
 		int data = 0;
-		byte[] bytes = new byte[5];
 		
-		try {
-			in.read(bytes);
-		} catch (IOException e) {
-			return null;
+		byte nextByte = 0;
+		byte[] tempBuffer;
+		while (nextByte != -128)
+		{
+			data += nextByte;
+			tempBuffer = new byte[1];
+			try {
+				in.read(tempBuffer);
+				nextByte = tempBuffer[0];
+			} catch (IOException e) { return null; }
 		}
-		
-		for (int i = 0; i < bytes.length; i++)
-			data += bytes[i];
 			
 		return data;
 	}
@@ -66,11 +46,12 @@ public class TCP_Client extends Thread {
 			if (data == 0)
 			{
 				out.write(0);
+				out.write(-128);
 				return true;
 			}
 			
 			if (!isNeg)
-				while (byteCount <= 5)
+				while (num > 0)
 				{
 					byteCount++;
 					if (num > 127) {
@@ -78,47 +59,24 @@ public class TCP_Client extends Thread {
 						num -= 127;
 					} else if (num > 0) {
 						out.write(num);
-					} else {
-						out.write(0);
+						num = 0;
 					}
 				}
 			else
-				while (byteCount <= 5)
+				while (num < 5)
 				{
 					byteCount++;
-					if (num < -128) {
-						out.write(-128);
-						num += 128;
+					if (num < -127) {
+						out.write(-127);
+						num += 127;
 					} else if (num < 0) {
 						out.write(num);
-					} else {
-						out.write(0);
+						num = 0;
 					}
 				}
 			
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	public Byte readByte()
-	{
-		try {
-			byte[] dat = new byte[1];
+			out.write(-128);
 			
-			in.read(dat);
-			
-			return dat[0];
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	public boolean writeByte(Byte data)
-	{
-		try {
-			out.write(data);
 			return true;
 		} catch (IOException e) {
 			return false;
