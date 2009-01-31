@@ -37,7 +37,11 @@ public class Client extends JFrame implements Runnable
 			DataInputStream dis = new DataInputStream(fis);
 			km = new KeyMap(dis);
 		}
-		catch(IOException e){}
+		catch(IOException e){
+			System.out.println("Unable to read files");
+			e.printStackTrace();
+			return;
+		}
 		String userName = "test";
 		String serverName = "gutman.dyndns.org";
 		
@@ -150,9 +154,10 @@ class DrawCanvas extends JPanel
 			e.get(i).drawElementLG(g, cam);
 		}
 		
-		g.setColor(Color.blue);
-		g.fillOval(getWidth()/2-15, getHeight()/2-15, 30, 30);
+		//g.setColor(Color.blue);
+		//g.fillOval(getWidth()/2-15, getHeight()/2-15, 30, 30);
 		//g.fillOval(getWidth()/2, getHeight()/2, 30, 30);
+		
 		g.setColor(Color.black);
 		g.drawString("fps: "+sc.getFPS(), 3, 16);
 		g.drawString("average fps: "+sc.getAverageFPS()+"", 3, 32);
