@@ -65,7 +65,6 @@ public class TCP_Server implements Runnable {
 	public boolean writeInt(int client, Integer data)
 	{
 		try {
-			int byteCount = 0;
 			boolean isNeg = data < 0;
 			int num = data;
 			
@@ -79,7 +78,6 @@ public class TCP_Server implements Runnable {
 			if (!isNeg)
 				while (num > 0)
 				{
-					byteCount++;
 					if (num > 127) {
 						outs.get(client).write(127);
 						num -= 127;
@@ -89,9 +87,8 @@ public class TCP_Server implements Runnable {
 					}
 				}
 			else
-				while (num < 5)
+				while (num < 0)
 				{
-					byteCount++;
 					if (num < -127) {
 						outs.get(client).write(-127);
 						num += 127;
@@ -104,6 +101,50 @@ public class TCP_Server implements Runnable {
 			outs.get(client).write(-128);
 			
 			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	public boolean writeFile(int client, File fle)
+	{
+		try {
+			FileInputStream fIn = new FileInputStream(fle);
+			
+			while (fIn.available() > 0)
+			{
+				byte[] dataBuffer = new byte[fIn.available()];
+				
+				fIn.read(dataBuffer);
+				
+				outs.get(client).write(dataBuffer);
+			}
+			
+			return true;
+		} catch (FileNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	public boolean readFile(int client, File fle)
+	{
+		try {
+			FileOutputStream fOut = new FileOutputStream(fle);
+			
+			while (ins.get(client).available() > 0)
+			{
+				byte[] dataBuffer = new byte[ins.get(client).available()];
+				
+				ins.get(client).read(dataBuffer);
+				
+				fOut.write(dataBuffer);
+			}
+			
+			return true;
+		} catch (FileNotFoundException e) {
+			return false;
 		} catch (IOException e) {
 			return false;
 		}
