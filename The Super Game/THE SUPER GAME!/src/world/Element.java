@@ -16,14 +16,12 @@ import java.io.Serializable;
  * the building blocks of the world, all things in the world are elements
  */
 
-public class Element
+public abstract class Element
 {
 	private String name;
 	protected Location l;
 	Action a = new Idle();
 	protected boolean impassable = false;
-	protected int shapeType;
-	protected Color clr;
 	
 	public Rectangle bounds;
 	public int width;
@@ -35,21 +33,6 @@ public class Element
 		this.width = width;
 		this.height = height;
 		setLocation(location);
-	}
-	public Element(int shapeType, Color clr, boolean impassable, Location loc, int width, int height)
-	{
-		this("", loc, width, height);
-		this.clr = clr;
-		this.shapeType = shapeType;
-		this.impassable = impassable;
-	}
-	public int getShapeType()
-	{
-		return shapeType;
-	}
-	public Color getColor()
-	{
-		return clr;
 	}
 	public boolean isImpassable()
 	{
@@ -82,19 +65,5 @@ public class Element
 	{
 		bounds = new Rectangle((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
-	public void drawElementLG(Graphics2D g, Camera cam)
-	{
-		Point pt = cam.getScreenLocation(l);
-		
-		g.setColor(clr);
-		
-		if (shapeType == 0)
-			g.fillOval(pt.x-width/2, pt.y-height/2, width, height);
-		else if (shapeType == 1)
-			g.fillRect(pt.x-width/2, pt.y-height/2, width, height);
-		else {
-			System.out.println("Bad shapeType!");
-			while (true);
-		}	
-	}
+	public abstract void drawElementLG(Graphics2D g);
 }

@@ -21,7 +21,7 @@ public class World implements Runnable
 	
 	DynamicMap dm;
 	KeyMap km;
-	String name = new String("untitled");
+	String name = new String("untitled"), loadPath;
 	
 	public World(boolean loadWorld)
 	{
@@ -35,10 +35,7 @@ public class World implements Runnable
 			
 			if(loadWorld)
 			{
-				f = new File(System.getProperty("user.dir")+File.separator+"largeTestMap.wrld");
-				fis = new FileInputStream(f);
-				dis = new DataInputStream(fis);
-				WorldReader.readWorld(this, dis);
+				WorldReader.readWorld(this, System.getProperty("user.dir")+File.separator+"largeTestMap.wrld");
 			}
 		}
 		catch(IOException e)
@@ -46,6 +43,14 @@ public class World implements Runnable
 			System.out.println("io exception");
 			e.printStackTrace();
 		}
+	}
+	public void setLoadPath(String str)
+	{
+		loadPath = str;
+	}
+	public String getLoadPath()
+	{
+		return loadPath;
 	}
 	public void updateUserScreenDimensions(int userIndex, int width, int height)
 	{

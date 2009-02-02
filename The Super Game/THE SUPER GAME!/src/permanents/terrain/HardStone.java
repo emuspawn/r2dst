@@ -17,7 +17,10 @@ public class HardStone extends Permanent
 	{
 		super("hard stone", l, 30, 30);
 		impassable = true;
-		shapeType = 1;
-		clr = new Color(140, 140, 140);
+	}
+	
+	public void drawElementLG(Graphics2D g) {
+		g.setColor(new Color(140, 140, 140));
+		g.fillRect((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
 }
