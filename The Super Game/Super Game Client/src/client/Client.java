@@ -141,7 +141,6 @@ class DrawCanvas extends JPanel
 	private void paintOffScreen(Graphics2D g)
 	{
 		//System.out.println("Entered paint");
-		Camera cam = conn.getCamera();
 		g.setColor(Color.green);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		ArrayList<Element> e = conn.getVisibleElements();
@@ -151,7 +150,7 @@ class DrawCanvas extends JPanel
 		
 		for(int i = e.size()-1; i >= 0; i--)
 		{
-			e.get(i).drawElementLG(g, cam);
+			e.get(i).drawElementLG(g);
 		}
 		
 		//g.setColor(Color.blue);
