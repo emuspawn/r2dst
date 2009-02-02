@@ -132,7 +132,6 @@ class DrawCanvas extends JPanel
 	}
 	private void paintOffScreen(Graphics2D g)
 	{
-		Camera cam = dc.getCamera();
 		g.setColor(Color.green);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		ArrayList<Element> e = dc.getVisibleElements();
@@ -142,7 +141,7 @@ class DrawCanvas extends JPanel
 		
 		for(int i = e.size()-1; i >= 0; i--)
 		{
-			e.get(i).drawElementLG(g, cam);
+			e.get(i).drawElementLG(g);
 		}
 		g.setColor(Color.black);
 		g.drawString("fps: "+sc.getFPS(), 3, 16);

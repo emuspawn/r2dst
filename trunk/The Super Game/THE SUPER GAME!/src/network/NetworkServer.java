@@ -2,6 +2,7 @@ package network;
 
 import graphics.Camera;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -68,10 +69,6 @@ public class NetworkServer extends Thread {
 						serv.writeInt(i, els.size());
 						for (int k = 0; k < els.size(); k++)
 						{
-							serv.writeInt(i, els.get(k).getShapeType());
-							serv.writeInt(i, els.get(k).getColor().getRed());
-							serv.writeInt(i, els.get(k).getColor().getGreen());
-							serv.writeInt(i, els.get(k).getColor().getBlue());
 							serv.writeInt(i, els.get(k).isImpassable() ? 1 : 0);
 							serv.writeInt(i, (int)els.get(k).getLocation().x);
 							serv.writeInt(i, (int)els.get(k).getLocation().y);
@@ -94,6 +91,13 @@ public class NetworkServer extends Thread {
 						
 					case 4:
 						serv.writeInt(i, (Integer)wrld.formConnection("test"));
+						serv.flush(i);
+						
+						while (getIntResponse(i) != 10);
+						
+						serv.writeInt(i, 10);
+						serv.writeFile(i, new File(wrld.getLoadPath()));
+						
 						serv.flush(i);
 						break;
 					}

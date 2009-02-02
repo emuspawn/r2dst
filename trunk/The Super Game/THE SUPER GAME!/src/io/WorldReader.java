@@ -5,8 +5,9 @@ import java.io.*;
 
 public class WorldReader
 {
-	public static void readWorld(World w, DataInputStream dis) throws IOException
+	public static void readWorld(World w, String filePath) throws IOException
 	{
+		DataInputStream dis = new DataInputStream(new FileInputStream(new File(filePath)));
 		WorldReader wr = new WorldReader();
 		int version = dis.readInt();
 		if(version == 1)

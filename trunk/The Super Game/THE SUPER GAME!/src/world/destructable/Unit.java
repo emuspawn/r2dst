@@ -15,11 +15,13 @@ public class Unit extends Destructable implements Serializable
 	public Unit(String name, Location l, int width, int height)
 	{
 		super(name, l, width, height);
-		shapeType = 0;
-		clr = Color.blue;
 	}
 	public void destroy(World w)
 	{
 		
+	}
+	public void drawElementLG(Graphics2D g) {
+		g.setColor(Color.blue);
+		g.fillOval((int)l.x-width/2, (int)l.y-height/2, width, height);
 	}
 }
