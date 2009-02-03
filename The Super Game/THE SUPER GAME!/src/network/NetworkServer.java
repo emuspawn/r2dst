@@ -42,7 +42,7 @@ class UDPThread extends Thread {
 			lck.acquireLock();
 			for (int i = 0; i < clients.size(); i++)
 			{
-				conn.sendDatagram(buildPacket)
+				conn.sendDatagram(buildPlayerPacket(clients.get(i)));
 			}
 			lck.releaseLock();
 		}
@@ -90,7 +90,7 @@ public class NetworkServer extends Thread {
 	{
 		serv = new TCP_Server(port);
 		wrld = wld;
-		udpThread = new UDPThread(new )
+		udpThread = new UDPThread(new UDP_Connection(1164), wrld);
 		start();
 	}
 	

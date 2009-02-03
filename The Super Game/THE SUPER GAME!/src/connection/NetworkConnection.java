@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ import world.World;
 import world.destructable.Unit;
 
 import TCPv3.*;
+import UDP.UDP_Connection;
 
 public class NetworkConnection extends Connection implements Serializable {
 
@@ -37,6 +39,7 @@ public class NetworkConnection extends Connection implements Serializable {
 	String userName;
 	
 	TCP_Client cli;
+	UDP_Connection udp;
 	
 	Thread thrd;
 	
@@ -51,6 +54,7 @@ public class NetworkConnection extends Connection implements Serializable {
 		try
 		{
 			cli = new TCP_Client(addr, port);
+			udp = new UDP_Connection(port);
 			
 			requestConnection();
 			
@@ -81,44 +85,20 @@ public class NetworkConnection extends Connection implements Serializable {
 	}
 	public ArrayList<Element> getVisibleElements()
 	{
-		lck.acquireLock();
-		
-		cli.writeInt(2);
-		cli.writeInt(index);
-		
-		cli.flush();
-		
-		lck.releaseLock();
-		
 		ArrayList<Element> els = new ArrayList<Element>();
-
-		lck.acquireLock();
+		DatagramPacket visPack = udp.receiveDatagram(-1);
+		byte[] buff = visPack.getData();
 		
-		cli.writeInt(3);
-		cli.writeInt(index);
-		
-		cli.flush();
-		
-		lck.releaseLock();
-		
-		int width = getIntResponse(), height = getIntResponse(), x = getIntResponse(), y = getIntResponse();
+		int width = buff[0], height = buff[1], x = buff[2], y = buff[3];
 		
 		Camera newCam = new Camera(width, height);
 		newCam.centerOn(new Location(x, y));
 		
 		for (Element e : mapElements)
 		{
-			Point pt = newCam.getScreenLocation(e.getLocation());
-			
-			if (pt.x < 0 || pt.y < 0)
-				continue;
-			
-			if (pt.x + e.width > width || pt.y + e.height > height)
-				continue;
-			
-			els.add(e);
+			if (isInMap(newCam, e.getLocation()))
+				els.add(e);
 		}
-		
 		int size = getIntResponse();
 		for (int i = 0; i < size; i++)
 		{
@@ -126,6 +106,16 @@ public class NetworkConnection extends Connection implements Serializable {
 		}
 		
 		return els;
+	}
+	private boolean isInMap(Camera cam, Location loc)
+	{
+		if (loc.x > (cam.getxover() + cam.getWidth()) || loc.x < cam.getxover())
+			return false;
+		
+		if (loc.y > (cam.getyover() + cam.getHeight()) || loc.y < cam.getyover())
+			return false;
+		
+		return true;
 	}
 	public void setIndex(int setter)
 	{
@@ -174,7 +164,7 @@ public class NetworkConnection extends Connection implements Serializable {
 		File fle = new File("tempMap.map");
 		cli.readFile(fle);
 
-		World wrld = new World(false);
+		World wrld = new World();
 		
 		try {
 			WorldReader.readWorld(wrld, fle.getAbsolutePath());
@@ -185,7 +175,7 @@ public class NetworkConnection extends Connection implements Serializable {
 			return false;
 		}
 		
-		mapElements = wrld.getVisibleElements(new Camera(1000, 1000));
+		mapElements = wrld.getElements();
 		
 		System.out.println("done");
 		
