@@ -5,6 +5,7 @@ import utilities.Location;
 import java.awt.Point;
 import graphics.Camera;
 import world.Element;
+import world.destructable.Unit;
 
 public class DynamicMap
 {
@@ -13,11 +14,11 @@ public class DynamicMap
 	private int width;
 	private int height;
 	
-	ArrayList<Element> movableUnits;
+	ArrayList<Unit> units;
 	
 	public DynamicMap(int width, int height)
 	{
-		movableUnits = new ArrayList<Element>();
+		units = new ArrayList<Unit>();
 		setSize(width, height);
 	}
 	public int getWidth()
@@ -39,16 +40,19 @@ public class DynamicMap
 		this.height = height;
 		adjustMap();
 	}
-	public void addMovableElement(Element e)
+	public void addMovableElement(Unit e)
 	{
-		//movableUnits.add(e);
+		units.add(e);
 		addElement(e);
+	}
+	public ArrayList<Unit> getVisiblePlayers()
+	{
+		return units;
 	}
 	public ArrayList<Element> getVisibleElements(Camera c)
 	{
 		ArrayList<Element> l = new ArrayList<Element>();
-		//l.addAll(movableUnits);
-		
+
 		for(int i = (width)/partitionSize; i >= 0; i--)
 		{
 			for(int a = (height)/partitionSize; a >= 0; a--)

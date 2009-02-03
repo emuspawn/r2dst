@@ -6,6 +6,7 @@ import connection.*;
 import utilities.Location;
 import dynamicMap.DynamicMap;
 import world.destructable.Destructable;
+import world.destructable.Unit;
 import world.permanent.Permanent;
 import world.environment.EnvironmentalEffect;
 import graphics.Camera;
@@ -23,7 +24,7 @@ public class World implements Runnable
 	KeyMap km;
 	String name = new String("untitled"), loadPath;
 	
-	public World(boolean loadWorld)
+	public World()
 	{
 		dm = new DynamicMap(1000, 1000);
 		try
@@ -32,11 +33,6 @@ public class World implements Runnable
 			FileInputStream fis = new FileInputStream(f);
 			DataInputStream dis = new DataInputStream(fis);
 			km = new KeyMap(dis);
-			
-			if(loadWorld)
-			{
-				WorldReader.readWorld(this, System.getProperty("user.dir")+File.separator+"largeTestMap.wrld");
-			}
 		}
 		catch(IOException e)
 		{
@@ -170,20 +166,17 @@ public class World implements Runnable
 	{
 		return dm.getHeight();
 	}
-	public ArrayList<Element> getVisibleElements(Camera c)
+	public ArrayList<Unit> getPlayers()
 	{
-		//used by editor
-		return dm.getVisibleElements(c);
+		return dm.getVisiblePlayers();
+	}
+	public ArrayList<Element> getElements()
+	{
+		return dm.getElements();
 	}
 	public Camera getUserCamera(int userIndex)
 	{
 		return u[userIndex].getCamera();
-	}
-	
-	public ArrayList<Element> getVisibleElements(int userIndex)
-	{
-		//used by single clients or server (server breaks down and sends to network clients)
-		return dm.getVisibleElements(u[userIndex].getCamera());
 	}
 	public User getUser(int userIndex)
 	{

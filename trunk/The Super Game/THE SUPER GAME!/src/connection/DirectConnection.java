@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import utilities.Location;
 import world.Element;
 import java.util.ArrayList;
 import graphics.Camera;
@@ -42,7 +44,26 @@ public class DirectConnection extends Connection
 	}
 	public ArrayList<Element> getVisibleElements()
 	{
-		return w.getVisibleElements(index);
+		ArrayList<Element> el = w.getElements();
+		Camera cam = w.getUserCamera(index);
+		
+		for (int i = 0; i < el.size(); i++)
+		{
+			if (!isInMap(cam, el.get(i).getLocation()))
+				el.remove(i);
+		}
+		
+		return el;
+	}
+	private boolean isInMap(Camera cam, Location loc)
+	{
+		if (loc.x > (cam.getxover() + cam.getWidth()) || loc.x < cam.getxover())
+			return false;
+		
+		if (loc.y > (cam.getyover() + cam.getHeight()) || loc.y < cam.getyover())
+			return false;
+		
+		return true;
 	}
 	public Camera getCamera()
 	{

@@ -40,7 +40,7 @@ public class SingleClient extends JFrame implements Runnable
 			km = new KeyMap(dis);
 		}
 		catch(IOException e){}
-		w = new World(true);
+		w = new World();
 		String userName = "test";
 		System.out.println("Using a direct connection for data transfer");
 		dc = new DirectConnection(w, userName);
