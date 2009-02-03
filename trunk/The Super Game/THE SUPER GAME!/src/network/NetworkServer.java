@@ -4,21 +4,93 @@ import graphics.Camera;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 
 import world.Element;
 import world.World;
+import world.destructable.Unit;
 import TCPv3.TCP_Server;
-
+import UDP.UDP_Connection;
+class UDPThread extends Thread {
+	UDP_Connection conn;
+	World wrld;
+	ArrayList<SocketAddress> clients;
+	Lock lck;
+	
+	public void updateClientList(SocketAddress toAdd)
+	{
+		lck.acquireLock();
+		clients.add(toAdd);
+		lck.releaseLock();
+	}
+	public UDPThread(UDP_Connection conn, World wrld)
+	{
+		this.conn = conn;
+		this.wrld = wrld;
+		this.lck = new Lock();
+		start();
+	}
+	
+	public void run()
+	{
+		while (!isInterrupted())
+		{
+			lck.acquireLock();
+			for (int i = 0; i < clients.size(); i++)
+			{
+				conn.sendDatagram(buildPacket)
+			}
+			lck.releaseLock();
+		}
+	}
+	
+	private DatagramPacket buildPlayerPacket(SocketAddress target)
+	{
+		ArrayList<Unit> players = wrld.getPlayers();
+		byte[] data = new byte[players.size()*2];
+		
+		for (int i = 0; i < players.size(); i+=2)
+		{
+			data[i] = ((Double)players.get(i).getLocation().x).byteValue();
+			data[i+1] = ((Double)players.get(i).getLocation().y).byteValue();
+		}
+		
+		return buildPacket((byte)0, data, target);
+	}
+	
+	private DatagramPacket buildPacket(byte packetType, byte[] dataBuffer, SocketAddress target)
+	{
+		byte[] data = new byte[dataBuffer.length+1];
+		
+		for (int i = dataBuffer.length-1; i >= 0; i--)
+		{
+			data[i+1] = data[i];
+		}
+		
+		data[0] = packetType;
+		
+		try {
+			return new DatagramPacket(data, data.length, target);
+		} catch (SocketException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+}
 public class NetworkServer extends Thread {
 	TCP_Server serv;
 	World wrld;
+	UDPThread udpThread;
 	
 	public NetworkServer(int port, World wld) throws IOException
 	{
 		serv = new TCP_Server(port);
 		wrld = wld;
+		udpThread = new UDPThread(new )
 		start();
 	}
 	
@@ -30,6 +102,7 @@ public class NetworkServer extends Thread {
 		
 		return read;
 	}
+	
 	public void run()
 	{
 		int lastClientCount = 0;
@@ -43,6 +116,9 @@ public class NetworkServer extends Thread {
 			{
 				System.out.println(diff + " new client(s) connected");
 				lastClientCount += diff;
+				
+				for (int i = lastClientCount; i < serv.getClientCount(); i++)
+					udpThread.updateClientList(serv.getClientAddress(i));
 			}
 			
 			for (int i = 0; i < serv.getClientCount(); i++)
@@ -62,32 +138,6 @@ public class NetworkServer extends Thread {
 					case 1:
 						wrld.interpretUserAction(getIntResponse(i).byteValue(), getIntResponse(i).byteValue());
 						break;
-					
-					case 2:
-						ArrayList<Element> els = wrld.getVisibleElements(getIntResponse(i));
-
-						serv.writeInt(i, els.size());
-						for (int k = 0; k < els.size(); k++)
-						{
-							serv.writeInt(i, els.get(k).isImpassable() ? 1 : 0);
-							serv.writeInt(i, (int)els.get(k).getLocation().x);
-							serv.writeInt(i, (int)els.get(k).getLocation().y);
-							serv.writeInt(i, els.get(k).width);
-							serv.writeInt(i, els.get(k).height);
-						}
-						
-						serv.flush(i);
-						break;
-						
-					case 3:
-						int userIndex = getIntResponse(i);
-						Camera userCam = wrld.getUserCamera(userIndex);
-						serv.writeInt(i, userCam.getWidth());
-						serv.writeInt(i, userCam.getHeight());
-						serv.writeInt(i, (int)wrld.getUser(userIndex).getUnit().getLocation().x);
-						serv.writeInt(i, (int)wrld.getUser(userIndex).getUnit().getLocation().y);
-						serv.flush(i);
-						break;
 						
 					case 4:
 						serv.writeInt(i, (Integer)wrld.formConnection("test"));
@@ -100,6 +150,9 @@ public class NetworkServer extends Thread {
 						
 						serv.flush(i);
 						break;
+					default:
+						System.out.println("Bad type: "+type);
+						while(true);
 					}
 				}
 			}
