@@ -9,6 +9,7 @@ public class WorldReader
 	{
 		DataInputStream dis = new DataInputStream(new FileInputStream(new File(filePath)));
 		WorldReader wr = new WorldReader();
+		w.setLoadPath(filePath);
 		int version = dis.readInt();
 		if(version == 1)
 		{
