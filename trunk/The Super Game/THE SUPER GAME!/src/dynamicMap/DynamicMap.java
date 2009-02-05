@@ -43,7 +43,7 @@ public class DynamicMap
 	public void addMovableElement(Unit e)
 	{
 		units.add(e);
-		addElement(e);
+		//addElement(e);
 	}
 	public ArrayList<Unit> getVisiblePlayers()
 	{

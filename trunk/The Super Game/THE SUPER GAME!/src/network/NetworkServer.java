@@ -5,6 +5,7 @@ import graphics.Camera;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ class UDPThread extends Thread {
 	}
 	public UDPThread(UDP_Connection conn, World wrld)
 	{
+		this.clients = new ArrayList<SocketAddress>();
 		this.conn = conn;
 		this.wrld = wrld;
 		this.lck = new Lock();
@@ -42,6 +44,7 @@ class UDPThread extends Thread {
 			lck.acquireLock();
 			for (int i = 0; i < clients.size(); i++)
 			{
+				//System.out.println(clients.get(i));
 				conn.sendDatagram(buildPlayerPacket(clients.get(i)));
 			}
 			lck.releaseLock();
@@ -51,12 +54,19 @@ class UDPThread extends Thread {
 	private DatagramPacket buildPlayerPacket(SocketAddress target)
 	{
 		ArrayList<Unit> players = wrld.getPlayers();
-		byte[] data = new byte[players.size()*2];
+		byte[] data = new byte[(players.size()*2)+4];
 		
-		for (int i = 0; i < players.size(); i+=2)
+		Camera cam = wrld.getUserCamera(9); //HACK
+		
+		data[0] = ((Integer)cam.getWidth()).byteValue();
+		data[1] = ((Integer)cam.getHeight()).byteValue();
+		data[2] = ((Integer)cam.getxover()).byteValue();
+		data[3] = ((Integer)cam.getyover()).byteValue();
+		
+		for (int i = 4; i < players.size(); i+=2)
 		{
-			data[i] = ((Double)players.get(i).getLocation().x).byteValue();
-			data[i+1] = ((Double)players.get(i).getLocation().y).byteValue();
+			data[i] = ((Double)players.get(i-4).getLocation().x).byteValue();
+			data[i+1] = ((Double)players.get(i-4).getLocation().y).byteValue();
 		}
 		
 		return buildPacket((byte)0, data, target);
@@ -66,7 +76,7 @@ class UDPThread extends Thread {
 	{
 		byte[] data = new byte[dataBuffer.length+1];
 		
-		for (int i = dataBuffer.length-1; i >= 0; i--)
+		for (int i = 0; i < data.length-1; i++)
 		{
 			data[i+1] = data[i];
 		}
@@ -74,8 +84,8 @@ class UDPThread extends Thread {
 		data[0] = packetType;
 		
 		try {
-			return new DatagramPacket(data, data.length, target);
-		} catch (SocketException e) {
+			return new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 1165); //HACK
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -116,9 +126,6 @@ public class NetworkServer extends Thread {
 			{
 				System.out.println(diff + " new client(s) connected");
 				lastClientCount += diff;
-				
-				for (int i = lastClientCount; i < serv.getClientCount(); i++)
-					udpThread.updateClientList(serv.getClientAddress(i));
 			}
 			
 			for (int i = 0; i < serv.getClientCount(); i++)
@@ -127,7 +134,7 @@ public class NetworkServer extends Thread {
 					
 				if (type != null)
 				{
-					//System.out.println("Got packet with type: " +type);
+					System.out.println("Got packet with type: " +type);
 					
 					switch (type)
 					{
@@ -149,6 +156,8 @@ public class NetworkServer extends Thread {
 						serv.writeFile(i, new File(wrld.getLoadPath()));
 						
 						serv.flush(i);
+						
+						udpThread.updateClientList(serv.getClientAddress(i));
 						break;
 					default:
 						System.out.println("Bad type: "+type);

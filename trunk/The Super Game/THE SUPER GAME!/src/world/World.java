@@ -82,7 +82,7 @@ public class World implements Runnable
 			if(u[i] == null)
 			{
 				u[i] = user;
-				addDestructable(user.getUnit());
+				dm.addMovableElement(user.getUnit());
 				return i;
 			}
 		}

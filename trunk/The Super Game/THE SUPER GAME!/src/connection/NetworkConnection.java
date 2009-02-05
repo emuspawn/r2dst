@@ -47,6 +47,8 @@ public class NetworkConnection extends Connection implements Serializable {
 	
 	ArrayList<Element> mapElements;
 	
+	int width, height;
+	
 	public NetworkConnection(InetAddress addr, int port, String uName)
 	{
 		userName = uName;
@@ -54,18 +56,17 @@ public class NetworkConnection extends Connection implements Serializable {
 		try
 		{
 			cli = new TCP_Client(addr, port);
-			udp = new UDP_Connection(port);
-			
 			requestConnection();
+			udp = new UDP_Connection(port+1);
 			
-			File f = new File(System.getProperty("user.dir")+"\\keyMapV1.km");
+			File f = new File("keyMapV1.km");
 			FileInputStream fis = new FileInputStream(f);
 			DataInputStream dis = new DataInputStream(fis);
 			km = new KeyMap(dis);
 		}
 		catch(IOException e)
 		{
-			System.out.println("io exception");
+			e.printStackTrace();
 		}
 	}
 	public String getUserName()
@@ -85,25 +86,27 @@ public class NetworkConnection extends Connection implements Serializable {
 	}
 	public ArrayList<Element> getVisibleElements()
 	{
+		System.out.println("visibleElement start!");
+		
 		ArrayList<Element> els = new ArrayList<Element>();
-		DatagramPacket visPack = udp.receiveDatagram(-1);
+		DatagramPacket visPack = udp.receiveDatagram(7);
 		byte[] buff = visPack.getData();
 		
-		int width = buff[0], height = buff[1], x = buff[2], y = buff[3];
-		
-		Camera newCam = new Camera(width, height);
-		newCam.centerOn(new Location(x, y));
+		Camera newCam = new Camera(buff[0], buff[1]);
+		newCam.centerOn(new Location(buff[0]+(buff[2]/2), buff[1]+(buff[3]/2)));
 		
 		for (Element e : mapElements)
 		{
 			if (isInMap(newCam, e.getLocation()))
 				els.add(e);
 		}
-		int size = getIntResponse();
-		for (int i = 0; i < size; i++)
+		
+		/*for (int i = 4; i < buff.length-1; i+=2)
 		{
-			els.add(new Unit("Unit", new Location(getIntResponse(), getIntResponse()), 30, 30));
-		}
+			els.add(new Unit("Unit", new Location(buff[i], buff[i+1]), 30, 30));
+		}*/
+		
+		System.out.println("visibleElements done!");
 		
 		return els;
 	}
@@ -125,6 +128,9 @@ public class NetworkConnection extends Connection implements Serializable {
 	{
 		lck.acquireLock();
 		
+		this.width = width;
+		this.height = height;
+		
 		cli.writeInt(0);
 		cli.writeInt(index);
 		cli.writeInt(width);
@@ -137,7 +143,7 @@ public class NetworkConnection extends Connection implements Serializable {
 	{
 		Integer i;
 		
-		while ((i = cli.readInt()) != null);
+		while ((i = cli.readInt()) == null);
 		
 		return i;
 	}
