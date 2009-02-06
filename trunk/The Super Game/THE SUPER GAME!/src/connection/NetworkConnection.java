@@ -21,6 +21,7 @@ import network.Lock;
 import permanents.terrain.Dirt;
 import permanents.terrain.HardStone;
 
+import utilities.ByteIntConverter;
 import utilities.Location;
 import world.Element;
 import world.World;
@@ -86,14 +87,47 @@ public class NetworkConnection extends Connection implements Serializable {
 	}
 	public ArrayList<Element> getVisibleElements()
 	{
-		System.out.println("visibleElement start!");
-		
 		ArrayList<Element> els = new ArrayList<Element>();
-		DatagramPacket visPack = udp.receiveDatagram(7);
-		byte[] buff = visPack.getData();
+		DatagramPacket visPack = udp.receiveDatagram(1000);
+		byte[] buff = visPack.getData(), tmpBuf;
 		
-		Camera newCam = new Camera(buff[0], buff[1]);
-		newCam.centerOn(new Location(buff[0]+(buff[2]/2), buff[1]+(buff[3]/2)));
+		int width = 0, height = 0, xover = 0, yover = 0;
+		int i = 2, tmp = 1;
+		
+		tmpBuf = new byte[buff[tmp]];
+		for (int k = 0; k < buff[tmp]; i++, k++)
+		{
+			tmpBuf[k] = buff[i];
+		}
+		width = ByteIntConverter.byteArrayToInt(tmpBuf);
+		
+		tmp = i;
+		tmpBuf = new byte[buff[tmp]];
+		for (int k = 0; k < buff[tmp]; i++, k++)
+		{
+			tmpBuf[k] = buff[i];
+		}
+		height = ByteIntConverter.byteArrayToInt(tmpBuf);
+		
+		tmp = i;
+		tmpBuf = new byte[buff[tmp]];
+		for (int k = 0; k < buff[tmp]; i++, k++)
+		{
+			tmpBuf[k] = buff[i];
+		}
+		xover = ByteIntConverter.byteArrayToInt(tmpBuf);
+		
+		tmp = i;
+		tmpBuf = new byte[buff[tmp]];
+		for (int k = 0; k < buff[tmp]; i++, k++)
+		{
+			tmpBuf[k] = buff[i];
+		}
+		yover = ByteIntConverter.byteArrayToInt(tmpBuf);
+		
+		System.out.println(width+"-"+height+"-"+xover+"-"+yover);
+		Camera newCam = new Camera(width, height);
+		newCam.centerOn(new Location(xover+(width/2), yover+(height/2)));
 		
 		for (Element e : mapElements)
 		{
@@ -101,12 +135,11 @@ public class NetworkConnection extends Connection implements Serializable {
 				els.add(e);
 		}
 		
-		/*for (int i = 4; i < buff.length-1; i+=2)
+		for (int j = 5; j < buff[0]; j+=2)
 		{
-			els.add(new Unit("Unit", new Location(buff[i], buff[i+1]), 30, 30));
-		}*/
-		
-		System.out.println("visibleElements done!");
+			if (isInMap(newCam, new Location(buff[j], buff[j+1])))
+				els.add(new Unit("Unit", new Location(buff[j], buff[j+1]), 30, 30));
+		}
 		
 		return els;
 	}
