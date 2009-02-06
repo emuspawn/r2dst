@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 
+import utilities.ByteIntConverter;
 import world.Element;
 import world.World;
 import world.destructable.Unit;
@@ -51,37 +52,50 @@ class UDPThread extends Thread {
 		}
 	}
 	
+	private int addBytes(byte[] buff, int index, int num)
+	{
+		int i = index, k = 0;
+		byte[] numByte = ByteIntConverter.intToByteArray(num);
+		
+		buff[i] = (byte) numByte.length;
+		for (i++; k < numByte.length; i++, k++)
+		{
+			buff[i] = numByte[k];
+		}
+		
+		return i;
+	}
+	
 	private DatagramPacket buildPlayerPacket(SocketAddress target)
 	{
 		ArrayList<Unit> players = wrld.getPlayers();
-		byte[] data = new byte[(players.size()*2)+4];
+		byte[] data = new byte[(players.size()*2)+500];
 		
 		Camera cam = wrld.getUserCamera(9); //HACK
 		
-		data[0] = ((Integer)cam.getWidth()).byteValue();
-		data[1] = ((Integer)cam.getHeight()).byteValue();
-		data[2] = ((Integer)cam.getxover()).byteValue();
-		data[3] = ((Integer)cam.getyover()).byteValue();
+		int offset = 0;
 		
-		for (int i = 4; i < players.size(); i+=2)
+		offset += addBytes(data, 1 + offset, cam.getWidth());
+		offset += addBytes(data, 2 + offset, cam.getHeight());
+		offset += addBytes(data, 3 + offset, cam.getxover());
+		offset += addBytes(data, 4 + offset, cam.getyover());
+		
+		int i = 5 + offset;
+		for (int j = 0; j < players.size(); j++)
 		{
-			data[i] = ((Double)players.get(i-4).getLocation().x).byteValue();
-			data[i+1] = ((Double)players.get(i-4).getLocation().y).byteValue();
+			data[i] = ((Double)players.get(j).getLocation().x).byteValue();
+			data[i+1] = ((Double)players.get(j).getLocation().y).byteValue();
+			i++;
 		}
+		
+		data[0] = (byte)i;
 		
 		return buildPacket((byte)0, data, target);
 	}
 	
 	private DatagramPacket buildPacket(byte packetType, byte[] dataBuffer, SocketAddress target)
 	{
-		byte[] data = new byte[dataBuffer.length+1];
-		
-		for (int i = 0; i < data.length-1; i++)
-		{
-			data[i+1] = data[i];
-		}
-		
-		data[0] = packetType;
+		byte[] data = dataBuffer; 
 		
 		try {
 			return new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 1165); //HACK
