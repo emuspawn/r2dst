@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path=""/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/apcsa/Desktop/Standard_G6_Super_RTS-V3.1/super rts G6.jar"/>
-	<classpathentry kind="output" path=""/>
-</classpath>
