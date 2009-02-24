@@ -4,8 +4,20 @@
 
 The G7 Super RTS is currently in development.
 
-As of now (2/2/09), maps load sucessfully, the editor for them is complete (and expandable), and the game runs correctly. There are, however, no resources yet created.
+As of now (2/2/09), maps load sucessfully, the editor for them is complete (and expandable), and the game runs correctly.
 
-= Details =
+The only remaining thing to do is correct the resource system.
 
-Will feature terrain, larger maps, many more units, and a far more optimized draw method among other things.
+= Units =
+
+Worker: basic unit, gathers resources
+
+= Buildings =
+
+HQ: builds workers, resources can be returned to it
+
+= Resources =
+
+So far resources include: trees
+
+Resources must be brought back to an HQ before they can be used.
