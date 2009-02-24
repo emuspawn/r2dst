@@ -1,0 +1,44 @@
+package ai;
+
+public class AIThread implements Runnable
+{
+	AI ai;
+	boolean stop = false;
+	
+	public AIThread(AI ai)
+	{
+		this.ai = ai;
+	}
+	public void start()
+	{
+		new Thread(this).start();
+	}
+	public void stop()
+	{
+		stop = true;
+	}
+	public void run()
+	{
+		for(;;)
+		{
+			if(!stop)
+			{
+				try
+				{
+					ai.performAIFunctions();
+				}
+				catch(Exception e)
+				{
+					System.out.println("exception caught in AIThread, continuing anyway");
+					System.out.println("probably related to out of sync threads, nothing to worry about :)");
+					e.printStackTrace();
+				}
+				try
+				{
+					Thread.sleep(50);
+				}
+				catch(InterruptedException e){}
+			}
+		}
+	}
+}
