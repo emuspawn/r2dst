@@ -265,7 +265,7 @@ public class World implements Runnable
 		for(;;)
 		{
 			ue.performUnitFunctions();
-			//se.performShotFunctions();
+			se.performShotFunctions();
 			be.performBuildEngineFunctions();
 			re.performResourceFunctions();
 			try
