@@ -1,6 +1,5 @@
 ai
 customAI
-display
 display.worldDisplay
 editor
 editor.mapEditor
