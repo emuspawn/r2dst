@@ -1,0 +1,8 @@
+1. Getting Resources:
+Resources are harvested by units that are gatherers and brought back to the HQ. There is no delay before the resource is added to the general store of mass.
+
+2. Resource Spawning:
+Resources will respawn, however, they will only repawn if there are others resources of the type near them. Over-harvesting will wipe out resource supply.
+
+3. Shot Collision Calculation:
+Shots are deemed to have collided with a target if the boundary of the shot intersects the boundary of a unit. In addition that unit must not be of the same owner as the unit that originally fired the shot.
