@@ -1,0 +1,12 @@
+#summary One-sentence summary of this page.
+
+= Annihilator Extraordinaire =
+
+A space shooter arcade game. Ships come from the top of the screen moving in patterns shooting. You try to avoid getting hit while blowing up as many of them as possible.
+
+
+= Details =
+
+w,a,s,d = move
+space = shoot
+esc = exit
