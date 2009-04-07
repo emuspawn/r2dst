@@ -10,6 +10,6 @@ to download click http://r2dst.googlecode.com/files/BoxGame3.zip
 
 = Details =
 
-w,a,s,d = move
-space = shoot
-esc = exit
+#w,a,s,d = move
+#space = shoot
+#esc = exit
