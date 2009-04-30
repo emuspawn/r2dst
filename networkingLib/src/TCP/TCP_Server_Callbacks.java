@@ -14,7 +14,7 @@ public abstract class TCP_Server_Callbacks {
 	//The client socket has caused an exception to be thrown
 	//when attempting to receive
 	//!!! THE CLIENT SOCKET IS DEAD WHEN THIS IS CALLED !!!
-	public abstract void ReceiveException(int clientIndex, Exception e);
+	public abstract void ReceiveException(Exception e);
 	
 	//The server socket has caused an exception to be thrown
 	//when attempting to accept connections
