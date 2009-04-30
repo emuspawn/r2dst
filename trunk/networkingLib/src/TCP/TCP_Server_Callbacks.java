@@ -1,4 +1,4 @@
-package TCPv4;
+package TCP;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
