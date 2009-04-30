@@ -1,79 +1,75 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
+import TCP.TCP_Server;
+import TCP.TCP_Server_Callbacks;
 
-public class TCP_IM_Server extends Thread {
+
+public class TCP_IM_Server extends TCP_Server_Callbacks {
 	TCP_Server serv;
 	
 	public TCP_IM_Server() throws IOException
 	{
-		serv = new TCP_Server(864);
-		
-		start();
+		serv = new TCP_Server(864, this);
 	}
-	
-	private String getIPAddressFromSocketAddress(SocketAddress sockAddr)
-	{
-		String toScan = sockAddr.toString();
+
+	public void ClientConnected(int clientIndex, Socket client) {
+		String Message = "User connected from "+client.getInetAddress().toString().substring(1)+" on port "+client.getLocalPort();
 		
-		if (toScan.indexOf('/') != -1)
-			toScan = toScan.substring(toScan.indexOf('/')+1);
-		
-		Scanner scan = new Scanner(toScan).useDelimiter(":");
-		
-		if (scan.hasNext())
-			return scan.next();
-		else
-			return toScan;
-	}
-	
-	public void run()
-	{
-		int lastClientCount = 0;
-		
-		while (!isInterrupted())
+		for (int i = 0; i < serv.getClientList().size(); i++)
 		{
-			if (lastClientCount != serv.getClientCount())
-			{
-				for (int j = 0; j < serv.getClientCount(); j++)
-				{	
-					serv.writeString(j, "User connected from: ");
-					serv.writeString(j, getIPAddressFromSocketAddress(serv.getClientSocketAddress(serv.getClientCount()-1)));
-					serv.write(j);
-				}
-				lastClientCount = serv.getClientCount();
-			}
+			if (i == clientIndex)
+				continue;
 			
-			for (int i = 0; i < serv.getClientCount(); i++)
-			{
-				String str;
-				
-				//See if there is any data. Read() returns false if there is no data
-				if (serv.read(i))
-				{
-					str = serv.readString(i);
-					
-					//Read until the buffer is clear
-					while (str != null)
-					{
-						//Send it to all connected clients except the one who sent it
-						for (int j = 0; j < serv.getClientCount(); j++)
-						{
-							if (j != i)
-								serv.writeString(j, str);
-						}
-						
-						str = serv.readString(i);
-					}
-					
-					for (int j = 0; j < serv.getClientCount(); j++)
-					{
-						if (j != i)
-							serv.write(j);
-					}
-				}
+			try {
+				serv.getClientList().get(i).getOutputStream().write(MessageToByteArray(Message));
+				serv.getClientList().get(i).getOutputStream().flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+	}
+
+	private static byte[] MessageToByteArray(String message)
+	{
+		byte[] sendBuff = new byte[message.length()];
+		
+		for (int i = 0; i < sendBuff.length; i++)
+		{
+			sendBuff[i] = (byte)(((int)message.charAt(i)) & 0xff);
+		}
+		
+		return sendBuff;
+	}
+	
+	public void ConnectException(Exception e) {
+		e.printStackTrace();
+	}
+
+	public void DataReceived(int clientIndex, byte[] data) {
+		for (int i = 0; i < serv.getClientList().size(); i++)
+		{
+			//System.out.println("Reflecting data to client "+i);
+			
+			if (i == clientIndex)
+				continue;
+			
+			try {
+				serv.getClientList().get(i).getOutputStream().write(data);
+				serv.getClientList().get(i).getOutputStream().flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void ReceiveException(int clientIndex, Exception e) {
+		e.printStackTrace();
 	}
 }

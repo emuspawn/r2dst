@@ -2,19 +2,22 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
 
-public class TCP_IM_Client extends Thread {
+import TCP.TCP_Client;
+import TCP.TCP_Client_Callbacks;
+
+public class TCP_IM_Client extends TCP_Client_Callbacks implements Runnable {
 	private TCP_Client cli;
-	private IM_Thread recvThread;
+	private Thread sendThread;
 	private String name;
 	
 	public TCP_IM_Client(String userName, InetAddress addr) throws IOException
 	{
 		name = userName;
 		
-		cli = new TCP_Client(addr, 864);
+		cli = new TCP_Client(addr, 864, this);
 		
-		recvThread = new IM_Thread(cli);
-		start();
+		sendThread = new Thread(this);
+		sendThread.start();
 	}
 	
 	public void run()
@@ -23,7 +26,7 @@ public class TCP_IM_Client extends Thread {
 		
 		System.out.println("--------------- Chat started ------------------");
 		
-		while (!isInterrupted())
+		while (!sendThread.isInterrupted())
 		{
 			if (scan.hasNext())
 			{
@@ -32,20 +35,22 @@ public class TCP_IM_Client extends Thread {
 				if (message.equalsIgnoreCase(".quit"))
 					break;
 				
-				for (int i = 0; i < name.length(); i++)
+				message = name + ": " + message;
+				
+				byte[] sendBuff = new byte[message.length()];
+				
+				for (int i = 0; i < sendBuff.length; i++)
 				{
-					cli.writeString(""+name.charAt(i));
+					sendBuff[i] = (byte)(((int)message.charAt(i)) & 0xff);
 				}
 				
-				cli.writeString(": ");
-				
-				for (int i = 0; i < message.length(); i++)
-				{
-					cli.writeString(""+message.charAt(i));
+				try {
+					cli.getSocket().getOutputStream().write(sendBuff);
+					cli.getSocket().getOutputStream().flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				
-				//Call write() to do the actual send
-				cli.write();
 			}
 		}
 		
@@ -57,12 +62,26 @@ public class TCP_IM_Client extends Thread {
 	
 	private void disconnect()
 	{
-		recvThread.interrupt();
-		
-		//Wait for the thread to die before we close the TCP_Client
-		while(recvThread.isAlive());
-		
 		//Close the TCP_Client
-		cli.close();
+		try {
+			cli.getSocket().close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void DataReceived(byte[] data) {
+		char[] charArray = new char[data.length];
+		
+		//Convert back to chars from ascii codes
+		for (int i = 0; i < data.length; i++)
+			charArray[i] = (char)data[i];
+		
+		System.out.println(new String(charArray));
+	}
+
+	public void ReceiveException(Exception e) {
+		e.printStackTrace();
 	}
 }
