@@ -70,7 +70,8 @@ public class TCP_IM_Client extends TCP_Client_Callbacks implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
+	//---- The following implement abstract methods in TCP_Client_Callbacks ----
 	public void DataReceived(byte[] data) {
 		char[] charArray = new char[data.length];
 		

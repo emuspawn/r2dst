@@ -7,18 +7,22 @@ import java.util.Scanner;
 public class TCP_IM_Main {
 
 	public static void main(String[] args) {
-		String name = null;
+		String name = null, ip = null;
 		Scanner scan = new Scanner(System.in);
 		
 		System.out.print("Please type your name: ");
+		if (scan.hasNextLine())
+			name = scan.nextLine().trim();
+		
+		System.out.print("Please type the server's external IP address: ");
 		if (scan.hasNext())
-			name = scan.next().trim();
+			ip = scan.nextLine().trim();
 		
 		try {
 			//Comment this next line out for a client-only setup
-			new TCP_IM_Server();
+			//new TCP_IM_Server();
 			
-			new TCP_IM_Client(name, InetAddress.getLocalHost());
+			new TCP_IM_Client(name, InetAddress.getByName(ip));
 		} catch (Exception e) {
 			System.out.println("Connection failed - "+e.getMessage());
 		}
