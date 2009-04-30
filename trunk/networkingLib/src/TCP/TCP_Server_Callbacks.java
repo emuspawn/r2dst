@@ -3,7 +3,7 @@ package TCP;
 import java.net.Socket;
 
 public abstract class TCP_Server_Callbacks {
-	private int callbackVer = -1;
+	private int callbackVer = 1;
 	
 	//Data has been received on the client socket
 	public abstract void DataReceived(int clientIndex, byte[] data);
