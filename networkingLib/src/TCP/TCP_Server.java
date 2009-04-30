@@ -92,7 +92,7 @@ class AcceptThread extends Thread
 				{
 					clients.add(client);
 					
-					callbacks.ClientConnected(client);
+					callbacks.ClientConnected(clients.indexOf(client), client);
 				}
 			} catch (IOException e) { 
 				callbacks.ConnectException(e);
