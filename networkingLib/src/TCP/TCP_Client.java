@@ -46,6 +46,9 @@ public class TCP_Client implements Runnable {
 		{
 			byte[] buffer;
 			try {
+				if (in.available() == 0)
+					continue;
+				
 				buffer = new byte[in.available()];
 				in.read(buffer);
 					
