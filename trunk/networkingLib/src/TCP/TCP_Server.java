@@ -99,7 +99,7 @@ class ReceiveThread extends Thread
 			in = client.getInputStream();
 		} catch (IOException e1) {
 			serv.getClientList().remove(clientIndex);
-			callbacks.ReceiveException(clientIndex, e1);
+			callbacks.ReceiveException(e1);
 			return;
 		}
 		
@@ -127,7 +127,7 @@ class ReceiveThread extends Thread
 				callbacks.DataReceived(clientIndex, buffer);
 			} catch (IOException e) {
 				serv.getClientList().remove(clientIndex);
-				callbacks.ReceiveException(clientIndex, e);
+				callbacks.ReceiveException(e);
 				return;
 			}
 		}
