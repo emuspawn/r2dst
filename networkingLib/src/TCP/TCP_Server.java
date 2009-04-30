@@ -77,14 +77,12 @@ class AcceptThread extends Thread
 class ReceiveThread extends Thread
 {
 	private Socket client;
-	private int clientIndex;
 	private TCP_Server_Callbacks callbacks;
 	private TCP_Server serv;
 	
 	public ReceiveThread(TCP_Server server, Socket sock, TCP_Server_Callbacks calls)
 	{
 		client = sock;
-		clientIndex = server.getClientList().indexOf(sock);
 		callbacks = calls;
 		serv = server;
 		
@@ -98,7 +96,7 @@ class ReceiveThread extends Thread
 		try {
 			in = client.getInputStream();
 		} catch (IOException e1) {
-			serv.getClientList().remove(clientIndex);
+			serv.getClientList().remove(client);
 			callbacks.ReceiveException(e1);
 			return;
 		}
@@ -124,9 +122,9 @@ class ReceiveThread extends Thread
 					in.read(buffer);
 				}
 				
-				callbacks.DataReceived(clientIndex, buffer);
+				callbacks.DataReceived(serv.getClientList().indexOf(client), buffer);
 			} catch (IOException e) {
-				serv.getClientList().remove(clientIndex);
+				serv.getClientList().remove(client);
 				callbacks.ReceiveException(e);
 				return;
 			}
