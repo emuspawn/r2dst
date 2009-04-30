@@ -8,8 +8,6 @@ public class TCP_Server implements Runnable {
 	private ServerSocket sock;
 	
 	private ArrayList<Socket> clients;
-	private ArrayList<BufferedInputStream> ins;
-	private ArrayList<BufferedOutputStream> outs;
 	
 	private TCP_Server_Callbacks callbacks;
 	
@@ -17,29 +15,15 @@ public class TCP_Server implements Runnable {
 	{
 		sock = new ServerSocket(port);
 		clients = new ArrayList<Socket>();
-		ins = new ArrayList<BufferedInputStream>();
-		outs = new ArrayList<BufferedOutputStream>();
 		callbacks = calls;
 
-		new AcceptThread(ins, outs, clients, sock, callbacks);
+		new AcceptThread(clients, sock, callbacks);
 		new Thread(this).start();
 	}
 	
 	public ServerSocket getServerSocket()
 	{
 		return sock;
-	}
-	
-	//Returned list is read-only unless in ReceiveException handler
-	public ArrayList<BufferedInputStream> getInStreamList()
-	{
-		return ins;
-	}
-	
-	//Returned list is read-only unless in ReceiveException handler
-	public ArrayList<BufferedOutputStream> getOutStreamList()
-	{
-		return outs;
 	}
 	
 	//Returned list is read-only unless in ReceiveException handler
@@ -54,10 +38,12 @@ public class TCP_Server implements Runnable {
 		{
 			for (int i = 0; i < clients.size(); i++)
 			{
-				BufferedInputStream in = ins.get(i);
+				InputStream in;
 				byte[] buffer;
 				
 				try {
+					in = clients.get(i).getInputStream();
+					
 					if (in.available() == 0)
 						continue;
 					
@@ -66,6 +52,7 @@ public class TCP_Server implements Runnable {
 					
 					callbacks.DataReceived(i, buffer);
 				} catch (IOException e) {
+					clients.remove(i);
 					callbacks.ReceiveException(i, e);
 					break;
 				}
@@ -79,19 +66,13 @@ class AcceptThread extends Thread
 	private ServerSocket sock;
 	
 	private ArrayList<Socket> clients;
-	private ArrayList<BufferedInputStream> ins;
-	private ArrayList<BufferedOutputStream> outs;
 	
 	private TCP_Server_Callbacks callbacks;
 	
-	public AcceptThread(ArrayList<BufferedInputStream> inList,
-						ArrayList<BufferedOutputStream> outList,
-						ArrayList<Socket> clientList,
+	public AcceptThread(ArrayList<Socket> clientList,
 						ServerSocket servSock,
 						TCP_Server_Callbacks calls)
 	{
-		ins = inList;
-		outs = outList;
 		clients = clientList;
 		sock = servSock;
 		callbacks = calls;
@@ -109,13 +90,9 @@ class AcceptThread extends Thread
 				
 				if (client != null)
 				{
-					BufferedInputStream in = new BufferedInputStream(client.getInputStream());
-					BufferedOutputStream out = new BufferedOutputStream(client.getOutputStream());
-					ins.add(in);
-					outs.add(out);
 					clients.add(client);
 					
-					callbacks.ClientConnected(client, in, out);
+					callbacks.ClientConnected(client);
 				}
 			} catch (IOException e) { 
 				callbacks.ConnectException(e);

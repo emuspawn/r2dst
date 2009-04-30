@@ -1,7 +1,5 @@
 package TCP;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.net.Socket;
 
 public abstract class TCP_Server_Callbacks {
@@ -11,12 +9,10 @@ public abstract class TCP_Server_Callbacks {
 	public abstract void DataReceived(int clientIndex, byte[] data);
 	
 	//A client has connected to the server socket
-	public abstract void ClientConnected(Socket client, BufferedInputStream in, BufferedOutputStream out);
+	public abstract void ClientConnected(Socket client);
 	
 	//The client socket has caused an exception to be thrown
-	//when attempting to receive. This handler is responsible
-	//for removing the client and associated streams from
-	//each list.
+	//when attempting to receive
 	//!!! THE CLIENT SOCKET IS DEAD WHEN THIS IS CALLED !!!
 	public abstract void ReceiveException(int clientIndex, Exception e);
 	
