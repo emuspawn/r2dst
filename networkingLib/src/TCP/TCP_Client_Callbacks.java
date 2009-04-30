@@ -1,4 +1,4 @@
-package TCPv4;
+package TCP;
 
 public abstract class TCP_Client_Callbacks {
 	private int callbackVer = -1;

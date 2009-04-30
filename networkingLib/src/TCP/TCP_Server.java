@@ -1,4 +1,4 @@
-package TCPv4;
+package TCP;
 
 import java.io.*;
 import java.net.*;
