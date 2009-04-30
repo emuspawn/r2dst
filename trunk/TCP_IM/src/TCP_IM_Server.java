@@ -25,7 +25,7 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 	//----- The following implement abstract methods in TCP_Server_Callbacks ------
 	public void ClientConnected(int clientIndex, Socket client) {
 		String Message = "User connected from "+client.getInetAddress().toString().substring(1)+" on port "+client.getLocalPort();
-		
+		System.out.println(Message);
 		for (int i = 0; i < serv.getClientList().size(); i++)
 		{
 			if (i == clientIndex)
@@ -59,7 +59,18 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 		}
 	}
 
-	public void ReceiveException(int clientIndex, Exception e) {
-		e.printStackTrace();
+	public void ReceiveException(Exception e) {
+		String Message = "User disconnected: "+e.getMessage();
+		System.out.println(Message);
+		
+		for (int i = 0; i < serv.getClientList().size(); i++)
+		{
+			try {
+				serv.getClientList().get(i).getOutputStream().write(MessageToByteArray(Message));
+				serv.getClientList().get(i).getOutputStream().flush();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 }
