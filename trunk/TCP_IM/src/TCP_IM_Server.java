@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.net.Socket;
-
-import TCP.TCP_Server;
-import TCP.TCP_Server_Callbacks;
-
+import TCP.*;
 
 public class TCP_IM_Server extends TCP_Server_Callbacks {
 	TCP_Server serv;
@@ -12,7 +9,20 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 	{
 		serv = new TCP_Server(864, this);
 	}
+	
+	private static byte[] MessageToByteArray(String message)
+	{
+		byte[] sendBuff = new byte[message.length()];
+		
+		for (int i = 0; i < sendBuff.length; i++)
+		{
+			sendBuff[i] = (byte)(((int)message.charAt(i)) & 0xff);
+		}
+		
+		return sendBuff;
+	}
 
+	//----- The following implement abstract methods in TCP_Server_Callbacks ------
 	public void ClientConnected(int clientIndex, Socket client) {
 		String Message = "User connected from "+client.getInetAddress().toString().substring(1)+" on port "+client.getLocalPort();
 		
@@ -25,22 +35,9 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 				serv.getClientList().get(i).getOutputStream().write(MessageToByteArray(Message));
 				serv.getClientList().get(i).getOutputStream().flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private static byte[] MessageToByteArray(String message)
-	{
-		byte[] sendBuff = new byte[message.length()];
-		
-		for (int i = 0; i < sendBuff.length; i++)
-		{
-			sendBuff[i] = (byte)(((int)message.charAt(i)) & 0xff);
-		}
-		
-		return sendBuff;
 	}
 	
 	public void ConnectException(Exception e) {
@@ -50,8 +47,6 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 	public void DataReceived(int clientIndex, byte[] data) {
 		for (int i = 0; i < serv.getClientList().size(); i++)
 		{
-			//System.out.println("Reflecting data to client "+i);
-			
 			if (i == clientIndex)
 				continue;
 			
@@ -59,7 +54,6 @@ public class TCP_IM_Server extends TCP_Server_Callbacks {
 				serv.getClientList().get(i).getOutputStream().write(data);
 				serv.getClientList().get(i).getOutputStream().flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
