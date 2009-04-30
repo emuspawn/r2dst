@@ -32,11 +32,19 @@ public class TCP_Client implements Runnable {
 				in = sock.getInputStream();
 				
 				if (in.available() == 0)
-					continue;
+				{
+					byte[] temp = new byte[1];
+					in.read(temp);
+					buffer = new byte[in.available()+1];
+					buffer[0] = temp[0];
+					in.read(buffer, 1, buffer.length-1);
+				}
+				else
+				{
+					buffer = new byte[in.available()];
+					in.read(buffer);
+				}
 				
-				buffer = new byte[in.available()];
-				in.read(buffer);
-
 				callbacks.DataReceived(buffer);
 			} catch (IOException e) {
 				callbacks.ReceiveException(e);

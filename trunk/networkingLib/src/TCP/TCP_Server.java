@@ -45,10 +45,18 @@ public class TCP_Server implements Runnable {
 					in = clients.get(i).getInputStream();
 					
 					if (in.available() == 0)
-						continue;
-					
-					buffer = new byte[in.available()];
-					in.read(buffer);
+					{
+						byte[] temp = new byte[1];
+						in.read(temp);
+						buffer = new byte[in.available()+1];
+						buffer[0] = temp[0];
+						in.read(buffer, 1, buffer.length-1);
+					}
+					else
+					{
+						buffer = new byte[in.available()];
+						in.read(buffer);
+					}
 					
 					callbacks.DataReceived(i, buffer);
 				} catch (IOException e) {
