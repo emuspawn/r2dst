@@ -37,7 +37,9 @@ public class TCP_Client implements Runnable {
 					in.read(temp);
 					buffer = new byte[in.available()+1];
 					buffer[0] = temp[0];
-					in.read(buffer, 1, buffer.length-1);
+					
+					if (buffer.length > 1)
+						in.read(buffer, 1, buffer.length-1);
 				}
 				else
 				{

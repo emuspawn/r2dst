@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class TCP_Server implements Runnable {
+public class TCP_Server {
 	private ServerSocket sock;
 	
 	private ArrayList<Socket> clients;
@@ -17,8 +17,7 @@ public class TCP_Server implements Runnable {
 		clients = new ArrayList<Socket>();
 		callbacks = calls;
 
-		new AcceptThread(clients, sock, callbacks);
-		new Thread(this).start();
+		new AcceptThread(this, callbacks);
 	}
 	
 	public ServerSocket getServerSocket()
@@ -31,42 +30,6 @@ public class TCP_Server implements Runnable {
 	{
 		return clients;
 	}
-	
-	public void run()
-	{
-		for (;;)
-		{
-			for (int i = 0; i < clients.size(); i++)
-			{
-				InputStream in;
-				byte[] buffer;
-				
-				try {
-					in = clients.get(i).getInputStream();
-					
-					if (in.available() == 0)
-					{
-						byte[] temp = new byte[1];
-						in.read(temp);
-						buffer = new byte[in.available()+1];
-						buffer[0] = temp[0];
-						in.read(buffer, 1, buffer.length-1);
-					}
-					else
-					{
-						buffer = new byte[in.available()];
-						in.read(buffer);
-					}
-					
-					callbacks.DataReceived(i, buffer);
-				} catch (IOException e) {
-					clients.remove(i);
-					callbacks.ReceiveException(i, e);
-					break;
-				}
-			}
-		}
-	}
 }
 
 class AcceptThread extends Thread
@@ -76,13 +39,14 @@ class AcceptThread extends Thread
 	private ArrayList<Socket> clients;
 	
 	private TCP_Server_Callbacks callbacks;
+	private TCP_Server serv;
 	
-	public AcceptThread(ArrayList<Socket> clientList,
-						ServerSocket servSock,
+	public AcceptThread(TCP_Server server,
 						TCP_Server_Callbacks calls)
 	{
-		clients = clientList;
-		sock = servSock;
+		serv = server;
+		clients = serv.getClientList();
+		sock = serv.getServerSocket();
 		callbacks = calls;
 
 		start();
@@ -99,11 +63,71 @@ class AcceptThread extends Thread
 				if (client != null)
 				{
 					clients.add(client);
-					
+					new ReceiveThread(serv, client, callbacks);
 					callbacks.ClientConnected(clients.indexOf(client), client);
 				}
 			} catch (IOException e) { 
 				callbacks.ConnectException(e);
+				return;
+			}
+		}
+	}
+}
+
+class ReceiveThread extends Thread
+{
+	private Socket client;
+	private int clientIndex;
+	private TCP_Server_Callbacks callbacks;
+	private TCP_Server serv;
+	
+	public ReceiveThread(TCP_Server server, Socket sock, TCP_Server_Callbacks calls)
+	{
+		client = sock;
+		clientIndex = server.getClientList().indexOf(sock);
+		callbacks = calls;
+		serv = server;
+		
+		start();
+	}
+	
+	public void run()
+	{
+		InputStream in;
+		
+		try {
+			in = client.getInputStream();
+		} catch (IOException e1) {
+			serv.getClientList().remove(clientIndex);
+			callbacks.ReceiveException(clientIndex, e1);
+			return;
+		}
+		
+		for (;;)
+		{
+			byte[] buffer;
+			
+			try {
+				if (in.available() == 0)
+				{
+					byte[] temp = new byte[1];
+					in.read(temp);
+					buffer = new byte[in.available()+1];
+					buffer[0] = temp[0];
+				
+					if (buffer.length > 1)
+						in.read(buffer, 1, buffer.length-1);
+				}
+				else
+				{
+					buffer = new byte[in.available()];
+					in.read(buffer);
+				}
+				
+				callbacks.DataReceived(clientIndex, buffer);
+			} catch (IOException e) {
+				serv.getClientList().remove(clientIndex);
+				callbacks.ReceiveException(clientIndex, e);
 				return;
 			}
 		}
