@@ -9,7 +9,7 @@ public abstract class TCP_Server_Callbacks {
 	public abstract void DataReceived(int clientIndex, byte[] data);
 	
 	//A client has connected to the server socket
-	public abstract void ClientConnected(Socket client);
+	public abstract void ClientConnected(int clientIndex, Socket client);
 	
 	//The client socket has caused an exception to be thrown
 	//when attempting to receive
