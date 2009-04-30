@@ -56,7 +56,11 @@ public class TCP_Server implements Runnable {
 			{
 				BufferedInputStream in = ins.get(i);
 				byte[] buffer;
+				
 				try {
+					if (in.available() == 0)
+						continue;
+					
 					buffer = new byte[in.available()];
 					in.read(buffer);
 					
