@@ -1,7 +1,7 @@
 package TCP;
 
 public abstract class TCP_Client_Callbacks {
-	private int callbackVer = -1;
+	private int callbackVer = 1;
 	
 	//Data has been received on the socket
 	public abstract void DataReceived(byte[] data);

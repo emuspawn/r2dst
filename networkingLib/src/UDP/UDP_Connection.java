@@ -10,10 +10,6 @@ public class UDP_Connection implements Runnable {
 	
 	public UDP_Connection(int prt, UDP_Callbacks calls, int maxPacketSize) throws SocketException
 	{
-		//Validate that the caller set the callback version number
-		if (calls.getCallbackVersion() == -1)
-			throw new IllegalArgumentException("Invalid callback version number");
-		
 		dsock = new DatagramSocket(prt);
 		callbacks = calls;
 		maxSize = maxPacketSize;

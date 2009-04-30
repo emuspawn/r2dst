@@ -3,7 +3,7 @@ package UDP;
 import java.net.DatagramPacket;
 
 public abstract class UDP_Callbacks {
-	private int callbackVer = -1;
+	private int callbackVer = 1;
 	
 	//A packet has been received on the socket
 	public abstract void PacketReceived(DatagramPacket pack);
