@@ -63,8 +63,8 @@ class AcceptThread extends Thread
 				if (client != null)
 				{
 					clients.add(client);
-					new ReceiveThread(serv, client, callbacks);
 					callbacks.ClientConnected(clients.indexOf(client), client);
+					new ReceiveThread(serv, client, callbacks);
 				}
 			} catch (IOException e) { 
 				callbacks.ConnectException(e);
@@ -121,8 +121,10 @@ class ReceiveThread extends Thread
 					buffer = new byte[in.available()];
 					in.read(buffer);
 				}
+				int clientIndex = serv.getClientList().indexOf(client);
+				if (clientIndex == -1) return;
 				
-				callbacks.DataReceived(serv.getClientList().indexOf(client), buffer);
+				callbacks.DataReceived(clientIndex, buffer);
 			} catch (IOException e) {
 				serv.getClientList().remove(client);
 				callbacks.ReceiveException(e);
