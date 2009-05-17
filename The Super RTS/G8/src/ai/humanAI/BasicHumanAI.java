@@ -122,17 +122,17 @@ public abstract class BasicHumanAI extends AI
 			Location start = initialPress;
 			Location end = kr.getLocation();
 			dragging = false;
-			if(start.compareTo(end) == 0)
-			{
-				//selection was not dragged
-				press = getSelectorPrism();
-			}
-			else
+			if(start.compareTo(end) != 0)
 			{
 				//selection dragged, region formed
 				pselections.add(getPrismSelectionRegion(start, end));
 			}
 		}
+		if(kr.getCharacter() == 'i')
+		{
+			press = getSelectorPrism();
+		}
+		
 	}
 	/**
 	 * gets the region created by dragging the cursor from the starting
