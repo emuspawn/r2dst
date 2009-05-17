@@ -43,6 +43,15 @@ public class Unit extends Element
 		this.energyCost = energyCost;
 	}
 	/**
+	 * the height at which the unit should remain such above its location in order
+	 * to have its full bounds displayed
+	 * @return
+	 */
+	public double getRestingHeight()
+	{
+		return getHeight()/2;
+	}
+	/**
 	 * gets the weapon used by this unit
 	 * @return returns the unit's weapon
 	 */
@@ -128,12 +137,20 @@ public class Unit extends Element
 		
 		Owner owner = getOwner();
 		gl.glColor3d(owner.getColor().getRed(), owner.getColor().getGreen(), owner.getColor().getBlue());
-		gl.glBegin(GL.GL_QUADS);
+		
+		if(w.isFired() || selected)
+		{
+			gl.glColor3d(128, 128, 128);
+		}
+		
+		/*gl.glBegin(GL.GL_QUADS);
 		gl.glVertex3d(l.x-width/2, l.y, l.z-depth/2);
 		gl.glVertex3d(l.x+width/2, l.y, l.z-depth/2);
 		gl.glVertex3d(l.x+width/2, l.y, l.z+depth/2);
 		gl.glVertex3d(l.x-width/2, l.y, l.z+depth/2);
-		gl.glEnd();
+		gl.glEnd();*/
+		this.drawPrism(gl);
+		
 		if(selected)
 		{
 			gl.glLineWidth(2);

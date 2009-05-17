@@ -3,6 +3,8 @@ package ai.computerAI.computerAIs;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import sgEngine.userAction.KeyPress;
+import sgEngine.userAction.KeyRelease;
 import utilities.Location;
 import world.World;
 import world.owner.Owner;
@@ -24,7 +26,7 @@ public class TesterAI extends ComputerAI
 			Unit u = i.next();
 			if(u.getAction().getName().equals("idle"))
 			{
-				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
+				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, u.getRestingHeight(),
 					Math.random()*w.getDepth()-w.getDepth()/2);
 				//System.out.println(l);
 				moveUnit(u, l);

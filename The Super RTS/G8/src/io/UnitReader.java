@@ -30,10 +30,13 @@ public class UnitReader
 			int life = dis.readInt();
 			int movement = dis.readInt();
 			int width = dis.readInt();
-			int height = dis.readInt();
+			int depth = dis.readInt();
+			
+			double height = 10;
 			
 			Weapon w = new TestWeapon();
-			u = new Unit(name, null, location, w, life, movement, 0, 0, 0, 0, width, 0, height);
+			Location l = new Location(location.x, location.y+height/2, location.z);
+			u = new Unit(name, null, l, w, life, movement, 0, 0, 0, 0, width, height, depth);
 		}
 		catch(IOException e){}
 		return u;

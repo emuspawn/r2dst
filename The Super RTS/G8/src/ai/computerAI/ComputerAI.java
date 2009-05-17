@@ -2,6 +2,8 @@ package ai.computerAI;
 
 import javax.media.opengl.GLAutoDrawable;
 
+import sgEngine.userAction.KeyPress;
+import sgEngine.userAction.KeyRelease;
 import sgEngine.userAction.MouseClick;
 import world.World;
 import world.owner.Owner;
@@ -22,4 +24,6 @@ public abstract class ComputerAI extends AI
 	public void interpretMouseClick(MouseClick ma){}
 	public void drawUI(GLAutoDrawable d){}
 	public abstract void performAIFunctions();
+	public void interpretKeyPress(KeyPress kp){}
+	public void interpretKeyRelease(KeyRelease kr){}
 }

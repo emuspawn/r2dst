@@ -85,15 +85,15 @@ public class SGEngine implements Runnable
 		while(q.hasNext())
 		{
 			Owner owner = q.next();
-			for(int x = 0; x < 400; x++)
+			for(int x = 0; x < 5; x++)
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
 				w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, l));
 			}
-			w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
-			w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
-			w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
+			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
+			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
+			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
 		}
 		
 		for(;;)

@@ -81,11 +81,15 @@ public class Weapon
 						se.registerShot(new Shot(location, e.getLocation(), s, owner));
 						fired = true;
 						reloadCount = 0;
-						//System.out.println("weapon fired");
+						System.out.println("weapon fired");
 					}
 				}
 			}
 		}
+	}
+	public boolean isFired()
+	{
+		return fired;
 	}
 	/**
 	 * updates the weapon
@@ -98,6 +102,7 @@ public class Weapon
 			if(reloadCount == reload)
 			{
 				fired = false;
+				System.out.println("weapon reloaded");
 			}
 		}
 	}

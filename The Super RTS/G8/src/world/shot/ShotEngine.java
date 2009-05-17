@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.HashSet;
+import java.util.List;
+
 import dynamicMap3D.DynamicMap3D;
+import utilities.Location;
 import utilities.MoverseV4;
 import utilities.Prism;
 import world.Element;
@@ -27,9 +30,9 @@ public class ShotEngine
 	{
 		s.add(shot);
 	}
-	public ArrayList<Shot> getShots()
+	public List<Shot> getShots()
 	{
-		return shots;
+		return s;
 	}
 	public void performShotFunctions()
 	{
@@ -62,12 +65,18 @@ public class ShotEngine
 			if(hit)
 			{
 				i.remove();
-				//System.out.println("unit hit");
+				//System.out.println("unit hit, total shots = "+s.size());
 			}
 			else
 			{
 				shot.setLocation(MoverseV4.getNewLocation(shot.getLocation(), shot.getTarget(), shot.getMovement()));
+				/*Prism worldBounds = new Prism(new Location(0, w.getHeight()/2, 0), w.getWidth(), w.getHeight(), w.getDepth());
+				if(!worldBounds.intersects(shot))
+				{
+					System.out.println("shot out of world, "+shot.getLocation());
+				}*/
 			}
 		}
+		//System.out.println(s.size());
 	}
 }
