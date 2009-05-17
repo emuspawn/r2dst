@@ -21,7 +21,8 @@ public class TestHumanAI extends BasicHumanAI
 					Math.random()*w.getHeight()-w.getHeight()/2);*/
 			if(l != null)
 			{
-				forceMoveUnit(u, l);
+				Location location = new Location(l.x, l.y+u.getRestingHeight(), l.z);
+				forceMoveUnit(u, location);
 			}
 			//Location loc = new Location(200, 200, 200);
 			//moveUnit(u, loc);

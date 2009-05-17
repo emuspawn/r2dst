@@ -4,15 +4,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-
+import java.util.List;
 import graphics.GLCamera;
 import javax.media.opengl.*;
-
 import sgEngine.SGEngine;
-
 import com.sun.opengl.util.j2d.TextRenderer;
-
 import world.Element;
 import world.World;
 import world.owner.Owner;
@@ -49,12 +45,12 @@ public class SGDisplay implements GLEventListener
 			e.get(i).drawElement(gl);
 		}
 		
-		ArrayList<Shot> s = w.getShotEngine().getShots();
+		/*List<Shot> s = w.getShotEngine().getShots();
 		Iterator<Shot> si = s.iterator(); //shot iterator
 		while(si.hasNext())
 		{
 			si.next().drawElement(gl);
-		}
+		}*/
 		
 		ArrayList<Owner> o = sge.getOwners();
 		Iterator<Owner> i = o.iterator();

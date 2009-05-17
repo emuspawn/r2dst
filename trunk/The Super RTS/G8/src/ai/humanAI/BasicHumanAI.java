@@ -1,7 +1,6 @@
 package ai.humanAI;
 
 import graphics.GLCamera;
-import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +8,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import sgEngine.userAction.*;
 import utilities.Location;
+import utilities.Prism;
 import world.World;
 import world.owner.Owner;
 import world.unit.Unit;
@@ -43,10 +43,12 @@ import ai.AI;
  */
 public abstract class BasicHumanAI extends AI
 {
+	private static final double selectorWidth = 10; //the width of the selector
+	
 	GLCamera c;
 	boolean unSelect = false; //true if the ai should unselect all units next iteration
-	Location press; //where the selector key was pressed (not dragged), where the units are sent to move to
-	ArrayList<Polygon> selections = new ArrayList<Polygon>();
+	Prism press; //where the selector key was pressed (not dragged), where the units are sent to move to
+	ArrayList<Prism> pselections = new ArrayList<Prism>();
 	
 	Location initialPress; //where the mouse was first pressed (when dragging)
 	boolean dragging = false;
@@ -56,7 +58,23 @@ public abstract class BasicHumanAI extends AI
 		super(o, w);
 		this.c = c;
 	}
-	public void drawUI(GLAutoDrawable d)
+	/**
+	 * draws the selector
+	 * @param gl
+	 */
+	private void drawSelector(GL gl)
+	{
+		gl.glPushMatrix();
+		gl.glRotated(-c.getRotation(), 0, 1, 0);
+		gl.glColor3d(0, 128, 255);
+		getSelectorPrism().drawPrism(gl);
+		gl.glPopMatrix();
+	}
+	/**
+	 * gets the prism representig the selector
+	 * @return
+	 */
+	private Prism getSelectorPrism()
 	{
 		double ydiff = c.getLocation().y-c.getViewLocation().y;
 		double zdiff = c.getLocation().z-c.getViewLocation().z;
@@ -64,25 +82,15 @@ public abstract class BasicHumanAI extends AI
 		double height = 1; //height of the selector
 		double depth = ((height-c.getLocation().y)/yzslope)+c.getLocation().z;
 		
-		/*double xdiff = c.getLocation().x - c.getViewLocation().x;
-		double zxslope = zdiff / xdiff;
-		double xover = ((depth-c.getLocation().z)/zxslope)+c.getLocation().x;*/
-		
 		Location l = new Location(c.getLocation().x, height, depth);
 		
-		double width = 10; //the width of the selector
+		return new Prism(l, selectorWidth, 2, selectorWidth);
+	}
+	public void drawUI(GLAutoDrawable d)
+	{
 		GL gl = d.getGL();
-		gl.glPushMatrix();
-		gl.glRotated(-c.getRotation(), 0, 1, 0);
-		gl.glColor3d(0, 128, 255);
-		gl.glBegin(GL.GL_QUADS);
-		gl.glVertex3d(l.x-width/2, l.y, l.z-width/2);
-		gl.glVertex3d(l.x+width/2, l.y, l.z-width/2);
-		gl.glVertex3d(l.x+width/2, l.y, l.z+width/2);
-		gl.glVertex3d(l.x-width/2, l.y, l.z+width/2);
-		gl.glEnd();
-		gl.glPopMatrix();
 		
+		drawSelector(gl);
 		
 		try
 		{
@@ -90,12 +98,7 @@ public abstract class BasicHumanAI extends AI
 			Location center = c.getMapLocation(1);
 			if(dragging)
 			{
-				gl.glBegin(GL.GL_QUADS);
-				gl.glVertex3d(initialPress.x, initialPress.y, initialPress.z);
-				gl.glVertex3d(center.x, initialPress.y, initialPress.z);
-				gl.glVertex3d(center.x, initialPress.y, center.z);
-				gl.glVertex3d(initialPress.x, initialPress.y, center.z);
-				gl.glEnd();
+				getPrismSelectionRegion(initialPress, center).drawPrism(gl);
 			}
 		}
 		catch(Exception e){}
@@ -122,12 +125,12 @@ public abstract class BasicHumanAI extends AI
 			if(start.compareTo(end) == 0)
 			{
 				//selection was not dragged
-				press = end;
+				press = getSelectorPrism();
 			}
 			else
 			{
 				//selection dragged, region formed
-				selections.add(getSelectionRegion(start, end));
+				pselections.add(getPrismSelectionRegion(start, end));
 			}
 		}
 	}
@@ -139,24 +142,14 @@ public abstract class BasicHumanAI extends AI
 	 * @param end
 	 * @return
 	 */
-	private Polygon getSelectionRegion(Location start, Location end)
+	private Prism getPrismSelectionRegion(Location start, Location end)
 	{
-		Polygon p = new Polygon();
-		if(start.compareTo(end) != 0)
-		{
-			p.addPoint((int)start.x, (int)start.z);
-			p.addPoint((int)start.x, (int)end.z);
-			p.addPoint((int)end.x, (int)end.z);
-			p.addPoint((int)end.x, (int)start.z);
-		}
-		else
-		{
-			p.addPoint((int)start.x-1, (int)start.z-1);
-			p.addPoint((int)start.x+1, (int)start.z-1);
-			p.addPoint((int)start.x+1, (int)start.z+1);
-			p.addPoint((int)start.x-1, (int)start.z+1);
-		}
-		return p;
+		double width = Math.abs(start.x-end.x);
+		//double height = Math.abs(start.y-end.y);
+		double height = 20;
+		double depth = Math.abs(start.z-end.z);
+		Location middle = new Location(start.x+(end.x-start.x)/2, start.y+(end.y-start.y)/2, start.z+(end.z-start.z)/2);
+		return new Prism(middle, width, height, depth);
 	}
 	public void interpretMouseClick(MouseClick ma)
 	{
@@ -164,42 +157,6 @@ public abstract class BasicHumanAI extends AI
 		{
 			unSelect = true;
 		}
-	}
-	/**
-	 * gets a 2d polygon representing the unit on the screen
-	 * @return returns the unit's polygon as seen by the user
-	 */
-	private Polygon get2DPolygon(Unit u)
-	{
-		Location l = u.getLocation();
-		Location p1 = c.project(new Location(l.x-u.getWidth(), l.y, l.z-u.getHeight()));
-		Location p2 = c.project(new Location(l.x+u.getWidth(), l.y, l.z-u.getHeight()));
-		Location p3 = c.project(new Location(l.x+u.getWidth(), l.y, l.z+u.getHeight()));
-		Location p4 = c.project(new Location(l.x-u.getWidth(), l.y, l.z+u.getHeight()));
-		Polygon p = new Polygon();
-		p.addPoint((int)p1.x, (int)p1.y);
-		p.addPoint((int)p2.x, (int)p2.y);
-		p.addPoint((int)p3.x, (int)p3.y);
-		p.addPoint((int)p4.x, (int)p4.y);
-		return p;
-	}
-	/**
-	 * gets a 3d polygon representing the unit in the world
-	 * @return returns the unit's polygon
-	 */
-	private Polygon get3DPolygon(Unit u)
-	{
-		Location l = u.getLocation();
-		Location p1 = new Location(l.x-u.getWidth(), l.y, l.z-u.getDepth());
-		Location p2 = new Location(l.x+u.getWidth(), l.y, l.z-u.getDepth());
-		Location p3 = new Location(l.x+u.getWidth(), l.y, l.z+u.getDepth());
-		Location p4 = new Location(l.x-u.getWidth(), l.y, l.z+u.getDepth());
-		Polygon p = new Polygon();
-		p.addPoint((int)p1.x, (int)p1.z);
-		p.addPoint((int)p2.x, (int)p2.z);
-		p.addPoint((int)p3.x, (int)p3.z);
-		p.addPoint((int)p4.x, (int)p4.z);
-		return p;
 	}
 	public void performAIFunctions()
 	{
@@ -224,18 +181,18 @@ public abstract class BasicHumanAI extends AI
 			{
 				if(!u.isSelected())
 				{
-					Iterator<Polygon> pi = selections.iterator();
+					Iterator<Prism> pi = pselections.iterator();
 					while(pi.hasNext())
 					{
-						Polygon p = pi.next();
-						if(get3DPolygon(u).intersects(p.getBounds2D()))
+						Prism p = pi.next();
+						if(u.intersects(p))
 						{
 							u.setSelected(true);
 							//System.out.println("unit selected!");
 							break;
 						}
 					}
-					if(press != null && get3DPolygon(u).contains(press.x, press.z) && !unitPressSelected)
+					if(press != null && u.intersects(press) && !unitPressSelected)
 					{
 						//unit selected by the key press (not drag)
 						//press selecting only selects one unit
@@ -262,7 +219,12 @@ public abstract class BasicHumanAI extends AI
 					 * all units selected by dragging, thus, the press location is
 					 * the location of a command
 					 */
-					orderUnit(u, press);
+					Location l = null;
+					if(press != null)
+					{
+						l = press.getLocation();
+					}
+					orderUnit(u, l);
 				}
 				else
 				{
@@ -270,7 +232,7 @@ public abstract class BasicHumanAI extends AI
 				}
 			}
 		}
-		selections = new ArrayList<Polygon>();
+		pselections = new ArrayList<Prism>();
 		unSelect = false;
 		press = null;
 	}
