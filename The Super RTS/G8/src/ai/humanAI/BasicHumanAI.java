@@ -47,7 +47,7 @@ public abstract class BasicHumanAI extends AI
 	
 	GLCamera c;
 	boolean unSelect = false; //true if the ai should unselect all units next iteration
-	Prism press; //where the selector key was pressed (not dragged), where the units are sent to move to
+	Location press; //where the selector key was pressed (not dragged), where the units are sent to move to
 	ArrayList<Prism> pselections = new ArrayList<Prism>();
 	
 	Location initialPress; //where the mouse was first pressed (when dragging)
@@ -130,7 +130,7 @@ public abstract class BasicHumanAI extends AI
 		}
 		if(kr.getCharacter() == 'i')
 		{
-			press = getSelectorPrism();
+			press = kr.getLocation();
 		}
 		
 	}
@@ -192,7 +192,7 @@ public abstract class BasicHumanAI extends AI
 							break;
 						}
 					}
-					if(press != null && u.intersects(press) && !unitPressSelected)
+					if(press != null && u.contains(press) && !unitPressSelected)
 					{
 						//unit selected by the key press (not drag)
 						//press selecting only selects one unit
@@ -222,7 +222,7 @@ public abstract class BasicHumanAI extends AI
 					Location l = null;
 					if(press != null)
 					{
-						l = press.getLocation();
+						l = press;
 					}
 					orderUnit(u, l);
 				}
