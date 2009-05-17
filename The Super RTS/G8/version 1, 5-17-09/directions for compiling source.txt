@@ -1,0 +1,3 @@
+1. add all the folders in the "src" folder into eclipse
+2. link the build path of the project with the two jars in the"lib" folder and the Vicissitude5 jar in the main directory
+3. expand the link for the "JRE System Library" in the "Libraries" tab of the "Java Build Path" selection in the properties of the project; click the "Native Library Location: (None)" selection and click edit; set its location to the location of the "lib" folder containing the OpenGL binaries for windows
