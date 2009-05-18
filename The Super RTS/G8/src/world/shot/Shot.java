@@ -71,6 +71,8 @@ public class Shot extends Element
 		    gl.glVertex3f( 1.0f,-1.0f, 1.0f);   //V1
 		gl.glEnd();*/
 		
+		gl.glColor3d(0, 0, 0);
+		
 		this.drawPrism(gl);
 		gl.glPopMatrix();
 	}

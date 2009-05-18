@@ -7,7 +7,7 @@ public class TestShot extends Shot
 {
 	public TestShot(Owner owner)
 	{
-		super(new Location(0, 0, 0), null, owner, 10, 6, 2, 2, 4);
+		super(new Location(0, 0, 0), null, owner, 100, 1, 2, 2, 4);
 	}
 
 }

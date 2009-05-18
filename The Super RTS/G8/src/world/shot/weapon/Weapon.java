@@ -68,8 +68,8 @@ public class Weapon
 		if(!fired)
 		{
 			//HashSet<Prism> hs = new HashSet<Prism>();
-			Location l = new Location(location.x, location.z);
-			HashSet<Prism> hs = unitMap.getElementsInRange(l, range);
+			//Location l = new Location(location.x, location.z);
+			HashSet<Prism> hs = unitMap.getElementsInRange(location, range);
 			if(hs.size() > 0)
 			{
 				Iterator<Prism> i = hs.iterator();
@@ -81,7 +81,7 @@ public class Weapon
 						se.registerShot(new Shot(location, e.getLocation(), s, owner));
 						fired = true;
 						reloadCount = 0;
-						System.out.println("weapon fired");
+						//System.out.println("weapon fired");
 					}
 				}
 			}
@@ -102,7 +102,7 @@ public class Weapon
 			if(reloadCount == reload)
 			{
 				fired = false;
-				System.out.println("weapon reloaded");
+				//System.out.println("weapon reloaded");
 			}
 		}
 	}
