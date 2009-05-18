@@ -29,6 +29,7 @@ public class ShotEngine
 	public void registerShot(Shot shot)
 	{
 		s.add(shot);
+		//System.out.println("shot registered, owner = "+shot.getOwner().getName());
 	}
 	public List<Shot> getShots()
 	{
@@ -50,6 +51,7 @@ public class ShotEngine
 		{
 			boolean hit = false; //hit an enemy
 			Shot shot = i.next();
+			//System.out.println(shot.getOwner().getName());
 			HashSet<Prism> hs = dm3d.checkIntersection(shot);
 			Iterator<Prism> ui = hs.iterator(); //unit iterator
 			while(ui.hasNext())
@@ -59,6 +61,7 @@ public class ShotEngine
 				if(!u.getOwner().getName().equalsIgnoreCase(shot.getOwner().getName()))
 				{
 					u.setLife(u.getLife()-shot.getDamage());
+					//System.out.println(u.getOwner().getName());
 					hit = true;
 				}
 			}

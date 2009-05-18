@@ -29,7 +29,6 @@ public class Weapon
 	int reload; //iterations between firing
 	int reloadCount = 0; //counts up until it reaches the reload
 	boolean fired = false;
-	Owner owner;
 	
 	/**
 	 * creates a weapon
@@ -46,15 +45,6 @@ public class Weapon
 		this.reload = reload;
 	}
 	/**
-	 * sets the owner of the weapon, called by the unit this weapon
-	 * is attached to
-	 * @param o
-	 */
-	public void setOwner(Owner o)
-	{
-		owner = o;
-	}
-	/**
 	 * first checks to see if the weapon can fire, if it can it then gets a
 	 * hash set representing all units in range, next it iterates over the set
 	 * unitl it finds a unit that is not of the same owner as the weapon, then
@@ -63,12 +53,12 @@ public class Weapon
 	 * @param se
 	 * @param unitMap
 	 */
-	public void fireWeapon(Location location, ShotEngine se, DynamicMap3D unitMap)
+	public void fireWeapon(Location location, ShotEngine se, DynamicMap3D unitMap, Owner owner)
 	{
+		//System.out.println(owner.getName());
 		if(!fired)
 		{
-			//HashSet<Prism> hs = new HashSet<Prism>();
-			//Location l = new Location(location.x, location.z);
+			//HashSet<Prism> hs = new HashSet<Prism>();]
 			HashSet<Prism> hs = unitMap.getElementsInRange(location, range);
 			if(hs.size() > 0)
 			{

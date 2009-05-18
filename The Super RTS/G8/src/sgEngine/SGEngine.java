@@ -42,7 +42,7 @@ public class SGEngine implements Runnable
 	
 	public SGEngine()
 	{
-		w = new World(4000, 100, 4000);
+		w = new World(400, 100, 400);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
 		c = new GLCamera(new Location(50, 100, 200), new Location(50, 90, 195), 200, 200);
@@ -93,7 +93,7 @@ public class SGEngine implements Runnable
 		while(q.hasNext())
 		{
 			Owner owner = q.next();
-			for(int x = 0; x < 200; x++)
+			for(int x = 0; x < 20; x++)
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);

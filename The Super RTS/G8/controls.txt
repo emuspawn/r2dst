@@ -1,0 +1,19 @@
+CAMERA:
+
+w = forward
+a = left
+d = right
+s = backwards
+
+r = zoom in
+f = zoom out
+
+MAP:
+
+q = rotate map left around origin
+e = rotate map rightaround origin
+
+GAMEPLAY:
+
+l = selects units (hold down to drag) or orders units
+j = deselects units

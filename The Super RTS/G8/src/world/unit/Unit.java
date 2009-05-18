@@ -38,7 +38,6 @@ public class Unit extends Element
 		super(name, l, owner, life, width, height, depth);
 		this.movement = movement;
 		this.w = w;
-		this.w.setOwner(owner);
 		this.metalDrain = metalDrain;
 		this.energyDrain = energyDrain;
 		this.metalCost = metalCost;
@@ -107,7 +106,6 @@ public class Unit extends Element
 		super(u.getName(), l, owner, u.getLife(), u.getWidth(), u.getHeight(), u.getDepth());
 		movement = u.getMovement();
 		w = u.getWeapon();
-		w.setOwner(owner);
 		metalDrain = u.getMetalDrain();
 		energyDrain = u.getEnergyDrain();
 		metalCost = u.getMetalCost();
