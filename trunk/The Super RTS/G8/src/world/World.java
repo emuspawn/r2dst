@@ -23,6 +23,7 @@ public class World
 	public World(int width, int height, int depth)
 	{
 		this.width = width;
+		this.height = height;
 		this.depth = depth;
 		se = new ShotEngine(this);
 		ue = new UnitEngine(this, se);

@@ -1,6 +1,8 @@
 package world.unit;
 
 import javax.media.opengl.GL;
+
+import sgEngine.EngineConstants;
 import utilities.Location;
 import world.Element;
 import world.owner.Owner;
@@ -138,7 +140,7 @@ public class Unit extends Element
 		Owner owner = getOwner();
 		gl.glColor3d(owner.getColor().getRed(), owner.getColor().getGreen(), owner.getColor().getBlue());
 		
-		if(w.isFired() || selected)
+		if(selected && EngineConstants.selectedUnitsAreWhite)
 		{
 			gl.glColor3d(128, 128, 128);
 		}

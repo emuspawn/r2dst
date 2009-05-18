@@ -32,7 +32,7 @@ public class UnitReader
 			int width = dis.readInt();
 			int depth = dis.readInt();
 			
-			double height = 10;
+			double height = 7;
 			
 			Weapon w = new TestWeapon();
 			Location l = new Location(location.x, location.y+height/2, location.z);

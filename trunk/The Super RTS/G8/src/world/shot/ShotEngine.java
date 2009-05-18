@@ -70,6 +70,11 @@ public class ShotEngine
 			else
 			{
 				shot.setLocation(MoverseV4.getNewLocation(shot.getLocation(), shot.getTarget(), shot.getMovement()));
+				if(shot.getLocation().compareTo(shot.getTarget()) == 0)
+				{
+					i.remove();
+				}
+				
 				/*Prism worldBounds = new Prism(new Location(0, w.getHeight()/2, 0), w.getWidth(), w.getHeight(), w.getDepth());
 				if(!worldBounds.intersects(shot))
 				{

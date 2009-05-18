@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import display.*;
+import dynamicMap3D.MapDisplay;
 import sgEngine.userAction.*;
-import ui.opengl.GLFrame;
+import ui.GLFrame;
 import utilities.Location;
 import world.World;
-import world.WorldConstants;
 import world.owner.Owner;
 import ai.AI;
 import ai.computerAI.computerAIs.*;
@@ -38,12 +38,14 @@ public class SGEngine implements Runnable
 	
 	GLCamera c;
 	KeyActionListener ka;
+	MapDisplay unitMapDisplay;
 	
 	public SGEngine()
 	{
-		w = new World(400, 100, 400);
+		w = new World(4000, 100, 4000);
 		
-		c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
+		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
+		c = new GLCamera(new Location(50, 100, 200), new Location(50, 90, 195), 200, 200);
 		
 		GLFrame f = new GLFrame(new SGDisplay(this, w, c));
 		ka = new KeyActionListener();
@@ -53,6 +55,12 @@ public class SGEngine implements Runnable
 		ual = new UserActionListener(this, owner, c, false);
 		f.getGLCanvas().addMouseListener(ual);
 		f.getGLCanvas().addKeyListener(ual);
+		
+		if(EngineConstants.startUnitMapDisplayWindow)
+		{
+			GLCamera mapCamera = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -15), 0, 0);
+			unitMapDisplay = new MapDisplay(mapCamera);
+		}
 		
 		new Thread(this).start();
 	}
@@ -85,11 +93,11 @@ public class SGEngine implements Runnable
 		while(q.hasNext())
 		{
 			Owner owner = q.next();
-			for(int x = 0; x < 5; x++)
+			for(int x = 0; x < 200; x++)
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
-				w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, l));
+				w.registerElement(EngineConstants.unitFactory.makeUnit("test unit 1", owner, l));
 			}
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
@@ -118,6 +126,12 @@ public class SGEngine implements Runnable
 				}
 				catch(InterruptedException e){}
 				icount++;
+				
+				if(EngineConstants.startUnitMapDisplayWindow)
+				{
+					unitMapDisplay.setMap(w.getUnitEngine().getUnitMap());
+					unitMapDisplay.updateMapDisplay();
+				}
 			}
 			catch(Exception e)
 			{
