@@ -88,14 +88,6 @@ public class UnitEngine
 	 */
 	private void updateUnit(Unit u)
 	{
-		/*if(u.getAction().getName().equalsIgnoreCase("idle"))
-		{
-			u.setAction(new Move(u, new Location(Math.random()*w.getWidth()-w.getWidth()/2, 
-					Math.random()*w.getHeight()-w.getHeight()/2)));
-		}*/
-		
-		
-		
 		Location oldLocation = u.getLocation();
 		boolean done = u.getAction().performAction();
 		dm3d.adjustElement(u, oldLocation, u.getLocation());
@@ -108,7 +100,8 @@ public class UnitEngine
 			u.setDead();
 		}
 		u.getWeapon().updateWeapon();
-		u.getWeapon().fireWeapon(u.getLocation(), se, dm3d);
+		u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+		//System.out.println(u.getOwner().getName());
 	}
 	/**
 	 * gets the total units in game
