@@ -13,6 +13,7 @@ public class Unit extends Element
 	private double movement;
 	private boolean selected = false;
 	private Weapon w;
+	private int id;
 	
 	private double metalDrain; //how much metal this unit generates for its owner
 	private double energyDrain; //how much energy this unit generates for its owner (or costs to run)
@@ -33,7 +34,10 @@ public class Unit extends Element
 	 * @param width
 	 * @param height
 	 */
-	public Unit(String name, Owner owner, Location l, Weapon w, int life, double movement, double metalDrain, double energyDrain, double metalCost, double energyCost, double width, double height, double depth)
+	public Unit(String name, Owner owner, Location l, Weapon w, int life, 
+			double movement, double metalDrain, double energyDrain, 
+			double metalCost, double energyCost, double width, double height, 
+			double depth)
 	{
 		super(name, l, owner, life, width, height, depth);
 		this.movement = movement;
@@ -42,6 +46,33 @@ public class Unit extends Element
 		this.energyDrain = energyDrain;
 		this.metalCost = metalCost;
 		this.energyCost = energyCost;
+	}
+	/**
+	 * makes a new unit that is a copy of the passed unit
+	 * @param u the unit to be copied
+	 * @param l the location of the new unit
+	 */
+	public Unit(Unit u, Owner owner, Location l)
+	{
+		super(u.getName(), l, owner, u.getLife(), u.getWidth(), u.getHeight(), u.getDepth());
+		movement = u.getMovement();
+		w = u.getWeapon();
+		metalDrain = u.getMetalDrain();
+		energyDrain = u.getEnergyDrain();
+		metalCost = u.getMetalCost();
+		energyCost = u.getEnergyCost();
+	}
+	public int getID()
+	{
+		return id;
+	}
+	/**
+	 * sets the id of the unit, set when registered in the UnitEngine
+	 * @param setter
+	 */
+	public void setID(int setter)
+	{
+		id = setter;
 	}
 	/**
 	 * the height at which the unit should remain such above its location in order
@@ -95,21 +126,6 @@ public class Unit extends Element
 	public double getEnergyCost()
 	{
 		return energyCost;
-	}
-	/**
-	 * makes a new unit that is a copy of the passed unit
-	 * @param u the unit to be copied
-	 * @param l the location of the new unit
-	 */
-	public Unit(Unit u, Owner owner, Location l)
-	{
-		super(u.getName(), l, owner, u.getLife(), u.getWidth(), u.getHeight(), u.getDepth());
-		movement = u.getMovement();
-		w = u.getWeapon();
-		metalDrain = u.getMetalDrain();
-		energyDrain = u.getEnergyDrain();
-		metalCost = u.getMetalCost();
-		energyCost = u.getEnergyCost();
 	}
 	/**
 	 * checks to see if the unit is selected

@@ -31,6 +31,8 @@ public class UnitEngine
 	World w;
 	ShotEngine se;
 	
+	int idCount = 0; //for determining ids
+	
 	public UnitEngine(World w, ShotEngine se)
 	{
 		this.w = w;
@@ -51,7 +53,7 @@ public class UnitEngine
 				updateUnit(u);
 				if(u.isDead())
 				{
-					dm3d.removeElement(u);
+					dm3d.removeElement(u, u.getID());
 					i.remove();
 					totalUnits--;
 				}
@@ -60,6 +62,9 @@ public class UnitEngine
 		addQueuedUnitsToMainList();
 		//dm3d.printMap();
 		//System.out.println(dm3d.getElements().size());
+		//System.out.println(dm3d.determineStoredElements());
+		//System.out.println();
+		//System.out.println(net);
 	}
 	/**
 	 * adds queued units to the main list
@@ -88,9 +93,14 @@ public class UnitEngine
 	 */
 	private void updateUnit(Unit u)
 	{
-		Location oldLocation = u.getLocation();
+		//Location oldLocation = u.getLocation();
+		//boolean done = u.getAction().performAction();
+		//dm3d.adjustElement(u, oldLocation, u.getLocation(), u.getID());
+		
+		dm3d.removeElement(u, u.getID());
 		boolean done = u.getAction().performAction();
-		dm3d.adjustElement(u, oldLocation, u.getLocation());
+		dm3d.addElement(u, u.getID());
+		
 		if(done)
 		{
 			u.setAction(new Idle());
@@ -125,8 +135,10 @@ public class UnitEngine
 	 */
 	public void registerUnit(Unit unit)
 	{
+		unit.setID(idCount);
+		idCount++;
 		unitQueue.add(unit);
-		dm3d.addElement(unit);
+		dm3d.addElement(unit, unit.getID());
 	}
 	/**
 	 * gets the units controlled by a given owner
