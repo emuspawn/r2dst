@@ -1,13 +1,13 @@
 package ai.humanAI;
 
 import graphics.GLCamera;
-
-import java.awt.geom.AffineTransform;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import com.sun.opengl.util.j2d.TextRenderer;
 import sgEngine.userAction.*;
 import utilities.Location;
 import utilities.Prism;
@@ -54,10 +54,15 @@ public abstract class BasicHumanAI extends AI
 	
 	Location movementLocation; //determined from the camera's location when 'i' is pressed
 	
+	TextRenderer tr;
+	
 	public BasicHumanAI(Owner o, World w, GLCamera c)
 	{
 		super(o, w);
 		this.c = c;
+		
+		Font font = new Font("SansSerif", Font.BOLD, 12);
+		tr = new TextRenderer(font, true, false);
 	}
 	/**
 	 * draws the selector
@@ -95,7 +100,20 @@ public abstract class BasicHumanAI extends AI
 				getPrismSelectionRegion(initialPress, center).drawPrism(gl);
 			}
 		}
-		catch(Exception e){}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("exception caught, continuing normally...");
+		}
+		drawResources();
+	}
+	private void drawResources()
+	{
+		tr.beginRendering((int)c.getWidth(), (int)c.getHeight());
+		tr.setColor(255, 0, 0, 255);
+		tr.draw("Energy: "+o.getEnergy(), (int)(c.getWidth()-110), (int)(c.getHeight()-20));
+		tr.draw("Metal: "+o.getMetal(), (int)(c.getWidth()-110), (int)(c.getHeight()-40));
+		tr.endRendering();
 	}
 	public void interpretKeyPress(KeyPress kp)
 	{
@@ -211,7 +229,19 @@ public abstract class BasicHumanAI extends AI
 			Unit u = i.next();
 			if(!unSelect)
 			{
-				orderUnit(u, movementLocation);
+				if(BasicHumanAIStats.selectorMovesUnits && !unitPressSelected)
+				{
+					Location l = null;
+					if(press != null)
+					{
+						l = press.getLocation();
+					}
+					orderUnit(u, l);
+				}
+				else if(!BasicHumanAIStats.selectorMovesUnits)
+				{
+					orderUnit(u, movementLocation);
+				}
 			}
 		}
 		pselections = new ArrayList<Prism>();

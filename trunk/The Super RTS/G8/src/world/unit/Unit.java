@@ -1,5 +1,8 @@
 package world.unit;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.media.opengl.GL;
 
 import sgEngine.EngineConstants;
@@ -14,6 +17,7 @@ public class Unit extends Element
 	private boolean selected = false;
 	private Weapon w;
 	private int id;
+	private ArrayList<String> buildTree;
 	
 	private double metalDrain; //how much metal this unit generates for its owner
 	private double energyDrain; //how much energy this unit generates for its owner (or costs to run)
@@ -61,6 +65,36 @@ public class Unit extends Element
 		energyDrain = u.getEnergyDrain();
 		metalCost = u.getMetalCost();
 		energyCost = u.getEnergyCost();
+		setBuildTree(u.getBuildTree());
+	}
+	/**
+	 * sets this unit's build tree
+	 * @param al
+	 */
+	public void setBuildTree(ArrayList<String> al)
+	{
+		buildTree = al;
+	}
+	public ArrayList<String> getBuildTree()
+	{
+		return buildTree;
+	}
+	/**
+	 * checks the build tree of the unit to determine if it can build that passed unit
+	 * @param name the name of the unit being checked
+	 * @return returns true if this unit can build the passed unit, false otherwise
+	 */
+	public boolean canBuild(String name)
+	{
+		Iterator<String> i = buildTree.iterator();
+		while(i.hasNext())
+		{
+			if(i.next().equalsIgnoreCase(name))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	public int getID()
 	{

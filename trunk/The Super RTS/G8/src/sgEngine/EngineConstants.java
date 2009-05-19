@@ -13,4 +13,6 @@ public final class EngineConstants
 	public static final boolean drawShots = true;
 	public static final boolean startUnitMapDisplayWindow = false; //displays the unit map for diagnostic purposes
 	public static final boolean selectedUnitsAreWhite = true;
+	public static final double startingMetal = 1000;
+	public static final double startingEnergy = 1000;
 }
