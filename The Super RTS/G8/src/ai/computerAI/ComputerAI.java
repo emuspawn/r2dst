@@ -2,6 +2,7 @@ package ai.computerAI;
 
 import javax.media.opengl.GLAutoDrawable;
 
+import sgEngine.SGEngine;
 import sgEngine.userAction.KeyPress;
 import sgEngine.userAction.KeyRelease;
 import sgEngine.userAction.MouseClick;
@@ -17,9 +18,9 @@ import ai.AI;
 public abstract class ComputerAI extends AI
 {
 
-	public ComputerAI(Owner o, World w)
+	public ComputerAI(Owner o, World w, SGEngine sge)
 	{
-		super(o, w);
+		super(o, w, sge);
 	}
 	public void interpretMouseClick(MouseClick ma){}
 	public void drawUI(GLAutoDrawable d){}

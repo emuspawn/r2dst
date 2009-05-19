@@ -15,7 +15,7 @@ import world.World;
 import world.owner.Owner;
 import ai.AI;
 import ai.computerAI.computerAIs.*;
-import ai.humanAI.humanAIs.TestHumanAI;
+import ai.humanAI.basicHumanAI.TestHumanAI;
 
 /**
  * the engine that accepts input and runs the game
@@ -28,7 +28,7 @@ public class SGEngine implements Runnable
 	World w;
 	ArrayList<Owner> o = new ArrayList<Owner>();
 	HashMap<Integer, ArrayList<UserAction>> userActions = new HashMap<Integer, ArrayList<UserAction>>();
-	HashMap<Integer, ArrayList<String>> buildOrders = new HashMap<Integer, ArrayList<String>>();
+	HashMap<Integer, ArrayList<BuildOrder>> buildOrders = new HashMap<Integer, ArrayList<BuildOrder>>();
 	
 	/**
 	 * the owner of this SGEngine, all user actions are attributed
@@ -79,26 +79,35 @@ public class SGEngine implements Runnable
 		owner = o;
 		ual.setOwner(o);
 	}
+	/**
+	 * cancels a queued build order
+	 * @param name the name of the unit to be built
+	 * @param runTime when the unit is to be built
+	 */
+	public void cancelBuildOrder(String name, int runTime)
+	{
+		buildOrders.get(runTime).remove(name);
+	}
 	public void run()
 	{
 		o.add(new Owner("test owner", Color.red));
-		o.get(0).setAI(new TestHumanAI(o.get(0), w, c));
+		o.get(0).setAI(new TestHumanAI(o.get(0), w, this, c));
 		setOwner(o.get(0));
 		
 		
 		o.add(new Owner("test owner 2", Color.blue));
-		o.get(1).setAI(new TesterAI(o.get(1), w));
+		o.get(1).setAI(new TesterAI(o.get(1), w, this));
 		
 		
 		Iterator<Owner> q = o.iterator();
 		while(q.hasNext())
 		{
 			Owner owner = q.next();
-			for(int x = 0; x < 20; x++)
+			for(int x = 0; x < 200; x++)
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
-				w.registerElement(EngineConstants.unitFactory.makeUnit("test unit 1", owner, l));
+				w.registerElement(EngineConstants.unitFactory.makeUnit("test unit 3", owner, l));
 			}
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
@@ -111,6 +120,7 @@ public class SGEngine implements Runnable
 			{
 				ka.updateCamera(c);
 				performedQueuedUserActions(icount);
+				performQueuedBuildOrders(icount);
 				w.performWorldFunctions();
 				Iterator<Owner> i = o.iterator();
 				while(i.hasNext())
@@ -202,6 +212,23 @@ public class SGEngine implements Runnable
 		}
 	}
 	/**
+	 * runs through the build orders and creates units if dictated by
+	 * the build order
+	 */
+	private void performQueuedBuildOrders(int iteration)
+	{
+		if(buildOrders.get(iteration) != null)
+		{
+			Iterator<BuildOrder> i = buildOrders.get(iteration).iterator();
+			while(i.hasNext())
+			{
+				BuildOrder bo = i.next();
+				EngineConstants.unitFactory.makeUnit(bo.getBuildOrder(), bo.getOwner(), bo.getLocation());
+			}
+			buildOrders.remove(iteration);
+		}
+	}
+	/**
 	 * queues a user action to be executed at the correct SGEngine iteration
 	 * @param ua the user action to be queued
 	 */
@@ -223,12 +250,12 @@ public class SGEngine implements Runnable
 	{
 		if(buildOrders.get(bo.getRunTime()) != null)
 		{
-			buildOrders.get(bo.getRunTime()).add(bo.getBuildOrder());
+			buildOrders.get(bo.getRunTime()).add(bo);
 		}
 		else
 		{
-			ArrayList<String> al = new ArrayList<String>();
-			al.add(bo.getBuildOrder());
+			ArrayList<BuildOrder> al = new ArrayList<BuildOrder>();
+			al.add(bo);
 			buildOrders.put(bo.getRunTime(), al);
 		}
 	}

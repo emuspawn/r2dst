@@ -2,9 +2,7 @@ package ai.computerAI.computerAIs;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import sgEngine.userAction.KeyPress;
-import sgEngine.userAction.KeyRelease;
+import sgEngine.SGEngine;
 import utilities.Location;
 import world.World;
 import world.owner.Owner;
@@ -13,9 +11,9 @@ import ai.computerAI.ComputerAI;
 
 public class TesterAI extends ComputerAI
 {
-	public TesterAI(Owner o, World w)
+	public TesterAI(Owner o, World w, SGEngine sge)
 	{
-		super(o, w);
+		super(o, w, sge);
 	}
 	public void performAIFunctions()
 	{

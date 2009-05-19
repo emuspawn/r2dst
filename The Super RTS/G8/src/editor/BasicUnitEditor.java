@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.swing.*;
 
@@ -39,21 +40,37 @@ public class BasicUnitEditor extends JFrame
 	JTextField energyDrain;
 	JTextField metalDrain;
 	
+	JTextArea buildTree;
+	
 	public BasicUnitEditor()
 	{
 		super("Basic Unit Editor");
 		f = this;
-		setSize(200, 350);
+		setSize(200, 380);
 		
 		JTabbedPane sp = new JTabbedPane();
 		sp.addTab("General", null, createGeneralPanel(), "Edits the general stats of the unit");
 		sp.addTab("Resource", null, createResourcePanel(), "Edits the resource aspects of the unit");
+		
+		
+		sp.addTab("Build Tree", null, createBuildTreePanel(), "Edits the build tree of the unit");
 		
 		add(sp);
 		setJMenuBar(createMenuBar());
 		
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	private JPanel createBuildTreePanel()
+	{
+		JPanel p = createPanel();
+		buildTree = new JTextArea();
+		buildTree.setLineWrap(true);
+		buildTree.setWrapStyleWord(true);
+		JScrollPane scroll = new JScrollPane(buildTree);
+		p.add(new JLabel("Build Tree:"));
+		p.add(scroll);
+		return p;
 	}
 	public static void main(String[] args)
 	{
@@ -77,14 +94,19 @@ public class BasicUnitEditor extends JFrame
 					System.out.println("file name = "+f.getName());
 					FileOutputStream fos = new FileOutputStream(f);
 					DataOutputStream dos = new DataOutputStream(fos);
-					/*UnitWriter.writeUnit(dos, name.getText(), Integer.parseInt(life.getText()), 
-							Integer.parseInt(movement.getText()), Integer.parseInt(width.getText()),
-							Integer.parseInt(height.getText()));*/
+					String[] buildTree = getBuildTree();
+					UnitWriter.writeUnit(dos, name.getText(), weapon.getText(), Double.parseDouble(life.getText()), 
+							Double.parseDouble(movement.getText()), Double.parseDouble(energyCost.getText()), 
+							Double.parseDouble(metalCost.getText()), Double.parseDouble(energyDrain.getText()), 
+							Double.parseDouble(metalDrain.getText()), Double.parseDouble(width.getText()),
+							Double.parseDouble(height.getText()), Double.parseDouble(depth.getText()),
+							buildTree);
 					System.out.println("done!");
 				}
-				catch(IOException a)
+				catch(Exception a)
 				{
-					System.out.println("failed");
+					a.printStackTrace();
+					System.out.println("failed to save");
 				}
 			}
 		});
@@ -103,9 +125,26 @@ public class BasicUnitEditor extends JFrame
 					
 					Unit u = UnitReader.readUnit(dis, new Location(0, 0));
 					name.setText(u.getName());
+					weapon.setText(u.getWeapon().getName());
 					life.setText(""+u.getLife());
+					movement.setText(""+u.getMovement());
+					
+					energyCost.setText(""+u.getEnergyCost());
+					metalCost.setText(""+u.getMetalCost());
+					energyDrain.setText(""+u.getEnergyDrain());
+					metalDrain.setText(""+u.getMetalDrain());
+					
 					width.setText(""+u.getWidth());
 					height.setText(""+u.getHeight());
+					depth.setText(""+u.getDepth());
+					
+					String bt = "";
+					Iterator<String> i = u.getBuildTree().iterator();
+					while(i.hasNext())
+					{
+						bt+=i.next()+";";
+					}
+					buildTree.setText(bt);
 				}
 				catch(IOException a){}
 			}
@@ -123,6 +162,20 @@ public class BasicUnitEditor extends JFrame
 		file.add(exit);
 		b.add(file);
 		return b;
+	}
+	/**
+	 * interprets the build tree text area to determine the proper build tree
+	 * @return
+	 */
+	private String[] getBuildTree()
+	{
+		String bt = buildTree.getText();
+		String[] s = bt.split(";");
+		for(int i = 0; i < s.length; i++)
+		{
+			s[i] = s[i].trim();
+		}
+		return s;
 	}
 	private JPanel createGeneralPanel()
 	{

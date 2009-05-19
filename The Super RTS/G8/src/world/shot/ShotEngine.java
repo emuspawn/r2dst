@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.List;
-
 import dynamicMap3D.DynamicMap3D;
-import utilities.Location;
 import utilities.MoverseV4;
 import utilities.Prism;
 import world.Element;

@@ -1,7 +1,7 @@
 package world.action;
 
 /**
- * what every element is doing, ex moving, gathering resources, etc.
+ * the action of every unit
  * @author Jack
  *
  */
@@ -21,6 +21,11 @@ public abstract class Action
 	 * @return returns true if the action is completed
 	 */
 	public abstract boolean performAction();
+	/**
+	 * cancels the action, called whenever the action is changed from
+	 * one thing to another
+	 */
+	public abstract void cancelAction();
 	public String toString()
 	{
 		return name;

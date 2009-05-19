@@ -18,6 +18,7 @@ public class Unit extends Element
 	private Weapon w;
 	private int id;
 	private ArrayList<String> buildTree;
+	private int buildTime; //how many iterations in order to build the unit
 	
 	private double metalDrain; //how much metal this unit generates for its owner
 	private double energyDrain; //how much energy this unit generates for its owner (or costs to run)
@@ -38,10 +39,10 @@ public class Unit extends Element
 	 * @param width
 	 * @param height
 	 */
-	public Unit(String name, Owner owner, Location l, Weapon w, int life, 
-			double movement, double metalDrain, double energyDrain, 
-			double metalCost, double energyCost, double width, double height, 
-			double depth)
+	public Unit(String name, Owner owner, Location l, Weapon w, double life, 
+			double movement, double energyCost, double metalCost, 
+			double energyDrain, double metalDrain, double width, double height, 
+			double depth, int buildTime)
 	{
 		super(name, l, owner, life, width, height, depth);
 		this.movement = movement;
@@ -50,6 +51,10 @@ public class Unit extends Element
 		this.energyDrain = energyDrain;
 		this.metalCost = metalCost;
 		this.energyCost = energyCost;
+	}
+	public int getBuildTime()
+	{
+		return buildTime;
 	}
 	/**
 	 * makes a new unit that is a copy of the passed unit
@@ -65,6 +70,7 @@ public class Unit extends Element
 		energyDrain = u.getEnergyDrain();
 		metalCost = u.getMetalCost();
 		energyCost = u.getEnergyCost();
+		buildTime = u.getBuildTime();
 		setBuildTree(u.getBuildTree());
 	}
 	/**

@@ -17,4 +17,5 @@ public class Idle extends Action
 	{
 		return false;
 	}
+	public void cancelAction(){}
 }

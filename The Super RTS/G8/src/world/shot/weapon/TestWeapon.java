@@ -6,6 +6,6 @@ public class TestWeapon extends Weapon
 {
 	public TestWeapon()
 	{
-		super("test weapon", new TestShot(null), 100, 20);
+		super("test weapon", new TestShot(null), 100, 40);
 	}
 }

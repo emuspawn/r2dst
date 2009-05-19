@@ -9,8 +9,8 @@ import world.owner.Owner;
 
 public abstract class Element extends Prism
 {
-	String name;
-	Owner owner;
+	private String name;
+	private Owner owner;
 	private Action a = new Idle();
 	private double life;
 	boolean dead = false;
@@ -50,8 +50,14 @@ public abstract class Element extends Prism
 	{
 		return a;
 	}
+	/**
+	 * cancels the old action of the element, sets the
+	 * current action to the passed action
+	 * @param action the new action of the element
+	 */
 	public void setAction(Action action)
 	{
+		a.cancelAction();
 		a = action;
 	}
 	public abstract void drawElement(GL gl);
