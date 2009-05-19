@@ -28,6 +28,7 @@ public class SGEngine implements Runnable
 	World w;
 	ArrayList<Owner> o = new ArrayList<Owner>();
 	HashMap<Integer, ArrayList<UserAction>> userActions = new HashMap<Integer, ArrayList<UserAction>>();
+	HashMap<Integer, ArrayList<String>> buildOrders = new HashMap<Integer, ArrayList<String>>();
 	
 	/**
 	 * the owner of this SGEngine, all user actions are attributed
@@ -216,6 +217,19 @@ public class SGEngine implements Runnable
 			ArrayList<UserAction> al = new ArrayList<UserAction>();
 			al.add(ua);
 			userActions.put(ua.getRunTime(), al);
+		}
+	}
+	public void queueBuildOrder(BuildOrder bo)
+	{
+		if(buildOrders.get(bo.getRunTime()) != null)
+		{
+			buildOrders.get(bo.getRunTime()).add(bo.getBuildOrder());
+		}
+		else
+		{
+			ArrayList<String> al = new ArrayList<String>();
+			al.add(bo.getBuildOrder());
+			buildOrders.put(bo.getRunTime(), al);
 		}
 	}
 	public static void main(String[] args)

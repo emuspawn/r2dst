@@ -2,6 +2,8 @@ package world.owner;
 
 import java.awt.Color;
 
+import sgEngine.EngineConstants;
+
 import ai.AI;
 
 public class Owner
@@ -13,6 +15,9 @@ public class Owner
 	 * the AI of the owner, if null the owner does nothing
 	 */
 	AI ai;
+	
+	double metal = EngineConstants.startingMetal;
+	double energy = EngineConstants.startingEnergy;
 	
 	public Owner(String name, Color c)
 	{
@@ -42,5 +47,37 @@ public class Owner
 	public String getName()
 	{
 		return name;
+	}
+	/**
+	 * returns the energy this owner has
+	 * @return
+	 */
+	public double getEnergy()
+	{
+		return energy;
+	}
+	/**
+	 * returns the metal this player has
+	 * @return
+	 */
+	public double getMetal()
+	{
+		return metal;
+	}
+	/**
+	 * sets the amount of energy this player has
+	 * @param setter
+	 */
+	public void setEnergy(double setter)
+	{
+		energy = setter;
+	}
+	/**
+	 * sets the amount of metal this player has
+	 * @param setter
+	 */
+	public void setMetal(double setter)
+	{
+		metal = setter;
 	}
 }
