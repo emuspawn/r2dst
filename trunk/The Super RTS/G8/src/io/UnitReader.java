@@ -2,6 +2,8 @@ package io;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import utilities.Location;
 import world.shot.weapon.TestWeapon;
 import world.shot.weapon.Weapon;
@@ -26,12 +28,65 @@ public class UnitReader
 			{
 				u = readUnitV2(dis, location);
 			}
+			else if(version == 3)
+			{
+				u = readUnitV3(dis, location);
+			}
 		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
 			System.out.println("IO exception, returning null");
 		}
+		return u;
+	}
+	private static Unit readUnitV3(DataInputStream dis, Location location) throws IOException
+	{
+		int length = dis.readInt();
+		String name = "";
+		for(int i = length-1; i >= 0; i--)
+		{
+			name += dis.readChar();
+		}
+		String weapon = "";
+		length = dis.readInt();
+		for(int i = length-1; i >= 0; i--)
+		{
+			weapon += dis.readChar();
+		}
+		double life = dis.readDouble();
+		double movement = dis.readDouble();
+		
+		double energyCost = dis.readDouble();
+		double metalCost = dis.readDouble();
+		double energyDrain = dis.readDouble();
+		double metalDrain = dis.readDouble();
+		
+		double width = dis.readDouble();
+		double height = dis.readDouble();
+		double depth = dis.readDouble();
+		
+		int buildTime = dis.readInt();
+		
+		ArrayList<String> buildTree = new ArrayList<String>();
+		length = dis.readInt();
+		for(int i = 0; i < length; i++)
+		{
+			int tempLength = dis.readInt();
+			String tempName = "";
+			for(int a = 0; a < tempLength; a++)
+			{
+				tempName+=dis.readChar();
+			}
+			buildTree.add(tempName);
+		}
+		
+		Weapon w = new TestWeapon();
+		Location l = new Location(location.x, location.y+height/2, location.z);
+		Unit u = new Unit(name, null, l, w, life, movement, energyCost, metalCost, 
+				energyDrain, metalDrain, width, height, depth, buildTime);
+		u.setBuildTree(buildTree);
+		//System.out.println(name+" build tree = "+buildTree);
 		return u;
 	}
 	private static Unit readUnitV2(DataInputStream dis, Location location) throws IOException
@@ -42,15 +97,43 @@ public class UnitReader
 		{
 			name += dis.readChar();
 		}
-		int life = dis.readInt();
-		int movement = dis.readInt();
-		int width = dis.readInt();
-		int depth = dis.readInt();
+		String weapon = "";
+		length = dis.readInt();
+		for(int i = length-1; i >= 0; i--)
+		{
+			weapon += dis.readChar();
+		}
+		double life = dis.readDouble();
+		double movement = dis.readDouble();
 		
-		double height = 7;
+		double energyCost = dis.readDouble();
+		double metalCost = dis.readDouble();
+		double energyDrain = dis.readDouble();
+		double metalDrain = dis.readDouble();
+		
+		double width = dis.readDouble();
+		double height = dis.readDouble();
+		double depth = dis.readDouble();
+		
+		ArrayList<String> buildTree = new ArrayList<String>();
+		length = dis.readInt();
+		for(int i = 0; i < length; i++)
+		{
+			int tempLength = dis.readInt();
+			String tempName = "";
+			for(int a = 0; a < tempLength; a++)
+			{
+				tempName+=dis.readChar();
+			}
+			buildTree.add(tempName);
+		}
 		
 		Weapon w = new TestWeapon();
 		Location l = new Location(location.x, location.y+height/2, location.z);
-		return new Unit(name, null, l, w, life, movement, 0, 0, 0, 0, width, height, depth);
+		Unit u = new Unit(name, null, l, w, life, movement, energyCost, metalCost, 
+				energyDrain, metalDrain, width, height, depth, 7);
+		u.setBuildTree(buildTree);
+		//System.out.println(name+" build tree = "+buildTree);
+		return u;
 	}
 }

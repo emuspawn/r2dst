@@ -2,8 +2,12 @@ package ai;
 
 import java.util.LinkedList;
 import javax.media.opengl.GLAutoDrawable;
+
+import sgEngine.EngineConstants;
+import sgEngine.SGEngine;
 import sgEngine.userAction.*;
 import utilities.Location;
+import utilities.Prism;
 import world.World;
 import world.action.actions.*;
 import world.owner.Owner;
@@ -20,11 +24,13 @@ public abstract class AI
 {
 	protected World w;
 	protected Owner o;
+	private SGEngine sge;
 	
-	public AI(Owner o, World w)
+	public AI(Owner o, World w, SGEngine sge)
 	{
 		this.w = w;
 		this.o = o;
+		this.sge = sge;
 	}
 	/**
 	 * tells the unit to move to a given location, does not move if the
@@ -36,7 +42,7 @@ public abstract class AI
 	{
 		if(inWorld(target) && u.getAction() instanceof Idle)
 		{
-			u.setAction(new Move(u, target));
+			u.setAction(new Move(u, new Location(target.x, u.getRestingHeight(), target.z)));
 		}
 	}
 	/**
@@ -59,14 +65,33 @@ public abstract class AI
 	 */
 	private boolean inWorld(Location l)
 	{
-		if(l.x >= -w.getWidth()/2 && l.x <= w.getWidth()/2 && l.z >= -w.getDepth()/2 && l.z <= w.getDepth()/2)
+		/*if(l.x >= -w.getWidth()/2 && l.x <= w.getWidth()/2 && l.z >= -w.getDepth()/2 && l.z <= w.getDepth()/2)
 		{
 			if(l.y >= 0)
 			{
 				return true;
 			}
 		}
-		return false;
+		return false;*/
+		Prism p = new Prism(EngineConstants.mapCenter, w.getWidth(), w.getHeight(), w.getDepth());
+		return p.contains(l);
+	}
+	/**
+	 * sends a unit to build another unit at the specified location if
+	 * the location is inside the world bounds and the builder is capable
+	 * of building the unit
+	 * @param name the name of the unit to be built
+	 * @param builder the builder
+	 * @param location the location of where the unit is to be built
+	 */
+	protected void buildAt(String name, Unit builder, Location location)
+	{
+		if(inWorld(location) && builder.canBuild(name))
+		{
+			Unit u = EngineConstants.unitFactory.makeUnit(name, null, null);
+			int runTime = sge.getIterationCount()+u.getBuildTime();
+			builder.setAction(new Build(builder, name, location, runTime, sge));
+		}
 	}
 	/**
 	 * the main AI method, called once by the SGEngine every iteration

@@ -27,7 +27,8 @@ public class Move extends Action
 		this.destination = destination;
 	}
 	public boolean performAction()
-	{	Location fLocation = MoverseV4.getNewLocation(u.getLocation(), destination, u.getMovement());
+	{	
+		Location fLocation = MoverseV4.getNewLocation(u.getLocation(), destination, u.getMovement());
 		u.setLocation(fLocation);
 		if(fLocation.compareTo(destination) == 0)
 		{
@@ -35,4 +36,5 @@ public class Move extends Action
 		}
 		return false;
 	}
+	public void cancelAction(){}
 }

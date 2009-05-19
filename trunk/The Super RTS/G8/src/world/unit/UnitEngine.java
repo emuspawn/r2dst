@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import dynamicMap3D.DynamicMap3D;
-import utilities.Location;
+import sgEngine.EngineConstants;
 import world.World;
 import world.action.actions.*;
 import world.owner.Owner;
@@ -38,7 +37,7 @@ public class UnitEngine
 		this.w = w;
 		this.se = se;
 		//dm3d = new DynamicMap3D(new Location(0, w.getHeight()/2, 0), w.getWidth(), w.getHeight(), w.getDepth());
-		dm3d = new DynamicMap3D(new Location(0, 0, 0), w.getWidth(), w.getHeight(), w.getDepth());
+		dm3d = new DynamicMap3D(EngineConstants.mapCenter, w.getWidth(), w.getHeight(), w.getDepth());
 		//dm3d.setPartitionSize(100);
 	}
 	public void performUnitFunctions()

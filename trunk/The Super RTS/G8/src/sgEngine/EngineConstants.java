@@ -1,5 +1,6 @@
 package sgEngine;
 
+import utilities.Location;
 import world.unit.UnitFactory;
 
 /**
@@ -11,6 +12,7 @@ public final class EngineConstants
 {
 	public static UnitFactory unitFactory = new UnitFactory();
 	public static final boolean drawShots = true;
+	public static final Location mapCenter = new Location(0, 0, 0);
 	public static final boolean startUnitMapDisplayWindow = false; //displays the unit map for diagnostic purposes
 	public static final boolean selectedUnitsAreWhite = true;
 	public static final double startingMetal = 1000;

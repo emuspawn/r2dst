@@ -44,6 +44,10 @@ public class Weapon
 		this.range = range;
 		this.reload = reload;
 	}
+	public String getName()
+	{
+		return name;
+	}
 	/**
 	 * first checks to see if the weapon can fire, if it can it then gets a
 	 * hash set representing all units in range, next it iterates over the set

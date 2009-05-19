@@ -45,7 +45,10 @@ public class SGDisplay implements GLEventListener
 		ArrayList<Element> e = w.getVisibleElements(c);
 		for(int i = e.size()-1; i >= 0; i--)
 		{
-			e.get(i).drawElement(gl);
+			if(e.get(i) != null)
+			{
+				e.get(i).drawElement(gl);
+			}
 		}
 		
 		if(EngineConstants.drawShots)
