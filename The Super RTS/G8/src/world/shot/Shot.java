@@ -8,22 +8,18 @@ import world.owner.Owner;
 public class Shot extends Element
 {
 	private Location target;
-	private int damage;
+	private double damage;
 	private double movement;
 	
-	public Shot(Location location, Location target, Owner owner, int damage, double movement, double width, double height, double depth)
+	public Shot(String name, double damage, double movement, double width, double height, double depth)
 	{
-		super("shot", location, owner, 0, width, height, depth);
-		if(target != null)
-		{
-			this.target = new Location(target.x, target.y, target.z);
-		}
+		super(name, null, null, 0, width, height, depth);
 		this.damage = damage;
 		this.movement = movement;
 	}
 	public Shot(Location location, Location target, Shot s, Owner owner)
 	{
-		super("shot", location, owner, 0, s.getWidth(), s.getHeight(), s.getDepth());
+		super(s.getName(), location, owner, 0, s.getWidth(), s.getHeight(), s.getDepth());
 		this.target = new Location(target.x, target.y, target.z);
 		damage = s.getDamage();
 		movement = s.getMovement();
@@ -36,7 +32,7 @@ public class Shot extends Element
 	{
 		return movement;
 	}
-	public int getDamage()
+	public double getDamage()
 	{
 		return damage;
 	}
@@ -73,7 +69,7 @@ public class Shot extends Element
 		
 		gl.glColor3d(0, 0, 0);
 		
-		this.drawPrism(gl);
+		drawPrism(gl);
 		gl.glPopMatrix();
 	}
 }

@@ -13,6 +13,7 @@ import ui.GLFrame;
 import utilities.Location;
 import world.World;
 import world.owner.Owner;
+import world.unit.Unit;
 import ai.AI;
 import ai.computerAI.computerAIs.*;
 import ai.humanAI.basicHumanAI.TestHumanAI;
@@ -46,7 +47,7 @@ public class SGEngine implements Runnable
 		w = new World(400, 100, 400);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
-		c = new GLCamera(new Location(50, 100, 200), new Location(50, 90, 195), 200, 200);
+		c = new GLCamera(new Location(0, 150, 180), new Location(0, 140, 175), 200, 200);
 		
 		GLFrame f = new GLFrame(new SGDisplay(this, w, c));
 		ka = new KeyActionListener();
@@ -107,7 +108,9 @@ public class SGEngine implements Runnable
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
-				w.registerElement(EngineConstants.unitFactory.makeUnit("test unit 3", owner, l));
+				Unit u = EngineConstants.unitFactory.makeUnit("test unit 3", owner, l);
+				u.setLocation(new Location(l.x, l.y+u.getRestingHeight(), l.z));
+				w.registerElement(u);
 			}
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
 			//w.registerElement(WorldConstants.unitFactory.makeUnit("test unit 1", owner, new Location(200, 0, 200)));
