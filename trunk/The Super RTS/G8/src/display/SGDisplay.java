@@ -3,12 +3,10 @@ package display;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import graphics.GLCamera;
 import javax.media.opengl.*;
-
 import sgEngine.EngineConstants;
 import sgEngine.SGEngine;
 import com.sun.opengl.util.j2d.TextRenderer;
@@ -62,17 +60,20 @@ public class SGDisplay implements GLEventListener
 					si.next().drawElement(gl);
 				}
 			}
-			catch(ConcurrentModificationException q){}
+			catch(Exception q){}
 		}
 		
-		ArrayList<Owner> o = sge.getOwners();
-		Iterator<Owner> i = o.iterator();
-		while(i.hasNext())
+		if(!EngineConstants.cameraMode)
 		{
-			i.next().getAI().drawUI(d);
+			ArrayList<Owner> o = sge.getOwners();
+			Iterator<Owner> i = o.iterator();
+			while(i.hasNext())
+			{
+				i.next().getAI().drawUI(d);
+			}
+			
+			drawEngineStats(d);
 		}
-		
-		drawEngineStats(d);
 		
 		c.updateCamera(gl);
 	}

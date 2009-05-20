@@ -3,7 +3,7 @@ package io;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class UnitWriter
+public final class UnitWriter
 {
 	private static final int version = 3;
 	public static void writeUnit(DataOutputStream dos, String name, String weapon, 

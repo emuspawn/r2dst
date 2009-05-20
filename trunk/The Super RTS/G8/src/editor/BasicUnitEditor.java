@@ -41,6 +41,7 @@ public class BasicUnitEditor extends JFrame
 	JTextField metalDrain;
 	
 	JTextArea buildTree;
+	JTextField buildTime;
 	
 	public BasicUnitEditor()
 	{
@@ -100,7 +101,7 @@ public class BasicUnitEditor extends JFrame
 							Double.parseDouble(metalCost.getText()), Double.parseDouble(energyDrain.getText()), 
 							Double.parseDouble(metalDrain.getText()), Double.parseDouble(width.getText()),
 							Double.parseDouble(height.getText()), Double.parseDouble(depth.getText()),
-							buildTree);
+							Integer.parseInt(buildTime.getText()), buildTree);
 					System.out.println("done!");
 				}
 				catch(Exception a)
@@ -137,6 +138,8 @@ public class BasicUnitEditor extends JFrame
 					width.setText(""+u.getWidth());
 					height.setText(""+u.getHeight());
 					depth.setText(""+u.getDepth());
+					
+					buildTime.setText(""+u.getBuildTime());
 					
 					String bt = "";
 					Iterator<String> i = u.getBuildTree().iterator();
@@ -218,6 +221,7 @@ public class BasicUnitEditor extends JFrame
 		metalCost = new JTextField(15);
 		energyDrain = new JTextField(15);
 		metalDrain = new JTextField(15);
+		buildTime = new JTextField(15);
 		p.add(new JLabel("Energy Cost:"));
 		p.add(energyCost);
 		p.add(new JLabel("Metal Cost:"));
@@ -226,7 +230,8 @@ public class BasicUnitEditor extends JFrame
 		p.add(energyDrain);
 		p.add(new JLabel("Metal Drain:"));
 		p.add(metalDrain);
-		
+		p.add(new JLabel("Build Time:"));
+		p.add(buildTime);
 		return p;
 	}
 	private JPanel createPanel()
