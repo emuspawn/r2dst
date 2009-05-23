@@ -40,7 +40,7 @@ public abstract class AI
 	 */
 	protected void moveUnit(Unit u, Location target)
 	{
-		if(inWorld(target) && u.getAction() instanceof Idle)
+		if(inWorld(target) && u.getAction() instanceof Idle && u.getMovement() > 0)
 		{
 			u.setAction(new Move(u, new Location(target.x, u.getRestingHeight(), target.z)));
 		}
@@ -53,7 +53,7 @@ public abstract class AI
 	 */
 	protected void forceMoveUnit(Unit u, Location target)
 	{
-		if(inWorld(target))
+		if(inWorld(target) && u.getMovement() > 0)
 		{
 			u.setAction(new Move(u, target));
 		}

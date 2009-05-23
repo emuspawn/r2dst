@@ -3,8 +3,6 @@ package io;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import utilities.Location;
 import world.shot.weapon.TestWeapon;
 import world.shot.weapon.Weapon;
 import world.unit.Unit;
@@ -18,7 +16,7 @@ public class UnitReader
 	 * @return returns a unit read from the passed unit file stream,
 	 * null if stream is null or io exception during reading
 	 */
-	public static Unit readUnit(DataInputStream dis, Location location)
+	public static Unit readUnit(DataInputStream dis)
 	{
 		Unit u = null;
 		try
@@ -26,11 +24,11 @@ public class UnitReader
 			int version = dis.readInt();
 			if(version == 2)
 			{
-				u = readUnitV2(dis, location);
+				u = readUnitV2(dis);
 			}
 			else if(version == 3)
 			{
-				u = readUnitV3(dis, location);
+				u = readUnitV3(dis);
 			}
 		}
 		catch(IOException e)
@@ -40,7 +38,7 @@ public class UnitReader
 		}
 		return u;
 	}
-	private static Unit readUnitV3(DataInputStream dis, Location location) throws IOException
+	private static Unit readUnitV3(DataInputStream dis) throws IOException
 	{
 		int length = dis.readInt();
 		String name = "";
@@ -82,14 +80,13 @@ public class UnitReader
 		}
 		
 		Weapon w = new TestWeapon();
-		Location l = new Location(location.x, location.y+height/2, location.z);
-		Unit u = new Unit(name, null, l, w, life, movement, energyCost, metalCost, 
+		Unit u = new Unit(name, w, life, movement, energyCost, metalCost, 
 				energyDrain, metalDrain, width, height, depth, buildTime);
 		u.setBuildTree(buildTree);
 		//System.out.println(name+" build tree = "+buildTree);
 		return u;
 	}
-	private static Unit readUnitV2(DataInputStream dis, Location location) throws IOException
+	private static Unit readUnitV2(DataInputStream dis) throws IOException
 	{
 		int length = dis.readInt();
 		String name = "";
@@ -129,8 +126,7 @@ public class UnitReader
 		}
 		
 		Weapon w = new TestWeapon();
-		Location l = new Location(location.x, location.y+height/2, location.z);
-		Unit u = new Unit(name, null, l, w, life, movement, energyCost, metalCost, 
+		Unit u = new Unit(name, w, life, movement, energyCost, metalCost, 
 				energyDrain, metalDrain, width, height, depth, 7);
 		u.setBuildTree(buildTree);
 		//System.out.println(name+" build tree = "+buildTree);

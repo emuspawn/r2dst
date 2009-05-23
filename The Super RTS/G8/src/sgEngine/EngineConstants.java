@@ -1,6 +1,8 @@
 package sgEngine;
 
 import utilities.Location;
+import world.shot.ShotFactory;
+import world.shot.weapon.WeaponFactory;
 import world.unit.UnitFactory;
 
 /**
@@ -10,12 +12,15 @@ import world.unit.UnitFactory;
  */
 public final class EngineConstants
 {
+	public static ShotFactory shotFactory = new ShotFactory();
+	public static WeaponFactory weaponFactory = new WeaponFactory();
 	public static UnitFactory unitFactory = new UnitFactory();
+	
 	public static final boolean drawShots = true;
 	public static final Location mapCenter = new Location(0, 0, 0);
 	public static final boolean startUnitMapDisplayWindow = false; //displays the unit map for diagnostic purposes
 	public static final boolean selectedUnitsAreWhite = true;
 	public static final double startingMetal = 1000;
 	public static final double startingEnergy = 1000;
-	public static final boolean cameraMode = true; //certain things arent drawn in camera mode to add to the games visuals
+	public static final boolean cameraMode = false; //certain things arent drawn in camera mode to add to the games visuals
 }

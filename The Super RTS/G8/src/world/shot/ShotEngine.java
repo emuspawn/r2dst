@@ -52,7 +52,7 @@ public class ShotEngine
 			//System.out.println(shot.getOwner().getName());
 			HashSet<Prism> hs = dm3d.checkIntersection(shot);
 			Iterator<Prism> ui = hs.iterator(); //unit iterator
-			while(ui.hasNext())
+			while(ui.hasNext() && !hit)
 			{
 				Element u = (Element)ui.next();
 				

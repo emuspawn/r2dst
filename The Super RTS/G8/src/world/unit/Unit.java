@@ -26,10 +26,8 @@ public class Unit extends Element
 	private double energyCost; //energy cost to produce this unit
 	
 	/**
-	 * makes a new unit with the passed traits
+	 * makes a new unit with the passed traits to be stored for the creation of other units
 	 * @param name
-	 * @param owner
-	 * @param l
 	 * @param life
 	 * @param movement
 	 * @param metalDrain
@@ -39,12 +37,12 @@ public class Unit extends Element
 	 * @param width
 	 * @param height
 	 */
-	public Unit(String name, Owner owner, Location l, Weapon w, double life, 
+	public Unit(String name, Weapon w, double life, 
 			double movement, double energyCost, double metalCost, 
 			double energyDrain, double metalDrain, double width, double height, 
 			double depth, int buildTime)
 	{
-		super(name, l, owner, life, width, height, depth);
+		super(name, null, null, life, width, height, depth);
 		this.movement = movement;
 		this.w = w;
 		this.metalDrain = metalDrain;
@@ -57,8 +55,9 @@ public class Unit extends Element
 		return buildTime;
 	}
 	/**
-	 * makes a new unit that is a copy of the passed unit
+	 * makes a new unit that is a copy of the passed unit to be used in the game
 	 * @param u the unit to be copied
+	 * @param owner the owner of the new unit
 	 * @param l the location of the new unit
 	 */
 	public Unit(Unit u, Owner owner, Location l)

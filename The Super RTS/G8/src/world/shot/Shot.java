@@ -11,12 +11,28 @@ public class Shot extends Element
 	private double damage;
 	private double movement;
 	
+	/**
+	 * creates a shot for storage in the shot factory to be loaded by other classes
+	 * @param name
+	 * @param damage
+	 * @param movement
+	 * @param width
+	 * @param height
+	 * @param depth
+	 */
 	public Shot(String name, double damage, double movement, double width, double height, double depth)
 	{
 		super(name, null, null, 0, width, height, depth);
 		this.damage = damage;
 		this.movement = movement;
 	}
+	/**
+	 * creates a shot to be used in the game
+	 * @param location
+	 * @param target
+	 * @param s
+	 * @param owner
+	 */
 	public Shot(Location location, Location target, Shot s, Owner owner)
 	{
 		super(s.getName(), location, owner, 0, s.getWidth(), s.getHeight(), s.getDepth());
