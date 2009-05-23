@@ -1,22 +1,15 @@
 package editor;
 
-import io.UnitReader;
 import io.UnitWriter;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
-
 import javax.swing.*;
-
-import utilities.Location;
+import sgEngine.EngineConstants;
 import world.unit.Unit;
 
 /**
@@ -117,15 +110,7 @@ public class BasicUnitEditor extends JFrame
 			{
 				try
 				{
-					String dir = System.getProperty("user.dir")+System.getProperty("file.separator")+
-							"units"+System.getProperty("file.separator");
-			
-					File f = new File(dir+name.getText()+".unit");
-					FileInputStream fis = new FileInputStream(f);
-					DataInputStream dis = new DataInputStream(fis);
-					
-					Unit u = UnitReader.readUnit(dis, new Location(0, 0));
-					name.setText(u.getName());
+					Unit u = EngineConstants.unitFactory.makeUnit(name.getText(), null, null);
 					weapon.setText(u.getWeapon().getName());
 					life.setText(""+u.getLife());
 					movement.setText(""+u.getMovement());
@@ -149,7 +134,10 @@ public class BasicUnitEditor extends JFrame
 					}
 					buildTree.setText(bt);
 				}
-				catch(IOException a){}
+				catch(NullPointerException a)
+				{
+					System.out.println("incorrect name, unit load failed");
+				}
 			}
 		});
 		JMenuItem exit = new JMenuItem("Exit");

@@ -50,7 +50,7 @@ public class UnitFactory
 				{
 					FileInputStream fis = new FileInputStream(f);
 					DataInputStream dis = new DataInputStream(fis);
-					Unit unit = UnitReader.readUnit(dis, new Location(0, 0, 0));
+					Unit unit = UnitReader.readUnit(dis);
 					u.put(unit.getName(), unit);
 					System.out.println(" done");
 				}

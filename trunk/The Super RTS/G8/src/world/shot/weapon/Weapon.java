@@ -44,6 +44,18 @@ public class Weapon
 		this.range = range;
 		this.reload = reload;
 	}
+	public int getReload()
+	{
+		return reload;
+	}
+	public double getRange()
+	{
+		return range;
+	}
+	public Shot getShot()
+	{
+		return s;
+	}
 	public String getName()
 	{
 		return name;
