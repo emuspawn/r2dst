@@ -108,8 +108,11 @@ public class UnitEngine
 		{
 			u.setDead();
 		}
-		u.getWeapon().updateWeapon();
-		u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+		if(u.getWeapon().getRange() > 0)
+		{
+			u.getWeapon().updateWeapon();
+			u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+		}
 		//System.out.println(u.getOwner().getName());
 	}
 	/**

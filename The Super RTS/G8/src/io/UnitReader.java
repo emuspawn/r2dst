@@ -3,7 +3,7 @@ package io;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import world.shot.weapon.TestWeapon;
+import sgEngine.EngineConstants;
 import world.shot.weapon.Weapon;
 import world.unit.Unit;
 
@@ -79,7 +79,7 @@ public class UnitReader
 			buildTree.add(tempName);
 		}
 		
-		Weapon w = new TestWeapon();
+		Weapon w = EngineConstants.weaponFactory.makeWeapon(weapon);
 		Unit u = new Unit(name, w, life, movement, energyCost, metalCost, 
 				energyDrain, metalDrain, width, height, depth, buildTime);
 		u.setBuildTree(buildTree);
@@ -125,7 +125,7 @@ public class UnitReader
 			buildTree.add(tempName);
 		}
 		
-		Weapon w = new TestWeapon();
+		Weapon w = EngineConstants.weaponFactory.makeWeapon(weapon);
 		Unit u = new Unit(name, w, life, movement, energyCost, metalCost, 
 				energyDrain, metalDrain, width, height, depth, 7);
 		u.setBuildTree(buildTree);
