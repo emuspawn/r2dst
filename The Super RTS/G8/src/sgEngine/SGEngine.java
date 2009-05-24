@@ -44,7 +44,7 @@ public class SGEngine implements Runnable
 	
 	public SGEngine()
 	{
-		w = new World(1000, 100, 1000);
+		w = new World(3000, 100, 3000);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
 		c = new GLCamera(new Location(0, 150, 180), new Location(0, 140, 175), 200, 200);

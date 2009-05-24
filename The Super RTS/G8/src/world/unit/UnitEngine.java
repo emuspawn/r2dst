@@ -120,10 +120,16 @@ public class UnitEngine
 		{
 			u.setDead();
 		}
-		if(u.getWeapon().getRange() > 0)
+		else
 		{
-			u.getWeapon().updateWeapon();
-			u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+			if(u.getWeapon().getRange() > 0)
+			{
+				u.getWeapon().updateWeapon();
+				u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+			}
+			Owner o = u.getOwner();
+			o.setEnergy(o.getEnergy()-u.getEnergyDrain());
+			o.setMetal(o.getMetal()-u.getMetalDrain());
 		}
 		//System.out.println(u.getOwner().getName());
 	}
