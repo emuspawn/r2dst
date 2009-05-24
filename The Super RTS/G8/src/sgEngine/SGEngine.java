@@ -108,7 +108,7 @@ public class SGEngine implements Runnable
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
-				Unit u = EngineConstants.unitFactory.makeUnit("test unit 3", owner, l);
+				Unit u = EngineConstants.unitFactory.makeUnit("worker", owner, l);
 				u.setLocation(new Location(l.x, l.y+u.getRestingHeight(), l.z));
 				w.registerElement(u);
 			}
