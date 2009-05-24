@@ -32,8 +32,8 @@ public class TesterAI extends ComputerAI
 	private void buildRandomly(Unit u)
 	{
 		Location l = getRandomMapLocation();
-		this.buildAt("test building", u, l);
-		this.buildAt("test unit 3", u, u.getLocation());
+		this.buildAt("factory", u, l);
+		this.buildAt("worker", u, u.getLocation());
 	}
 	/**
 	 * gets a random location within the map bounds, the height does not matter
