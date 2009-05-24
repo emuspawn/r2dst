@@ -90,8 +90,13 @@ public abstract class AI
 		if(inWorld(location) && builder.canBuild(name) && builder.getAction() instanceof Idle && 
 				o.getPopulation() <= EngineConstants.maxPopulation)
 		{
-			//Owner o = builder.getOwner();
-			builder.setAction(new Build(builder, name, location, sge), false);
+			Unit u = EngineConstants.unitFactory.makeUnit(name, null, null);
+			if(o.getEnergy() >= u.getEnergyCost() && o.getMetal() >= u.getMetalCost())
+			{
+				builder.setAction(new Build(builder, name, location, sge), false);
+				o.setEnergy(o.getEnergy()-u.getEnergyCost());
+				o.setMetal(o.getMetal()-u.getMetalCost());
+			}
 		}
 	}
 	protected HashMap<String, LinkedList<Unit>> getEnemyUnits()
