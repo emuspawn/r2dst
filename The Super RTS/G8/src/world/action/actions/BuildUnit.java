@@ -1,10 +1,12 @@
 package world.action.actions;
 
 import sgEngine.BuildOrder;
+import sgEngine.EngineConstants;
 import sgEngine.SGEngine;
 import utilities.Location;
 import world.action.Action;
 import world.owner.Owner;
+import world.unit.Unit;
 
 /**
  * builds units
@@ -13,8 +15,14 @@ import world.owner.Owner;
  */
 public class BuildUnit extends Action
 {
+	String unitName;
+	Location l;
+	Owner owner;
+	
+	
 	BuildOrder bo;
 	SGEngine sge;
+	boolean firstRun = true;
 	
 	/**
 	 * creates a new build action
@@ -23,17 +31,25 @@ public class BuildUnit extends Action
 	 * @param owner the owner of unit that is to be created
 	 * @param sge a reference to the SGEngine to register the build and cancel
 	 * it if necesary
-	 * @param runTime when the unit is built and this unit is once again idle
 	 */
-	public BuildUnit(String unitName, Location l, Owner owner, int runTime, SGEngine sge)
+	public BuildUnit(String unitName, Location l, Owner owner, SGEngine sge)
 	{
 		super("build unit");
-		bo = new BuildOrder(unitName, l, owner, runTime);
+		this.unitName = unitName;
+		this.l = l;
+		this.owner = owner;
 		this.sge = sge;
-		sge.queueBuildOrder(bo);
 	}
 	public boolean performAction()
 	{	
+		if(firstRun)
+		{
+			Unit u = EngineConstants.unitFactory.makeUnit(unitName, null, null);
+			int runTime = sge.getIterationCount()+u.getBuildTime();
+			bo = new BuildOrder(unitName, l, owner, runTime);
+			sge.queueBuildOrder(bo);
+			firstRun = false;
+		}
 		if(sge.getIterationCount() == bo.getRunTime())
 		{
 			return true;
@@ -42,6 +58,9 @@ public class BuildUnit extends Action
 	}
 	public void cancelAction()
 	{
-		sge.cancelBuildOrder(bo.getBuildOrder(), bo.getRunTime());
+		if(bo != null)
+		{
+			sge.cancelBuildOrder(bo.getBuildOrder(), bo.getRunTime());
+		}
 	}
 }

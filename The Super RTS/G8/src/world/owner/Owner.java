@@ -10,6 +10,7 @@ public class Owner
 {
 	String name;
 	Color c;
+	int population = 0;
 	
 	/**
 	 * the AI of the owner, if null the owner does nothing
@@ -23,6 +24,23 @@ public class Owner
 	{
 		this.c = c;
 		this.name = name;
+	}
+	/**
+	 * gets the total population value of the units commanded
+	 * by this owner
+	 * @return returns this owner's population
+	 */
+	public int getPopulation()
+	{
+		return population;
+	}
+	/**
+	 * sets the owner's population value
+	 * @param setter the new value of this owner's population
+	 */
+	public void setPopulation(int setter)
+	{
+		population = setter;
 	}
 	/**
 	 * sets the ai for this owner

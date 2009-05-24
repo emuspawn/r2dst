@@ -20,10 +20,10 @@ public class Build extends ActionList
 	 * @param runTime when the unit is to be finished
 	 * @param sge a reference to the SGEngine to queue the build order
 	 */
-	public Build(Unit builder, String name, Location location, int runTime, SGEngine sge)
+	public Build(Unit builder, String name, Location location, SGEngine sge)
 	{
 		super("build");
 		addActionToList(new Move(builder, location));
-		addActionToList(new BuildUnit(name, location, builder.getOwner(), runTime, sge));
+		addActionToList(new BuildUnit(name, location, builder.getOwner(), sge));
 	}
 }

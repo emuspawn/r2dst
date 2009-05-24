@@ -44,7 +44,7 @@ public class SGEngine implements Runnable
 	
 	public SGEngine()
 	{
-		w = new World(400, 100, 400);
+		w = new World(1000, 100, 1000);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
 		c = new GLCamera(new Location(0, 150, 180), new Location(0, 140, 175), 200, 200);
@@ -104,7 +104,7 @@ public class SGEngine implements Runnable
 		while(q.hasNext())
 		{
 			Owner owner = q.next();
-			for(int x = 0; x < 20; x++)
+			for(int x = 0; x < 1; x++)
 			{
 				Location l = new Location(Math.random()*w.getWidth()-w.getWidth()/2, 0,
 						Math.random()*w.getDepth()-w.getDepth()/2);
@@ -226,7 +226,8 @@ public class SGEngine implements Runnable
 			while(i.hasNext())
 			{
 				BuildOrder bo = i.next();
-				EngineConstants.unitFactory.makeUnit(bo.getBuildOrder(), bo.getOwner(), bo.getLocation());
+				Unit u = EngineConstants.unitFactory.makeUnit(bo.getBuildOrder(), bo.getOwner(), bo.getLocation());
+				w.registerElement(u);
 			}
 			buildOrders.remove(iteration);
 		}
@@ -261,6 +262,7 @@ public class SGEngine implements Runnable
 			al.add(bo);
 			buildOrders.put(bo.getRunTime(), al);
 		}
+		//System.out.println("build order for "+bo.getBuildOrder()+" queued, run time = "+bo.getRunTime()+", current time = "+icount);
 	}
 	public static void main(String[] args)
 	{

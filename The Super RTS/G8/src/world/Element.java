@@ -54,10 +54,15 @@ public abstract class Element extends Prism
 	 * cancels the old action of the element, sets the
 	 * current action to the passed action
 	 * @param action the new action of the element
+	 * @param completed true if they completed their
+	 * last action, false if it was cancelled
 	 */
-	public void setAction(Action action)
+	public void setAction(Action action, boolean completed)
 	{
-		a.cancelAction();
+		if(!completed)
+		{
+			a.cancelAction();
+		}
 		a = action;
 	}
 	public abstract void drawElement(GL gl);

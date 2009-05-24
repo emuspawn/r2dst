@@ -49,10 +49,7 @@ public class Unit extends Element
 		this.energyDrain = energyDrain;
 		this.metalCost = metalCost;
 		this.energyCost = energyCost;
-	}
-	public int getBuildTime()
-	{
-		return buildTime;
+		this.buildTime = buildTime;
 	}
 	/**
 	 * makes a new unit that is a copy of the passed unit to be used in the game
@@ -71,6 +68,15 @@ public class Unit extends Element
 		energyCost = u.getEnergyCost();
 		buildTime = u.getBuildTime();
 		setBuildTree(u.getBuildTree());
+	}
+	/**
+	 * gets how many iterations of the SGEngine main thread before this
+	 * unit is built
+	 * @return returns the unit's build time
+	 */
+	public int getBuildTime()
+	{
+		return buildTime;
 	}
 	/**
 	 * sets this unit's build tree
