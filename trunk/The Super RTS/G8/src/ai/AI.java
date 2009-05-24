@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import javax.media.opengl.GLAutoDrawable;
 
@@ -42,7 +43,7 @@ public abstract class AI
 	{
 		if(inWorld(target) && u.getAction() instanceof Idle && u.getMovement() > 0)
 		{
-			u.setAction(new Move(u, new Location(target.x, u.getRestingHeight(), target.z)));
+			u.setAction(new Move(u, new Location(target.x, u.getRestingHeight(), target.z)), false);
 		}
 	}
 	/**
@@ -55,7 +56,7 @@ public abstract class AI
 	{
 		if(inWorld(target) && u.getMovement() > 0)
 		{
-			u.setAction(new Move(u, target));
+			u.setAction(new Move(u, new Location(target.x, u.getRestingHeight(), target.z)), false);
 		}
 	}
 	/**
@@ -79,19 +80,23 @@ public abstract class AI
 	/**
 	 * sends a unit to build another unit at the specified location if
 	 * the location is inside the world bounds and the builder is capable
-	 * of building the unit
+	 * of building the unit, builder must be idle to build
 	 * @param name the name of the unit to be built
 	 * @param builder the builder
 	 * @param location the location of where the unit is to be built
 	 */
 	protected void buildAt(String name, Unit builder, Location location)
 	{
-		if(inWorld(location) && builder.canBuild(name))
+		if(inWorld(location) && builder.canBuild(name) && builder.getAction() instanceof Idle && 
+				o.getPopulation() <= EngineConstants.maxPopulation)
 		{
-			Unit u = EngineConstants.unitFactory.makeUnit(name, null, null);
-			int runTime = sge.getIterationCount()+u.getBuildTime();
-			builder.setAction(new Build(builder, name, location, runTime, sge));
+			//Owner o = builder.getOwner();
+			builder.setAction(new Build(builder, name, location, sge), false);
 		}
+	}
+	protected HashMap<String, LinkedList<Unit>> getEnemyUnits()
+	{
+		return w.getUnitEngine().getEnemyUnits(o);
 	}
 	/**
 	 * the main AI method, called once by the SGEngine every iteration

@@ -59,11 +59,23 @@ public class UnitEngine
 			}
 		}
 		addQueuedUnitsToMainList();
-		//dm3d.printMap();
-		//System.out.println(dm3d.getElements().size());
-		//System.out.println(dm3d.determineStoredElements());
-		//System.out.println();
-		//System.out.println(net);
+		determinePopulations();
+	}
+	/**
+	 * determines the populations for each owner
+	 */
+	private void determinePopulations()
+	{
+		Iterator<String> ki = units.keySet().iterator();
+		while(ki.hasNext())
+		{
+			LinkedList<Unit> ll = units.get(ki.next());
+			if(ll.size() > 0)
+			{
+				Owner o = ll.getFirst().getOwner();
+				o.setPopulation(ll.size());
+			}
+		}
 	}
 	/**
 	 * adds queued units to the main list
@@ -102,7 +114,7 @@ public class UnitEngine
 		
 		if(done)
 		{
-			u.setAction(new Idle());
+			u.setAction(new Idle(), true);
 		}
 		if(u.getLife() <= 0)
 		{
@@ -174,5 +186,18 @@ public class UnitEngine
 			ll.addAll(units.get(i.next()));
 		}
 		return ll;
+	}
+	/**
+	 * returns a hash map representing all enemy units, keys
+	 * are the names of the owners of the enemy units, values
+	 * are linked list representing those units
+	 * @param o the owner
+	 * @return returns units that are enemies to the passed owner
+	 */
+	public HashMap<String, LinkedList<Unit>> getEnemyUnits(Owner o)
+	{
+		HashMap<String, LinkedList<Unit>> hm = new HashMap<String, LinkedList<Unit>>(units);
+		hm.remove(o.getName());
+		return hm;
 	}
 }

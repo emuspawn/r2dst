@@ -9,6 +9,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import com.sun.opengl.util.j2d.TextRenderer;
 
+import sgEngine.EngineConstants;
 import sgEngine.SGEngine;
 import sgEngine.userAction.*;
 import utilities.Location;
@@ -25,9 +26,10 @@ import ai.AI;
  * basic human UI:
  * 
  * commands:
- * l=selection key
- * j=deselect key
- * i=movement key
+ * l = selection key
+ * j = deselect key
+ * i = movement key
+ * c = toggle camera mode
  * 
  * clicking the selection key on a unit selects that unit, if several
  * units are on top of each other, only one unit is selected
@@ -127,6 +129,10 @@ public abstract class BasicHumanAI extends AI
 		else if(kp.getCharacter() == 'j')
 		{
 			unSelect = true;
+		}
+		else if(kp.getCharacter() == 'c')
+		{
+			EngineConstants.cameraMode = !EngineConstants.cameraMode;
 		}
 	}
 	public void interpretKeyRelease(KeyRelease kr)
