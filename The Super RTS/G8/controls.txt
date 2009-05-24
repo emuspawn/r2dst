@@ -17,3 +17,4 @@ GAMEPLAY:
 
 l = selects units (hold down to drag) or orders units
 j = deselects units
+c = toggle camera mode
