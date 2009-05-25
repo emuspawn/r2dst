@@ -2,10 +2,10 @@ package sgEngine;
 
 import graphics.GLCamera;
 import java.awt.Color;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import display.*;
 import dynamicMap3D.MapDisplay;
 import sgEngine.userAction.*;
@@ -44,7 +44,8 @@ public class SGEngine implements Runnable
 	
 	public SGEngine()
 	{
-		w = new World(3000, 100, 3000);
+		incrementEngineRunCount();
+		w = new World(1000, 100, 1000);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
 		c = new GLCamera(new Location(0, 150, 180), new Location(0, 140, 175), 200, 200);
@@ -65,6 +66,33 @@ public class SGEngine implements Runnable
 		}
 		
 		new Thread(this).start();
+	}
+	/**
+	 * loads the engine run count (or creates one if it cant find it) and
+	 * increments it by 1, the run count is simply a measure of how
+	 * many times the engine has been run
+	 */
+	private void incrementEngineRunCount()
+	{
+		int total = 0;
+		File f = new File(System.getProperty("user.dir")+System.getProperty("file.separator")+"runcount.d");
+		try
+		{
+			FileInputStream fis = new FileInputStream(f);
+			DataInputStream dis = new DataInputStream(fis);
+			total = dis.readInt();
+		}
+		catch(IOException e){}
+		total++;
+		try
+		{
+			FileOutputStream fos = new FileOutputStream(f);
+			DataOutputStream dos = new DataOutputStream(fos);
+			dos.writeInt(total);
+		}
+		catch(IOException e){}
+		EngineConstants.engineRunCount = total;
+		System.out.println("run count = "+total);
 	}
 	public ArrayList<Owner> getOwners()
 	{
@@ -97,7 +125,7 @@ public class SGEngine implements Runnable
 		
 		
 		o.add(new Owner("test owner 2", Color.blue));
-		o.get(1).setAI(new TesterAI(o.get(1), w, this));
+		o.get(1).setAI(new SimpleAI(o.get(1), w, this));
 		
 		
 		Iterator<Owner> q = o.iterator();

@@ -53,6 +53,7 @@ public class UnitEngine
 				if(u.isDead())
 				{
 					dm3d.removeElement(u, u.getID());
+					u.getAction().cancelAction();
 					i.remove();
 					totalUnits--;
 				}
