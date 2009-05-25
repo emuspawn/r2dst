@@ -120,7 +120,7 @@ public class SGEngine implements Runnable
 	public void run()
 	{
 		o.add(new Owner("test owner", Color.red));
-		o.get(0).setAI(new TestHumanAI(o.get(0), w, this, c));
+		o.get(0).setAI(new RapeBot(o.get(0), w, this));
 		setOwner(o.get(0));
 		
 		
