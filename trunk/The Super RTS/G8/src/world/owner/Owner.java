@@ -16,9 +16,11 @@ public class Owner
 	 * the AI of the owner, if null the owner does nothing
 	 */
 	AI ai;
-	
-	double metal = EngineConstants.startingMetal;
+
 	double energy = EngineConstants.startingEnergy;
+	double metal = EngineConstants.startingMetal;
+	double energyMax = EngineConstants.startingEnergyMax;
+	double metalMax = EngineConstants.startingMetalMax;
 	
 	public Owner(String name, Color c)
 	{
@@ -89,6 +91,14 @@ public class Owner
 	public void setEnergy(double setter)
 	{
 		energy = setter;
+		if(energy < 0)
+		{
+			energy = 0;
+		}
+		else if(energy > energyMax)
+		{
+			energy = energyMax;
+		}
 	}
 	/**
 	 * sets the amount of metal this player has
@@ -97,5 +107,13 @@ public class Owner
 	public void setMetal(double setter)
 	{
 		metal = setter;
+		if(metal < 0)
+		{
+			metal = 0;
+		}
+		else if(metal > metalMax)
+		{
+			metal = metalMax;
+		}
 	}
 }

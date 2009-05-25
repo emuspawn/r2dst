@@ -70,6 +70,17 @@ public class Unit extends Element
 		setBuildTree(u.getBuildTree());
 	}
 	/**
+	 * checks to see if this unit is of the same type as the passed unit,
+	 * units are of the same type if their have identicle names
+	 * @param name the name of the unit that this unit is being checked against
+	 * @return returns true if the passed unit and this unit are of the same
+	 * type, false otherwise
+	 */
+	public boolean is(String name)
+	{
+		return getName().equalsIgnoreCase(name);
+	}
+	/**
 	 * gets how many iterations of the SGEngine main thread before this
 	 * unit is built
 	 * @return returns the unit's build time
