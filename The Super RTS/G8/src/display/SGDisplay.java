@@ -30,7 +30,7 @@ public class SGDisplay implements GLEventListener
 		this.w = w;
 		this.c = c;
 		
-		Font font = new Font("SansSerif", Font.BOLD, 32);
+		Font font = new Font("SansSerif", Font.PLAIN, 12);
         textRenderer = new TextRenderer(font, true, false);
 	}
 	public void display(GLAutoDrawable d)
@@ -79,10 +79,15 @@ public class SGDisplay implements GLEventListener
 		
 		gl.glPushMatrix();
 		gl.glRotated(angle, 0, 1, 0);
+		Font font = new Font("SansSerif", Font.BOLD, 32);
+        textRenderer = new TextRenderer(font, true, false);
+        textRenderer.setColor(0, 0, 255, 255);
 		textRenderer.begin3DRendering();
 		textRenderer.draw3D("Jack is the best!!", 0, 100, 0, 1);
 		textRenderer.end3DRendering();
-		angle++;
+		angle+=.6;
+		font = new Font("SansSerif", Font.PLAIN, 12);
+        textRenderer = new TextRenderer(font, true, false);
 		gl.glPopMatrix();
 	}
 	private void renderPlane(GLAutoDrawable d, int width, int height)
