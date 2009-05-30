@@ -96,7 +96,7 @@ public final class CrusherAI extends ComputerAI
 				moveUnit(u, getRegionLocation(attackPoint, 100, 100));
 			}
 		}
-		else
+		else if(buildLocations.size() > 0)
 		{
 			int index = (int)(Math.random()*buildLocations.size());
 			forceMoveUnit(u, getRegionLocation(buildLocations.get(index), 200, 200));
