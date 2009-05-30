@@ -7,7 +7,7 @@ import world.World;
 import world.owner.Owner;
 import world.unit.Unit;
 
-public class TestHumanAI extends BasicHumanAI
+public class TestHumanAI extends BasicHumanAI2
 {
 	public TestHumanAI(Owner o, World w, SGEngine sge, GLCamera c)
 	{

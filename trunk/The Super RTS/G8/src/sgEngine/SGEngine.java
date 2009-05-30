@@ -45,7 +45,7 @@ public class SGEngine implements Runnable
 	public SGEngine()
 	{
 		incrementEngineRunCount();
-		w = new World(1000, 100, 1000);
+		w = new World(3000, 100, 3000);
 		
 		//c = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -5), 200, 200);
 		c = new GLCamera(new Location(0, 150, 180), new Location(0, 140, 175), 200, 200);
@@ -58,6 +58,7 @@ public class SGEngine implements Runnable
 		ual = new UserActionListener(this, owner, c, false);
 		f.getGLCanvas().addMouseListener(ual);
 		f.getGLCanvas().addKeyListener(ual);
+		f.getGLCanvas().addMouseMotionListener(ual);
 		
 		if(EngineConstants.startUnitMapDisplayWindow)
 		{
@@ -92,7 +93,7 @@ public class SGEngine implements Runnable
 		}
 		catch(IOException e){}
 		EngineConstants.engineRunCount = total;
-		System.out.println("run count = "+total);
+		System.out.println("engine run count = "+total);
 	}
 	public ArrayList<Owner> getOwners()
 	{
@@ -115,17 +116,25 @@ public class SGEngine implements Runnable
 	 */
 	public void cancelBuildOrder(String name, int runTime)
 	{
-		buildOrders.get(runTime).remove(name);
+		try
+		{
+			buildOrders.get(runTime).remove(name);
+		}
+		catch(NullPointerException e){}
 	}
 	public void run()
 	{
-		o.add(new Owner("test owner", Color.red));
-		o.get(0).setAI(new RapeBot(o.get(0), w, this));
+		/*o.add(new Owner("test owner 3", Color.red));
+		o.get(0).setAI(new TestHumanAI(o.get(0), w, this, c));
+		setOwner(o.get(0));*/
+		
+		o.add(new Owner("test owner 1", Color.red));
+		o.get(0).setAI(new CrusherAI(o.get(0), w, this));
 		setOwner(o.get(0));
 		
-		
 		o.add(new Owner("test owner 2", Color.blue));
-		o.get(1).setAI(new SimpleAI(o.get(1), w, this));
+		o.get(1).setAI(new CrusherAI(o.get(1), w, this));
+		
 		
 		
 		Iterator<Owner> q = o.iterator();
@@ -192,6 +201,15 @@ public class SGEngine implements Runnable
 		return icount;
 	}
 	/**
+	 * returns the user action listener used by this game engine to
+	 * fire and interpret user actions
+	 * @return returns the user action listener
+	 */
+	public UserActionListener getUserActionListener()
+	{
+		return ual;
+	}
+	/**
 	 * performs all the queued user actions
 	 * @param iteration the iteration the game engine is on
 	 */
@@ -225,10 +243,21 @@ public class SGEngine implements Runnable
 	{
 		if(ua.getOwner().getAI() != null)
 		{
-			if(ua instanceof MouseClick)
+			if(ua instanceof MouseAction)
 			{
-				MouseClick mc = (MouseClick)ua;
-				mc.getOwner().getAI().interpretMouseClick(mc);
+				MouseAction mc = (MouseAction)ua;
+				if(mc.getType() == MouseAction.press)
+				{
+					mc.getOwner().getAI().interpretMousePress(mc);
+				}
+				else if(mc.getType() == MouseAction.release)
+				{
+					mc.getOwner().getAI().interpretMouseRelease(mc);
+				}
+				else if(mc.getType() == MouseAction.click)
+				{
+					mc.getOwner().getAI().interpretMouseClick(mc);
+				}
 			}
 			else if(ua instanceof KeyPress)
 			{

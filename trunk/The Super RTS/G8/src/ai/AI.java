@@ -113,7 +113,9 @@ public abstract class AI
 	 * @param d
 	 */
 	public abstract void drawUI(GLAutoDrawable d);
-	public abstract void interpretMouseClick(MouseClick ma);
+	public abstract void interpretMouseClick(MouseAction mc);
+	public abstract void interpretMousePress(MouseAction mc);
+	public abstract void interpretMouseRelease(MouseAction mc);
 	public abstract void interpretKeyPress(KeyPress kp);
 	public abstract void interpretKeyRelease(KeyRelease kr);
 	/**

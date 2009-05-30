@@ -45,6 +45,38 @@ public class Owner
 		population = setter;
 	}
 	/**
+	 * sets the max energy this owner can have
+	 * @param setter
+	 */
+	public void setEnergyMax(double setter)
+	{
+		energyMax = setter;
+	}
+	/**
+	 * gets the max energy this owner can have
+	 * @param setter
+	 */
+	public double getEnergyMax()
+	{
+		return energyMax;
+	}
+	/**
+	 * sets the max metal this owner can have
+	 * @param setter
+	 */
+	public void setMetalMax(double setter)
+	{
+		metalMax = setter;
+	}
+	/**
+	 * gets the max metal this owner can have
+	 * @param setter
+	 */
+	public double getMetalMax()
+	{
+		return metalMax;
+	}
+	/**
 	 * sets the ai for this owner
 	 * @param ai the ai this owner is to use
 	 */

@@ -91,11 +91,11 @@ public class RapeBot extends ComputerAI
 				sctpPlants++;
 			}
 		}	
-		System.out.println(workers);
-		System.out.println(lightTanks);
-		System.out.println(factories);
-		System.out.println(refineries);
-		System.out.println(sctpPlants);
+		//System.out.println(workers);
+		//System.out.println(lightTanks);
+		//System.out.println(factories);
+		//System.out.println(refineries);
+		//System.out.println(sctpPlants);
 	}
 	private void getClosestEnemy(HashMap<String, LinkedList<Unit>> enemies)
 	{

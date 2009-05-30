@@ -5,11 +5,11 @@ import java.io.IOException;
 
 public final class UnitWriter
 {
-	private static final int version = 3;
+	private static final int version = 4;
 	public static void writeUnit(DataOutputStream dos, String name, String weapon, 
 			double life, double movement, double energyCost, double metalCost, 
-			double energyDrain, double metalDrain, double width, double height, 
-			double depth, int buildTime, String[] buildTree)
+			double energyDrain, double metalDrain, double energyStorage, double metalStorage, 
+			double width, double height, double depth, int buildTime, String[] buildTree)
 	{
 		try
 		{
@@ -26,6 +26,8 @@ public final class UnitWriter
 			dos.writeDouble(metalCost);
 			dos.writeDouble(energyDrain);
 			dos.writeDouble(metalDrain);
+			dos.writeDouble(energyStorage);
+			dos.writeDouble(metalStorage);
 			
 			dos.writeDouble(width);
 			dos.writeDouble(height);
