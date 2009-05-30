@@ -53,16 +53,22 @@ public class SGDisplay implements GLEventListener
 		
 		if(EngineConstants.drawShots)
 		{
+			int shotsDrawn = 0;
+			List<Shot> s = w.getShotEngine().getShots();
 			try
 			{
-				List<Shot> s = w.getShotEngine().getShots();
 				Iterator<Shot> si = s.iterator(); //shot iterator
 				while(si.hasNext())
 				{
 					si.next().drawElement(gl);
+					shotsDrawn++;
 				}
 			}
 			catch(Exception q){}
+			/*if(shotsDrawn != s.size())
+			{
+				System.out.println("shots drawn: "+shotsDrawn+" / "+s.size());
+			}*/
 		}
 		
 		if(!EngineConstants.cameraMode)
