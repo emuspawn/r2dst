@@ -124,13 +124,13 @@ public class SGEngine implements Runnable
 	}
 	public void run()
 	{
-		/*o.add(new Owner("test owner 3", Color.red));
+		o.add(new Owner("test owner 3", Color.red));
 		o.get(0).setAI(new TestHumanAI(o.get(0), w, this, c));
-		setOwner(o.get(0));*/
-		
-		o.add(new Owner("test owner 1", Color.red));
-		o.get(0).setAI(new CrusherAI(o.get(0), w, this));
 		setOwner(o.get(0));
+		
+		/*o.add(new Owner("test owner 1", Color.red));
+		o.get(0).setAI(new CrusherAI(o.get(0), w, this));
+		setOwner(o.get(0));*/
 		
 		o.add(new Owner("test owner 2", Color.blue));
 		o.get(1).setAI(new CrusherAI(o.get(1), w, this));
