@@ -15,7 +15,6 @@ public class TestHumanAI extends BasicHumanAI2
 	}
 	protected void orderUnit(Unit u, Location l)
 	{
-		buildRandomly(u);
 		if(u.isSelected())
 		{
 			if(l != null)

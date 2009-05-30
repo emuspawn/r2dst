@@ -45,6 +45,7 @@ public class BuildUnit extends Action
 		if(firstRun)
 		{
 			Unit u = EngineConstants.unitFactory.makeUnit(unitName, null, null);
+			l = new Location(l.x, u.getRestingHeight(), l.z);
 			int runTime = sge.getIterationCount()+u.getBuildTime();
 			bo = new BuildOrder(unitName, l, owner, runTime);
 			sge.queueBuildOrder(bo);

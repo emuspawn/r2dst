@@ -46,7 +46,7 @@ import ai.AI;
  */
 public abstract class BasicHumanAI2 extends AI
 {
-	private static final double selectorWidth = 10; //the width of the selector
+	private static final double selectorSize = 2; //the width of the selector (used for when things are clicked)
 	
 	GLCamera c;
 	boolean unSelect = false; //true if the ai should unselect all units next iteration
@@ -55,8 +55,6 @@ public abstract class BasicHumanAI2 extends AI
 	
 	Location initialPress; //where the mouse was first pressed (when dragging)
 	boolean dragging = false;
-	
-	Location movementLocation; //determined from the camera's location when 'i' is pressed
 	
 	TextRenderer tr;
 	SGEngine sge;
@@ -70,42 +68,20 @@ public abstract class BasicHumanAI2 extends AI
 		Font font = new Font("SansSerif", Font.BOLD, 12);
 		tr = new TextRenderer(font, true, false);
 	}
-	/**
-	 * draws the selector
-	 * @param gl
-	 */
-	private void drawSelector(GL gl)
-	{
-		gl.glPushMatrix();
-		gl.glRotated(-c.getRotation(), 0, 1, 0);
-		gl.glColor3d(0, 128, 255);
-		
-		double ydiff = c.getLocation().y-c.getViewLocation().y;
-		double zdiff = c.getLocation().z-c.getViewLocation().z;
-		double yzslope = ydiff / zdiff;
-		double height = 1; //height of the selector
-		double depth = ((height-c.getLocation().y)/yzslope)+c.getLocation().z;
-		
-		Location l = new Location(c.getLocation().x, height, depth);
-		new Prism(l, selectorWidth, 2, selectorWidth).drawPrism(gl);
-		
-		gl.glPopMatrix();
-	}
 	public void drawUI(GLAutoDrawable d)
 	{
 		GL gl = d.getGL();
 		
-		drawSelector(gl);
-		
 		try
 		{
 			gl.glColor4d(255, 128, 0, 0);
-			if(dragging)
+			Location ml = sge.getUserActionListener().getMouseDragLocation();
+			if(dragging && ml != null)
 			{
-				Location ml = sge.getUserActionListener().getMouseLocation();
-				//System.out.println(ml);
 				Location l = c.getMapLocation(ml, 1);
+				//System.out.println(ml);
 				getPrismSelectionRegion(initialPress, l).drawPrism(gl);
+				new Prism(new Location(l.x, l.y+3, l.z), 6, 6, 6).drawPrism(gl);
 			}
 		}
 		catch(Exception e)
@@ -126,16 +102,7 @@ public abstract class BasicHumanAI2 extends AI
 	}
 	public void interpretKeyPress(KeyPress kp)
 	{
-		if(kp.getCharacter() == 'l')
-		{
-			initialPress = kp.getLocation();
-			dragging = true;
-		}
-		else if(kp.getCharacter() == 'j')
-		{
-			unSelect = true;
-		}
-		else if(kp.getCharacter() == 'c')
+		if(kp.getCharacter() == 'c')
 		{
 			EngineConstants.cameraMode = !EngineConstants.cameraMode;
 		}
@@ -147,51 +114,16 @@ public abstract class BasicHumanAI2 extends AI
 	}
 	public void interpretMouseRelease(MouseAction mc)
 	{
-		/*Location start = initialPress;
-		Location end = mc.getLocation();
-		dragging = false;
-		if(start.compareTo(end) == 0)
-		{
-			//selection was not dragged
-			press = new Prism(mc.getLocation(), selectorWidth, 2, selectorWidth);
-		}
-		else
-		{
-			//selection dragged, region formed
-			pselections.add(getPrismSelectionRegion(start, end));
-		}*/
-		
 		Location start = initialPress;
 		Location end = mc.getLocation();
 		dragging = false;
+		sge.getUserActionListener().nullMouseDragLocation();
 		if(start.compareTo(end) != 0)
 		{
 			pselections.add(getPrismSelectionRegion(start, end));
 		}
 	}
-	public void interpretKeyRelease(KeyRelease kr)
-	{
-		if(kr.getCharacter() == 'l')
-		{
-			Location start = initialPress;
-			Location end = kr.getLocation();
-			dragging = false;
-			if(start.compareTo(end) == 0)
-			{
-				//selection was not dragged
-				press = new Prism(kr.getLocation(), selectorWidth, 2, selectorWidth);
-			}
-			else
-			{
-				//selection dragged, region formed
-				pselections.add(getPrismSelectionRegion(start, end));
-			}
-		}
-		else if(kr.getCharacter() == 'i')
-		{
-			movementLocation = kr.getLocation();
-		}
-	}
+	public void interpretKeyRelease(KeyRelease kr){}
 	/**
 	 * gets the region created by dragging the cursor from the starting
 	 * location to the ending location, used in determining which units where
@@ -203,9 +135,9 @@ public abstract class BasicHumanAI2 extends AI
 	private Prism getPrismSelectionRegion(Location start, Location end)
 	{
 		double width = Math.abs(start.x-end.x);
-		double height = 20;
+		double height = 10;
 		double depth = Math.abs(start.z-end.z);
-		Location middle = new Location(start.x+(end.x-start.x)/2, start.y+(end.y-start.y)/2, start.z+(end.z-start.z)/2);
+		Location middle = new Location(start.x+(end.x-start.x)/2, start.y+(end.y-start.y)/2+height/2, start.z+(end.z-start.z)/2);
 		return new Prism(middle, width, height, depth);
 	}
 	public void interpretMouseClick(MouseAction mc)
@@ -216,7 +148,7 @@ public abstract class BasicHumanAI2 extends AI
 		}
 		else
 		{
-			press = new Prism(mc.getLocation(), selectorWidth, 2, selectorWidth);
+			press = new Prism(mc.getLocation(), selectorSize, selectorSize, selectorSize);
 		}
 	}
 	public void performAIFunctions()
@@ -234,7 +166,7 @@ public abstract class BasicHumanAI2 extends AI
 		 */
 		boolean unitPressSelected = false;
 		
-		//selects units
+		//selects or delsects units
 		while(i.hasNext())
 		{
 			Unit u = i.next();
@@ -242,6 +174,7 @@ public abstract class BasicHumanAI2 extends AI
 			{
 				if(!u.isSelected())
 				{
+					//selects units based off mouse drags
 					Iterator<Prism> pi = pselections.iterator();
 					while(pi.hasNext())
 					{
@@ -249,14 +182,13 @@ public abstract class BasicHumanAI2 extends AI
 						if(u.intersects(p))
 						{
 							u.setSelected(true);
-							//System.out.println("unit selected!");
 							break;
 						}
 					}
+					//selects units based off the mouse click
 					if(press != null && u.intersects(press) && !unitPressSelected)
 					{
-						//unit selected by the key press (not drag)
-						//press selecting only selects one unit
+						//unit selected by the key press (not drag), press selecting only selects one unit
 						unitPressSelected = true;
 						u.setSelected(true);
 					}
@@ -274,8 +206,9 @@ public abstract class BasicHumanAI2 extends AI
 			Unit u = i.next();
 			if(!unSelect)
 			{
-				if(BasicHumanAIStats.selectorMovesUnits && !unitPressSelected)
+				if(!unitPressSelected)
 				{
+					//press is an order
 					Location l = null;
 					if(press != null)
 					{
@@ -283,15 +216,10 @@ public abstract class BasicHumanAI2 extends AI
 					}
 					orderUnit(u, l);
 				}
-				else if(!BasicHumanAIStats.selectorMovesUnits)
-				{
-					orderUnit(u, movementLocation);
-				}
 			}
 		}
 		pselections = new ArrayList<Prism>();
 		unSelect = false;
-		movementLocation = null;
 		press = null;
 	}
 	/**
