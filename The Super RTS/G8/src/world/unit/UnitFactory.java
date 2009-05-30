@@ -3,6 +3,7 @@ package world.unit;
 import io.UnitReader;
 import java.io.*;
 import java.util.HashMap;
+import java.util.Set;
 
 import utilities.Location;
 import world.owner.Owner;
@@ -71,5 +72,9 @@ public class UnitFactory
 	public Unit makeUnit(String name, Owner owner, Location l)
 	{
 		return new Unit(u.get(name), owner, l);
+	}
+	public Set<String> getUnitNames()
+	{
+		return u.keySet();
 	}
 }

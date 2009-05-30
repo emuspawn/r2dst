@@ -13,12 +13,15 @@ import world.owner.Owner;
  * @author Jack
  *
  */
-public class UserActionListener implements MouseListener, KeyListener
+public class UserActionListener implements MouseListener, KeyListener, MouseMotionListener
 {
 	SGEngine sge;
 	Owner owner;
 	GLCamera c;
 	boolean networked;
+	Location mouseLocation;
+	
+	Location mousePress; //for determining if a mouse was clicked or not
 	
 	/**
 	 * creates a new user action listener
@@ -44,19 +47,6 @@ public class UserActionListener implements MouseListener, KeyListener
 	{
 		owner = o;
 	}
-	public void mouseClicked(MouseEvent e)
-	{
-		Location l = new Location(e.getPoint());
-		l.y = c.getHeight()-l.y; //because openGL has (0, 0) as the bottom left point
-		
-		boolean rightClick = e.getButton()==MouseEvent.BUTTON3;
-		int runTime = UserAction.RUN_INSTANTLY;
-		if(networked)
-		{
-			runTime = sge.getIterationCount()+UserAction.advanceAmount;
-		}
-		sge.queueUserAction(new MouseClick(l, owner, rightClick, runTime));
-	}
 	public void keyPressed(KeyEvent e)
 	{
 		int runTime = UserAction.RUN_INSTANTLY;
@@ -77,7 +67,48 @@ public class UserActionListener implements MouseListener, KeyListener
 	}
 	public void mouseEntered(MouseEvent arg0){}
 	public void mouseExited(MouseEvent arg0){}
-	public void mousePressed(MouseEvent arg0){}
-	public void mouseReleased(MouseEvent arg0){}
+	public void mousePressed(MouseEvent e)
+	{
+		mousePress = c.getMapLocation(new Location(e.getPoint()), 1);
+		queueMouseAction(e, MouseAction.press);
+	}
+	public void mouseReleased(MouseEvent e)
+	{
+		queueMouseAction(e, MouseAction.release);
+	}
+	public void mouseClicked(MouseEvent e)
+	{
+		Location mouseRelease = c.getMapLocation(new Location(e.getPoint()), 1);
+		if(mouseRelease.compareTo(mousePress) == 0)
+		{
+			queueMouseAction(e, MouseAction.click);
+		}
+	}
 	public void keyTyped(KeyEvent arg0){}
+	private void queueMouseAction(MouseEvent e, byte type)
+	{
+		Location l = new Location(e.getPoint());
+		Location mapLocation = c.getMapLocation(l, 1);
+		
+		boolean rightClick = e.getButton()==MouseEvent.BUTTON3;
+		int runTime = UserAction.RUN_INSTANTLY;
+		if(networked)
+		{
+			runTime = sge.getIterationCount()+UserAction.advanceAmount;
+		}
+		sge.queueUserAction(new MouseAction(mapLocation, owner, rightClick, type, runTime));
+	}
+	public void mouseDragged(MouseEvent arg0){}
+	public void mouseMoved(MouseEvent e)
+	{
+		mouseLocation = new Location(e.getPoint());
+	}
+	/**
+	 * gets where the mouse is on screen
+	 * @return returns where the mouse is on screen
+	 */
+	public Location getMouseLocation()
+	{
+		return mouseLocation;
+	}
 }

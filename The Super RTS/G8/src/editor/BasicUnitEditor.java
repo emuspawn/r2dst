@@ -32,6 +32,8 @@ public class BasicUnitEditor extends JFrame
 	JTextField metalCost;
 	JTextField energyDrain;
 	JTextField metalDrain;
+	JTextField energyStorage;
+	JTextField metalStorage;
 	
 	JTextArea buildTree;
 	JTextField buildTime;
@@ -92,7 +94,8 @@ public class BasicUnitEditor extends JFrame
 					UnitWriter.writeUnit(dos, name.getText(), weapon.getText(), Double.parseDouble(life.getText()), 
 							Double.parseDouble(movement.getText()), Double.parseDouble(energyCost.getText()), 
 							Double.parseDouble(metalCost.getText()), Double.parseDouble(energyDrain.getText()), 
-							Double.parseDouble(metalDrain.getText()), Double.parseDouble(width.getText()),
+							Double.parseDouble(metalDrain.getText()), Double.parseDouble(energyStorage.getText()), 
+							Double.parseDouble(metalStorage.getText()), Double.parseDouble(width.getText()),
 							Double.parseDouble(height.getText()), Double.parseDouble(depth.getText()),
 							Integer.parseInt(buildTime.getText()), buildTree);
 					System.out.println("done!");
@@ -119,6 +122,8 @@ public class BasicUnitEditor extends JFrame
 					metalCost.setText(""+u.getMetalCost());
 					energyDrain.setText(""+u.getEnergyDrain());
 					metalDrain.setText(""+u.getMetalDrain());
+					energyStorage.setText(""+u.getEnergyStorage());
+					metalStorage.setText(""+u.getMetalStorage());
 					
 					width.setText(""+u.getWidth());
 					height.setText(""+u.getHeight());
@@ -210,6 +215,8 @@ public class BasicUnitEditor extends JFrame
 		energyDrain = new JTextField(15);
 		metalDrain = new JTextField(15);
 		buildTime = new JTextField(15);
+		energyStorage = new JTextField(15);
+		metalStorage = new JTextField(15);
 		p.add(new JLabel("Energy Cost:"));
 		p.add(energyCost);
 		p.add(new JLabel("Metal Cost:"));
@@ -218,6 +225,10 @@ public class BasicUnitEditor extends JFrame
 		p.add(energyDrain);
 		p.add(new JLabel("Metal Drain:"));
 		p.add(metalDrain);
+		p.add(new JLabel("Energy Storage:"));
+		p.add(energyStorage);
+		p.add(new JLabel("Metal Storage:"));
+		p.add(metalStorage);
 		p.add(new JLabel("Build Time:"));
 		p.add(buildTime);
 		return p;

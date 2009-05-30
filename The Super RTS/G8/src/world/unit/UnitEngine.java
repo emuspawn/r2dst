@@ -52,6 +52,10 @@ public class UnitEngine
 				updateUnit(u);
 				if(u.isDead())
 				{
+					Owner o = u.getOwner();
+					o.setEnergyMax(o.getEnergyMax()-u.getEnergyStorage());
+					o.setMetalMax(o.getMetalMax()-u.getMetalStorage());
+					
 					dm3d.removeElement(u, u.getID());
 					u.getAction().cancelAction();
 					i.remove();
@@ -75,6 +79,10 @@ public class UnitEngine
 			{
 				Owner o = ll.getFirst().getOwner();
 				o.setPopulation(ll.size());
+			}
+			else
+			{
+				ki.remove();
 			}
 		}
 	}
@@ -105,34 +113,32 @@ public class UnitEngine
 	 */
 	private void updateUnit(Unit u)
 	{
-		//Location oldLocation = u.getLocation();
-		//boolean done = u.getAction().performAction();
-		//dm3d.adjustElement(u, oldLocation, u.getLocation(), u.getID());
-		
-		dm3d.removeElement(u, u.getID());
-		boolean done = u.getAction().performAction();
-		dm3d.addElement(u, u.getID());
-		
-		if(done)
-		{
-			u.setAction(new Idle(), true);
-		}
 		if(u.getLife() <= 0)
 		{
 			u.setDead();
 		}
-		else
+		else if(u.isOnline())
 		{
-			if(u.getWeapon().getRange() > 0)
+			dm3d.removeElement(u, u.getID());
+			boolean done = u.getAction().performAction();
+			dm3d.addElement(u, u.getID());
+			
+			if(done)
 			{
-				u.getWeapon().updateWeapon();
-				u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+				u.setAction(new Idle(), true);
 			}
-			Owner o = u.getOwner();
-			o.setEnergy(o.getEnergy()-u.getEnergyDrain());
-			o.setMetal(o.getMetal()-u.getMetalDrain());
+			else
+			{
+				if(u.getWeapon().getRange() > 0)
+				{
+					u.getWeapon().updateWeapon();
+					u.getWeapon().fireWeapon(u.getLocation(), se, dm3d, u.getOwner());
+				}
+				Owner o = u.getOwner();
+				o.setEnergy(o.getEnergy()-u.getEnergyDrain());
+				o.setMetal(o.getMetal()-u.getMetalDrain());
+			}
 		}
-		//System.out.println(u.getOwner().getName());
 	}
 	/**
 	 * gets the total units in game
@@ -160,6 +166,9 @@ public class UnitEngine
 		idCount++;
 		unitQueue.add(unit);
 		dm3d.addElement(unit, unit.getID());
+		Owner o = unit.getOwner();
+		o.setEnergyMax(o.getEnergyMax()+unit.getEnergyStorage());
+		o.setMetalMax(o.getMetalMax()+unit.getMetalStorage());
 	}
 	/**
 	 * gets the units controlled by a given owner

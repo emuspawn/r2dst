@@ -1,8 +1,14 @@
 package ai.computerAI.computerAIs;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import javax.media.opengl.GLAutoDrawable;
+
+import com.sun.opengl.util.j2d.TextRenderer;
+
 import sgEngine.SGEngine;
 import utilities.Location;
 import world.World;
@@ -10,8 +16,9 @@ import world.owner.Owner;
 import world.unit.Unit;
 import ai.computerAI.ComputerAI;
 
-public final class SimpleAI extends ComputerAI
+public final class CrusherAI extends ComputerAI
 {
+	boolean drawUI = false;
 	ArrayList<Location> buildLocations; //where buildings should be built
 	Location attackPoint; //where unitsare to attack
 	boolean attackingMovingTarget = false;
@@ -20,10 +27,10 @@ public final class SimpleAI extends ComputerAI
 	int maxWorkers = 2;
 	int workers;
 	
-	int maxLightTanks = 70;
+	int maxLightTanks = 999;
 	int lightTanks;
 	
-	int maxsctpPlants = 1;
+	int maxsctpPlants = 3;
 	int sctpPlants;
 	
 	int maxRefineries = 3;
@@ -32,9 +39,19 @@ public final class SimpleAI extends ComputerAI
 	int maxFactories = 4;
 	int factories;
 	
-	public SimpleAI(Owner o, World w, SGEngine sge)
+	int maxEnergyDepots = 1;
+	int energyDepots;
+	
+	int maxMetalDepots = 1;
+	int metalDepots;
+	
+	TextRenderer tr;
+	
+	public CrusherAI(Owner o, World w, SGEngine sge)
 	{
 		super(o, w, sge);
+		Font font = new Font("SansSerif", Font.BOLD, 12);
+		tr = new TextRenderer(font, true, false);
 	}
 	public void performAIFunctions()
 	{
@@ -68,7 +85,7 @@ public final class SimpleAI extends ComputerAI
 	 */
 	private void orderLightTank(Unit u)
 	{
-		if(attackPoint != null && lightTanks > 10)
+		if(attackPoint != null && lightTanks > 50)
 		{
 			if(attackingMovingTarget)
 			{
@@ -82,7 +99,7 @@ public final class SimpleAI extends ComputerAI
 		else
 		{
 			int index = (int)(Math.random()*buildLocations.size());
-			moveUnit(u, getRegionLocation(buildLocations.get(index), 200, 200));
+			forceMoveUnit(u, getRegionLocation(buildLocations.get(index), 200, 200));
 		}
 	}
 	/**
@@ -100,6 +117,20 @@ public final class SimpleAI extends ComputerAI
 		{
 			buildAt("light tank", u, u.getLocation());
 			lightTanks++;
+		}
+		
+		
+		if(o.getEnergy()/o.getEnergyMax() < .33)
+		{
+			u.setOnline(false);
+			maxsctpPlants+=2;
+			maxRefineries+=2;
+			maxEnergyDepots++;
+			maxMetalDepots++;
+		}
+		else
+		{
+			u.setOnline(true);
 		}
 	}
 	/**
@@ -128,9 +159,23 @@ public final class SimpleAI extends ComputerAI
 				buildAt("refinery", u, l);
 				refineries++;
 			}
+			else if(energyDepots < maxEnergyDepots)
+			{
+				buildAt("energy depot", u, l);
+				energyDepots++;
+			}
+			else if(metalDepots < maxMetalDepots)
+			{
+				buildAt("metal depot", u, l);
+				metalDepots++;
+			}
 			else
 			{
-				moveUnit(u, getRegionLocation(buildLocations.get(index), w.getWidth(), w.getDepth()));
+				//moveUnit(u, getRegionLocation(buildLocations.get(index), w.getWidth(), w.getDepth()));
+				maxFactories++;
+				maxEnergyDepots++;
+				maxMetalDepots++;
+				orderWorker(u);
 			}
 		}
 		else
@@ -145,10 +190,12 @@ public final class SimpleAI extends ComputerAI
 	private void determineState()
 	{
 		workers = 0;
-		int lightTanks = 0;
+		lightTanks = 0;
 		sctpPlants = 0;
 		refineries = 0;
 		factories = 0;
+		energyDepots = 0;
+		metalDepots = 0;
 		
 		ArrayList<Location> al = new ArrayList<Location>();
 		LinkedList<Unit> units = getUnits();
@@ -179,6 +226,14 @@ public final class SimpleAI extends ComputerAI
 			else if(u.is("refinery"))
 			{
 				refineries++;
+			}
+			else if(u.is("energy depot"))
+			{
+				energyDepots++;
+			}
+			else if(u.is("metal depot"))
+			{
+				metalDepots++;
 			}
 		}
 		buildLocations = al;
@@ -223,5 +278,16 @@ public final class SimpleAI extends ComputerAI
 	{
 		return new Location(center.x+Math.random()*width-width/2, 0, 
 				center.z+Math.random()*depth-depth/2);
+	}
+	public void drawUI(GLAutoDrawable d)
+	{
+		if(drawUI)
+		{
+			tr.beginRendering((int)d.getWidth(), (int)d.getHeight());
+			tr.setColor(255, 0, 0, 255);
+			tr.draw("Energy: "+o.getEnergy(), (int)(d.getWidth()-110), (int)(d.getHeight()-20));
+			tr.draw("Metal: "+o.getMetal(), (int)(d.getWidth()-110), (int)(d.getHeight()-40));
+			tr.endRendering();
+		}
 	}
 }

@@ -20,6 +20,7 @@ public class SGDisplay implements GLEventListener
 	SGEngine sge;
 	World w;
 	GLCamera c;
+	double angle = 2;
 	
 	TextRenderer textRenderer;
 	
@@ -29,7 +30,7 @@ public class SGDisplay implements GLEventListener
 		this.w = w;
 		this.c = c;
 		
-		Font font = new Font("SansSerif", Font.PLAIN, 12);
+		Font font = new Font("SansSerif", Font.BOLD, 32);
         textRenderer = new TextRenderer(font, true, false);
 	}
 	public void display(GLAutoDrawable d)
@@ -38,7 +39,8 @@ public class SGDisplay implements GLEventListener
 		
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
-		c.loadModelViewMatrix(gl);
+		c.loadMatrices(gl);
+		c.updateCamera(gl);
 		renderPlane(d, w.getWidth(), w.getDepth());
 		ArrayList<Element> e = w.getVisibleElements(c);
 		for(int i = e.size()-1; i >= 0; i--)
@@ -75,7 +77,13 @@ public class SGDisplay implements GLEventListener
 			drawEngineStats(d);
 		}
 		
-		c.updateCamera(gl);
+		gl.glPushMatrix();
+		gl.glRotated(angle, 0, 1, 0);
+		textRenderer.begin3DRendering();
+		textRenderer.draw3D("Jack is the best!!", 0, 100, 0, 1);
+		textRenderer.end3DRendering();
+		angle++;
+		gl.glPopMatrix();
 	}
 	private void renderPlane(GLAutoDrawable d, int width, int height)
 	{

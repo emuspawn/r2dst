@@ -44,7 +44,7 @@ import ai.AI;
  * @author Jack
  *
  */
-public abstract class BasicHumanAI extends AI
+public abstract class BasicHumanAI2 extends AI
 {
 	private static final double selectorWidth = 10; //the width of the selector
 	
@@ -59,11 +59,13 @@ public abstract class BasicHumanAI extends AI
 	Location movementLocation; //determined from the camera's location when 'i' is pressed
 	
 	TextRenderer tr;
+	SGEngine sge;
 	
-	public BasicHumanAI(Owner o, World w, SGEngine sge, GLCamera c)
+	public BasicHumanAI2(Owner o, World w, SGEngine sge, GLCamera c)
 	{
 		super(o, w, sge);
 		this.c = c;
+		this.sge = sge;
 		
 		Font font = new Font("SansSerif", Font.BOLD, 12);
 		tr = new TextRenderer(font, true, false);
@@ -98,10 +100,12 @@ public abstract class BasicHumanAI extends AI
 		try
 		{
 			gl.glColor4d(255, 128, 0, 0);
-			Location center = c.getMapLocation(1);
 			if(dragging)
 			{
-				getPrismSelectionRegion(initialPress, center).drawPrism(gl);
+				Location ml = sge.getUserActionListener().getMouseLocation();
+				//System.out.println(ml);
+				Location l = c.getMapLocation(ml, 1);
+				getPrismSelectionRegion(initialPress, l).drawPrism(gl);
 			}
 		}
 		catch(Exception e)
@@ -110,6 +114,7 @@ public abstract class BasicHumanAI extends AI
 			System.out.println("exception caught, continuing normally...");
 		}
 		drawResources();
+		
 	}
 	private void drawResources()
 	{
@@ -133,6 +138,35 @@ public abstract class BasicHumanAI extends AI
 		else if(kp.getCharacter() == 'c')
 		{
 			EngineConstants.cameraMode = !EngineConstants.cameraMode;
+		}
+	}
+	public void interpretMousePress(MouseAction mc)
+	{
+		initialPress = mc.getLocation();
+		dragging = true;
+	}
+	public void interpretMouseRelease(MouseAction mc)
+	{
+		/*Location start = initialPress;
+		Location end = mc.getLocation();
+		dragging = false;
+		if(start.compareTo(end) == 0)
+		{
+			//selection was not dragged
+			press = new Prism(mc.getLocation(), selectorWidth, 2, selectorWidth);
+		}
+		else
+		{
+			//selection dragged, region formed
+			pselections.add(getPrismSelectionRegion(start, end));
+		}*/
+		
+		Location start = initialPress;
+		Location end = mc.getLocation();
+		dragging = false;
+		if(start.compareTo(end) != 0)
+		{
+			pselections.add(getPrismSelectionRegion(start, end));
 		}
 	}
 	public void interpretKeyRelease(KeyRelease kr)
@@ -169,17 +203,20 @@ public abstract class BasicHumanAI extends AI
 	private Prism getPrismSelectionRegion(Location start, Location end)
 	{
 		double width = Math.abs(start.x-end.x);
-		//double height = Math.abs(start.y-end.y);
 		double height = 20;
 		double depth = Math.abs(start.z-end.z);
 		Location middle = new Location(start.x+(end.x-start.x)/2, start.y+(end.y-start.y)/2, start.z+(end.z-start.z)/2);
 		return new Prism(middle, width, height, depth);
 	}
-	public void interpretMouseClick(MouseClick ma)
+	public void interpretMouseClick(MouseAction mc)
 	{
-		if(ma.isRightClick())
+		if(mc.isRightClick())
 		{
 			unSelect = true;
+		}
+		else
+		{
+			press = new Prism(mc.getLocation(), selectorWidth, 2, selectorWidth);
 		}
 	}
 	public void performAIFunctions()
