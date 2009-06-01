@@ -74,7 +74,7 @@ public abstract class BasicHumanAI2 extends AI
 		
 		try
 		{
-			gl.glColor4d(255, 128, 0, 0);
+			gl.glColor4d(255, 128, 0, 40);
 			Location ml = sge.getUserActionListener().getMouseDragLocation();
 			if(dragging && ml != null)
 			{

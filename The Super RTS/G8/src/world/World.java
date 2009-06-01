@@ -41,7 +41,7 @@ public class World
 		ue.performUnitFunctions();
 		se.performShotFunctions();
 	}
-	public ArrayList<Element> getVisibleElements(GLCamera c)
+	public ArrayList<Element> getElements(GLCamera c)
 	{
 		ArrayList<Element> e = new ArrayList<Element>();
 		

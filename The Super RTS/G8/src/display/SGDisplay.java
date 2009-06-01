@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import graphics.GLCamera;
 import javax.media.opengl.*;
 import sgEngine.EngineConstants;
@@ -42,7 +41,7 @@ public class SGDisplay implements GLEventListener
 		c.loadMatrices(gl);
 		c.updateCamera(gl);
 		renderPlane(d, w.getWidth(), w.getDepth());
-		ArrayList<Element> e = w.getVisibleElements(c);
+		ArrayList<Element> e = w.getElements(c);
 		for(int i = e.size()-1; i >= 0; i--)
 		{
 			if(e.get(i) != null)
@@ -54,10 +53,12 @@ public class SGDisplay implements GLEventListener
 		if(EngineConstants.drawShots)
 		{
 			int shotsDrawn = 0;
-			List<Shot> s = w.getShotEngine().getShots();
+			int size = 0;
 			try
 			{
-				Iterator<Shot> si = s.iterator(); //shot iterator
+				ArrayList<Shot> s = new ArrayList<Shot>(w.getShotEngine().getShots());
+				size = s.size();
+				Iterator<Shot> si = new ArrayList<Shot>(s).iterator(); //shot iterator
 				while(si.hasNext())
 				{
 					si.next().drawElement(gl);
@@ -65,10 +66,10 @@ public class SGDisplay implements GLEventListener
 				}
 			}
 			catch(Exception q){}
-			/*if(shotsDrawn != s.size())
+			if(shotsDrawn != size)
 			{
-				System.out.println("shots drawn: "+shotsDrawn+" / "+s.size());
-			}*/
+				System.out.println("shots drawn: "+shotsDrawn+" / "+size);
+			}
 		}
 		
 		if(!EngineConstants.cameraMode)
@@ -118,6 +119,7 @@ public class SGDisplay implements GLEventListener
 	{
 		GL gl = d.getGL();
 		gl.glEnable(GL.GL_DEPTH_TEST);
+		//gl.glEnable(GL.GL_BLEND);
 		//gl.glClearColor(0, 1f, 0, 0);
 	}
 	public void reshape(GLAutoDrawable d, int arg1, int arg2, int width, int height)

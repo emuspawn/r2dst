@@ -193,15 +193,15 @@ public class UnitEngine
 	 * gets all the games units
 	 * @return returns all game units
 	 */
-	public LinkedList<Unit> getAllUnits()
+	public ArrayList<Unit> getAllUnits()
 	{
-		LinkedList<Unit> ll = new LinkedList<Unit>();
+		ArrayList<Unit> al = new ArrayList<Unit>();
 		Iterator<String> i = units.keySet().iterator();
 		while(i.hasNext())
 		{
-			ll.addAll(units.get(i.next()));
+			al.addAll(units.get(i.next()));
 		}
-		return ll;
+		return al;
 	}
 	/**
 	 * returns a hash map representing all enemy units, keys
