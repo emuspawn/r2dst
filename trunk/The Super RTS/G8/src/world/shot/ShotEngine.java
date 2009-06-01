@@ -75,12 +75,6 @@ public class ShotEngine
 				{
 					i.remove();
 				}
-				
-				/*Prism worldBounds = new Prism(new Location(0, w.getHeight()/2, 0), w.getWidth(), w.getHeight(), w.getDepth());
-				if(!worldBounds.intersects(shot))
-				{
-					System.out.println("shot out of world, "+shot.getLocation());
-				}*/
 			}
 		}
 		//System.out.println(s.size());

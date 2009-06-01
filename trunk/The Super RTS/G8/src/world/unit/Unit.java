@@ -263,7 +263,7 @@ public class Unit extends Element
 		gl.glVertex3d(l.x+width/2, l.y, l.z+depth/2);
 		gl.glVertex3d(l.x-width/2, l.y, l.z+depth/2);
 		gl.glEnd();*/
-		this.drawPrism(gl);
+		drawPrism(gl);
 		
 		if(selected)
 		{

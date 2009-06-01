@@ -55,36 +55,7 @@ public class Shot extends Element
 	public void drawElement(GL gl)
 	{
 		gl.glPushMatrix();
-		/*gl.glTranslated(getLocation().x, getLocation().y, getLocation().z);
-		gl.glScaled(getWidth(), getHeight(), getDepth());
-		gl.glBegin(GL.GL_QUAD_STRIP);
-		  //Quads 1 2 3 4
-		    gl.glVertex3f( 1.0f, 1.0f, 1.0f);   //V2
-		    gl.glVertex3f( 1.0f,-1.0f, 1.0f);   //V1
-		    gl.glVertex3f( 1.0f, 1.0f,-1.0f);   //V4
-		    gl.glVertex3f( 1.0f,-1.0f,-1.0f);   //V3
-		    gl.glVertex3f(-1.0f, 1.0f,-1.0f);   //V6
-		    gl.glVertex3f(-1.0f,-1.0f,-1.0f);   //V5
-		    gl.glVertex3f(-1.0f, 1.0f, 1.0f);   //V8
-		    gl.glVertex3f(-1.0f,-1.0f, 1.0f);   //V7
-		    gl.glVertex3f( 1.0f, 1.0f, 1.0f);   //V2
-		    gl.glVertex3f( 1.0f,-1.0f, 1.0f);   //V1
-		gl.glEnd();
-		gl.glBegin(GL.GL_QUADS);
-		  //Quad 5
-		    gl.glVertex3f(-1.0f, 1.0f,-1.0f);   //V6
-		    gl.glVertex3f(-1.0f, 1.0f, 1.0f);   //V8
-		    gl.glVertex3f( 1.0f, 1.0f, 1.0f);   //V2
-		    gl.glVertex3f( 1.0f, 1.0f,-1.0f);   //V4
-		  //Quad 6
-		    gl.glVertex3f(-1.0f,-1.0f, 1.0f);   //V7
-		    gl.glVertex3f(-1.0f,-1.0f,-1.0f);   //V5
-		    gl.glVertex3f( 1.0f,-1.0f,-1.0f);   //V3
-		    gl.glVertex3f( 1.0f,-1.0f, 1.0f);   //V1
-		gl.glEnd();*/
-		
 		gl.glColor3d(0, 0, 0);
-		
 		drawPrism(gl);
 		gl.glPopMatrix();
 	}

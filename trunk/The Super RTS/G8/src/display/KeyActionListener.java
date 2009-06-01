@@ -6,16 +6,16 @@ import graphics.GLCamera;
 
 public class KeyActionListener implements KeyListener
 {
-	boolean moveUp = false;
-	boolean moveRight = false;
-	boolean moveDown = false;
-	boolean moveLeft = false;
+	private boolean moveUp = false;
+	private boolean moveRight = false;
+	private boolean moveDown = false;
+	private boolean moveLeft = false;
 	
-	boolean rotateRight = false;
-	boolean rotateLeft = false;
+	private boolean rotateRight = false;
+	private boolean rotateLeft = false;
 	
-	boolean zoomIn = false;
-	boolean zoomOut = false;
+	private boolean zoomIn = false;
+	private boolean zoomOut = false;
 	
 	public void updateCamera(GLCamera c)
 	{
