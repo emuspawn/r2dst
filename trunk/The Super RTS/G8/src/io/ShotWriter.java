@@ -3,6 +3,8 @@ package io;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import world.shot.Shot;
+
 public class ShotWriter
 {
 	private static final int version = 1;
@@ -22,5 +24,9 @@ public class ShotWriter
 			dos.writeDouble(depth);
 		}
 		catch(IOException e){}
+	}
+	public static void writeShot(DataOutputStream dos, Shot s)
+	{
+		writeShot(dos, s.getName(), s.getDamage(), s.getMovement(), s.getWidth(), s.getHeight(), s.getDepth());
 	}
 }
