@@ -29,6 +29,7 @@ public class GameEditor extends JFrame
 	
 	public GameEditor()
 	{
+		super("Game Editor");
 		owner = this;
 		JTabbedPane tpane = new JTabbedPane();
 		tpane.addTab("Units", createUnitPanel());

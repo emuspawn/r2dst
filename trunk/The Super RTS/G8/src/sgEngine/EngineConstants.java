@@ -1,5 +1,6 @@
 package sgEngine;
 
+import dynamicMap3D.DynamicMap3D;
 import utilities.Location;
 import world.shot.ShotFactory;
 import world.shot.weapon.WeaponFactory;
@@ -18,7 +19,6 @@ public final class EngineConstants
 	
 	public static final boolean drawShots = true;
 	public static final Location mapCenter = new Location(0, 0, 0);
-	public static final boolean startUnitMapDisplayWindow = false; //displays the unit map for diagnostic purposes
 	public static final boolean selectedUnitsAreWhite = true;
 	public static boolean cameraMode = false; //certain things arent drawn in camera mode to add to the games visuals
 	public static final int maxPopulation = 300; //roughly
@@ -28,4 +28,7 @@ public final class EngineConstants
 	public static final double startingMetal = 1000;
 	public static final double startingEnergyMax = 1000;
 	public static final double startingMetalMax = 1000;
+
+	public static final boolean startUnitMapDisplayWindow = false; //displays the unit map for diagnostic purposes
+	public static DynamicMap3D dmap = null; //the displayed map
 }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import display.*;
-import dynamicMap3D.MapDisplay;
+//import dynamicMap3D.MapDisplay;
 import sgEngine.userAction.*;
 import ui.GLFrame;
 import utilities.Location;
@@ -40,7 +40,7 @@ public class SGEngine implements Runnable
 	
 	GLCamera c;
 	KeyActionListener ka;
-	MapDisplay unitMapDisplay;
+	//MapDisplay unitMapDisplay;
 	
 	public SGEngine()
 	{
@@ -60,11 +60,11 @@ public class SGEngine implements Runnable
 		f.getGLCanvas().addKeyListener(ual);
 		f.getGLCanvas().addMouseMotionListener(ual);
 		
-		if(EngineConstants.startUnitMapDisplayWindow)
+		/*if(EngineConstants.startUnitMapDisplayWindow)
 		{
 			GLCamera mapCamera = new GLCamera(new Location(0, 10, 0), new Location(0, 0, -15), 0, 0);
 			unitMapDisplay = new MapDisplay(mapCamera);
-		}
+		}*/
 		
 		new Thread(this).start();
 	}
@@ -192,11 +192,11 @@ public class SGEngine implements Runnable
 				catch(InterruptedException e){}
 				icount++;
 				
-				if(EngineConstants.startUnitMapDisplayWindow)
+				/*if(EngineConstants.startUnitMapDisplayWindow)
 				{
 					unitMapDisplay.setMap(w.getUnitEngine().getUnitMap());
 					unitMapDisplay.updateMapDisplay();
-				}
+				}*/
 			}
 			catch(Exception e)
 			{
@@ -337,14 +337,14 @@ public class SGEngine implements Runnable
 	}
 	public static void main(String[] args)
 	{
-		/*System.load(System.getProperty("user.dir")+System.getProperty("file.separator")+"lib"+
+		System.load(System.getProperty("user.dir")+System.getProperty("file.separator")+"lib"+
 				System.getProperty("file.separator")+"gluegen-rt.dll");
 		System.load(System.getProperty("user.dir")+System.getProperty("file.separator")+"lib"+
 				System.getProperty("file.separator")+"jogl_awt.dll");
 		System.load(System.getProperty("user.dir")+System.getProperty("file.separator")+"lib"+
 				System.getProperty("file.separator")+"jogl.dll");
 		System.load(System.getProperty("user.dir")+System.getProperty("file.separator")+"lib"+
-				System.getProperty("file.separator")+"jogl_cg.dll");*/
+				System.getProperty("file.separator")+"jogl_cg.dll");
 		new SGEngine();
 	}
 }

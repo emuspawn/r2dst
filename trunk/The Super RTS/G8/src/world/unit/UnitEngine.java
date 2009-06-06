@@ -36,9 +36,9 @@ public class UnitEngine
 	{
 		this.w = w;
 		this.se = se;
-		//dm3d = new DynamicMap3D(new Location(0, w.getHeight()/2, 0), w.getWidth(), w.getHeight(), w.getDepth());
 		dm3d = new DynamicMap3D(EngineConstants.mapCenter, w.getWidth(), w.getHeight(), w.getDepth());
 		//dm3d.setPartitionSize(100);
+		EngineConstants.dmap = dm3d;
 	}
 	public void performUnitFunctions()
 	{
