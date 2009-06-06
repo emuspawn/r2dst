@@ -84,6 +84,18 @@ public class SGDisplay implements GLEventListener
 			drawEngineStats(d);
 		}
 		
+		if(EngineConstants.startUnitMapDisplayWindow && EngineConstants.dmap != null)
+		{
+			gl.glPushMatrix();
+			/*gl.glScaled(EngineConstants.m.getWidth()/EngineConstants.m.getPartitionSize(), 
+					EngineConstants.m.getHeight()/EngineConstants.m.getPartitionSize(), 
+					EngineConstants.m.getDepth()/EngineConstants.m.getPartitionSize());*/
+			gl.glScaled(10, 10, 10);
+			EngineConstants.dmap.drawMap(gl, c);
+			//System.out.println(EngineConstants.m.getWidth()/EngineConstants.m.getPartitionSize());
+			gl.glPopMatrix();
+		}
+		
 		gl.glPushMatrix();
 		gl.glRotated(angle, 0, 1, 0);
 		Font font = new Font("SansSerif", Font.BOLD, 32);
@@ -102,6 +114,7 @@ public class SGDisplay implements GLEventListener
 		GL gl = d.getGL();
 		gl.glPushMatrix();
 		gl.glColor3d(0, 255, 0);
+		//gl.glColor3d(0, 128, 255);
 		gl.glScaled(1, 1, 1);
 		double y = -.5;
 		double hwidth = width/2;
