@@ -30,7 +30,7 @@ public class ModelDisplay implements GLEventListener
 		
 		m.drawModel(gl);
 		m.drawNormalVectors(gl);
-		m.drawVertices(gl, c, .2, true);
+		m.drawVertices(gl, c, .2, true, 1000);
 	}
 	private void drawGrid(GL gl)
 	{

@@ -4,6 +4,9 @@ import graphics.GLCamera;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,8 +25,16 @@ import utilities.Prism;
  * @author Jack
  *
  */
-public class Model
+public final class Model
 {
+	/**
+	 * the name of the model
+	 */
+	private String name = new String("Untitled");
+	/**
+	 * a description of the model
+	 */
+	private String description = new String();
 	/**
 	 * stores the vertices of the model, key=name of vertex, value=location of vertex
 	 */
@@ -34,9 +45,28 @@ public class Model
 	 * their positions stored relative to the position of the vertex that they
 	 * are dependent upon
 	 */
-	private HashMap<String, LinkedList<String>> dependents = new HashMap<String, LinkedList<String>>();
+	private HashMap<String, LinkedList<String>> dependencies = new HashMap<String, LinkedList<String>>();
+	/**
+	 * the triangles that the model is made up of
+	 */
 	private ArrayList<Triangle> t = new ArrayList<Triangle>();
 	
+	/**
+	 * creates a model with the passed parameters
+	 * @param name the name of the model
+	 * @param description the description of the model
+	 * @param v the vertices of the model
+	 * @param d the dependencies of the vertices of the model
+	 * @param t the triangles of the model
+	 */
+	public Model(String name, String description, HashMap<String, Location> v, HashMap<String, LinkedList<String>> d, ArrayList<Triangle> t)
+	{
+		this.name = name;
+		this.description = description;
+		this.v = v;
+		this.dependencies = d;
+		this.t = t;
+	}
 	/**
 	 * creates a new model with one vertex at (0, 0, 0) named "origin"
 	 */
@@ -57,15 +87,15 @@ public class Model
 		if(!v.containsKey(name) && v.containsKey(base))
 		{
 			v.put(name, l);
-			if(dependents.get(base) != null)
+			if(dependencies.get(base) != null)
 			{
-				dependents.get(base).add(name);
+				dependencies.get(base).add(name);
 			}
 			else
 			{
 				LinkedList<String> list = new LinkedList<String>();
 				list.add(name);
-				dependents.put(base, list);
+				dependencies.put(base, list);
 			}
 			return true;
 		}
@@ -89,10 +119,10 @@ public class Model
 	 */
 	private void modifyVertexHelper(String vertex, Location l)
 	{
-		if(dependents.get(vertex) != null)
+		if(dependencies.get(vertex) != null)
 		{
 			Location old = v.get(vertex);
-			List<String> list = dependents.get(vertex);
+			List<String> list = dependencies.get(vertex);
 			Iterator<String> i = list.iterator();
 			while(i.hasNext())
 			{
@@ -126,7 +156,7 @@ public class Model
 		if(!name.equalsIgnoreCase("origin"))
 		{
 			v.remove(name);
-			List<String> l = dependents.get(name);
+			List<String> l = dependencies.get(name);
 			if(l != null)
 			{
 				Iterator<String> i = l.iterator();
@@ -134,7 +164,7 @@ public class Model
 				{
 					removeVertex(i.next());
 				}
-				dependents.remove(name);
+				dependencies.remove(name);
 			}
 		}
 	}
@@ -183,8 +213,10 @@ public class Model
 	 * @param gl
 	 * @param size the size the vertices are to be when drawn
 	 * @param drawNames if true then the names of the vertices are drawn next to them
+	 * @param maxDistance the maximum distance the vertices can be from the camera
+	 * before the vertex name is not drawn
 	 */
-	public void drawVertices(GL gl, GLCamera c, double size, boolean drawNames)
+	public void drawVertices(GL gl, GLCamera c, double size, boolean drawNames, double maxDistance)
 	{
 		Font font = new Font("SansSerif", Font.PLAIN, 12);
         TextRenderer tr = new TextRenderer(font, true, false);
@@ -194,15 +226,215 @@ public class Model
 			String name = i.next();
 			gl.glColor3d(255, 0, 0);
 			new Prism(v.get(name), size, size, size).drawPrism(gl);
-			if(drawNames)
+			if(drawNames && c.getLocation().distanceTo(v.get(name)) <= maxDistance)
 			{
-		        tr.setColor(Color.white);
+				tr.setColor(Color.white);
 				Location l = c.project(v.get(name));
 				tr.beginRendering((int)c.getWidth(), (int)c.getHeight());
 				tr.draw(name, (int)l.x, (int)l.y);
 				tr.endRendering();
 			}
 		}
+	}
+	/**
+	 * writes the model's information to the passed output stream
+	 * @param dos
+	 */
+	public void writeModel(DataOutputStream dos)
+	{
+		ModelIO.writeModel(dos, name, description, v, dependencies, t);
+	}
+	/**
+	 * reads the information from the model file specified by the
+	 * input stream
+	 * @param dis
+	 */
+	public void readModel(DataInputStream dis)
+	{
+		Model m = ModelIO.readModel(dis);
+		name = m.name;
+		description = m.description;
+		v = m.v;
+		dependencies = m.dependencies;
+		t = m.t;
+	}
+}
+/**
+ * handles the IO functions for the model
+ * @author Jack
+ *
+ */
+final class ModelIO
+{
+	private static final int version = 1;
+	/**
+	 * writes the model to the passed output stream
+	 * @param dos the output stream the model is to be written to
+	 * @param v hashmap of vertices
+	 * @param d dependent vertices
+	 * @param t triangles
+	 */
+	public static void writeModel(DataOutputStream dos, String name, String description, HashMap<String, Location> v, 
+			HashMap<String, LinkedList<String>> d, ArrayList<Triangle> t)
+	{
+		try
+		{
+			System.out.println("writing model...");
+			
+			dos.writeInt(version);
+			System.out.println("version = "+version);
+			
+			System.out.print("writing name and description... ");
+			dos.writeInt(name.length());
+			dos.writeChars(name);
+			dos.writeInt(description.length());
+			dos.writeChars(description);
+			System.out.println("done");
+			
+			System.out.println("writing "+v.keySet().size()+" vertices... ");
+			dos.writeInt(v.keySet().size());
+			Iterator<String> vi = v.keySet().iterator(); //vertex iterator
+			while(vi.hasNext())
+			{
+				String key = vi.next();
+				dos.writeInt(key.length());
+				dos.writeChars(key);
+				Location l = v.get(key);
+				dos.writeDouble(l.x);
+				dos.writeDouble(l.y);
+				dos.writeDouble(l.z);
+				System.out.println(key+" = "+l);
+			}
+			System.out.println("done");
+			
+			System.out.println("writing "+d.keySet().size()+" depedencies... ");
+			dos.writeInt(d.keySet().size());
+			vi = v.keySet().iterator(); //vertex iterator
+			while(vi.hasNext())
+			{
+				String key = vi.next();
+				if(d.keySet().contains(key))
+				{
+					Iterator<String> di = d.get(key).iterator(); //dependency iterator
+					System.out.println(key+", "+d.get(key).size()+" dependents");
+					
+					dos.writeInt(key.length());
+					dos.writeChars(key);
+					dos.writeInt(d.get(key).size());
+					
+					while(di.hasNext())
+					{
+						String dependent = di.next();
+						dos.writeInt(dependent.length());
+						dos.writeChars(dependent);
+					}
+				}
+			}
+			System.out.println("done");
+			
+			System.out.println("writing "+t.size()+" triangles...");
+			dos.writeInt(t.size());
+			Iterator<Triangle> ti = t.iterator();
+			while(ti.hasNext())
+			{
+				Triangle tri = ti.next();
+				String[] vertices = tri.getVerteces();
+				for(int i = 2; i >= 0; i--)
+				{
+					dos.writeInt(vertices[i].length());
+					dos.writeChars(vertices[i]);
+					System.out.print(vertices[i]+" ");
+				}
+				System.out.println();
+				dos.writeInt(tri.getColor().getRed());
+				dos.writeInt(tri.getColor().getGreen());
+				dos.writeInt(tri.getColor().getBlue());
+			}
+			System.out.println("done");
+			
+			System.out.println("done");
+		}
+		catch(IOException e)
+		{
+			System.out.println("io exception in writing the model");
+		}
+	}
+	public static Model readModel(DataInputStream dis)
+	{
+		try
+		{
+			int version = dis.readInt();
+			if(version == 1)
+			{
+				return readModelV1(dis);
+			}
+		}
+		catch(IOException e)
+		{
+			System.out.println("io exception in reading the model");
+		}
+		return null;
+	}
+	private static Model readModelV1(DataInputStream dis) throws IOException
+	{
+		//name and description
+		String name = readString(dis);
+		String description = readString(dis);
+		
+		//vertices
+		HashMap<String, Location> v = new HashMap<String, Location>(); //vertices
+		int length = dis.readInt();
+		for(int i = 0; i < length; i++)
+		{
+			String vertexName = readString(dis);
+			double x = dis.readDouble();
+			double y = dis.readDouble();
+			double z = dis.readDouble();
+			v.put(vertexName, new Location(x, y, z));
+		}
+		
+		//depedencies
+		HashMap<String, LinkedList<String>> d = new HashMap<String, LinkedList<String>>(); //dependencies
+		length = dis.readInt();
+		for(int i = 0; i < length; i++)
+		{
+			LinkedList<String> dList = new LinkedList<String>();
+			String dName = readString(dis);
+			int dLength = dis.readInt();
+			for(int a = 0; a < dLength; a++)
+			{
+				String n = readString(dis);
+				dList.add(n);
+			}
+			d.put(dName, dList);
+		}
+		
+		//triangles
+		ArrayList<Triangle> t = new ArrayList<Triangle>(); //triangles
+		length = dis.readInt();
+		for(int i = 0; i < length; i++)
+		{
+			String v1 = readString(dis); //vertex 1
+			String v2 = readString(dis);
+			String v3 = readString(dis);
+			System.out.println(v1+", "+v2+", "+v3);
+			int r = dis.readInt();
+			int g = dis.readInt();
+			int b = dis.readInt();
+			t.add(new Triangle(v1, v2, v3, new Color(r, g, b), v));
+		}
+		
+		return new Model(name, description, v, d, t);
+	}
+	private static String readString(DataInputStream dis) throws IOException
+	{
+		int length = dis.readInt();
+		String s = "";
+		for(int i = 0; i  < length; i++)
+		{
+			s+=dis.readChar();
+		}
+		return s;
 	}
 }
 final class Triangle
@@ -238,6 +470,24 @@ final class Triangle
 		
 		determineNormal(v);
 		updateOldLocations(v);
+	}
+	/**
+	 * gets the color of this triangle
+	 * @return
+	 */
+	public Color getColor()
+	{
+		return c;
+	}
+	/**
+	 * creates an array of length 3 where the first index corresponds to the first
+	 * vertex of the triangle, etc
+	 * @return returns an array containing the triangle's vertices
+	 */
+	public String[] getVerteces()
+	{
+		String[] s = {p1, p2, p3};
+		return s;
 	}
 	/**
 	 * updates the stored old locations of the triangle
