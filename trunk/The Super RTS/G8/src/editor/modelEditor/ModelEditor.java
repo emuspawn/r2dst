@@ -14,6 +14,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class ModelEditor extends Frame implements Runnable, FocusListener
 {
@@ -59,7 +65,7 @@ public class ModelEditor extends Frame implements Runnable, FocusListener
         });
         ka = new KeyActionListener();
         addKeyListener(ka);
-        setMenuBar(createMenuBar());
+        setMenuBar(new ModelEditorMenuBar(this, m, animator, this.c));
         animator.start();
         new Thread(this).start();
         setResizable(false);
@@ -82,53 +88,75 @@ public class ModelEditor extends Frame implements Runnable, FocusListener
 	{
 		new ModelEditor();
 	}
-	private MenuBar createMenuBar()
-	{
-		MenuBar mb = new MenuBar();
-		
-		Menu file = new Menu("File");
-		MenuItem save = new MenuItem("Save");
-		MenuItem load = new MenuItem("Load");
-		MenuItem exit = new MenuItem("Exit");
-		exit.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
-				new ExitDialog(owner, animator);
-			}
-		});
-		file.add(save);
-		file.add(load);
-		file.addSeparator();
-		file.add(exit);
-		
-		Menu view = new Menu("View");
-		MenuItem centerView = new MenuItem("Center View");
-		centerView.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
-				new CenterViewDialog(owner, c);
-			}
-		});
-		view.add(centerView);
-		MenuItem gridSettings = new MenuItem("Grid Settings");
-		gridSettings.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
-				new GridSettingsDialog(owner);
-			}
-		});
-		view.add(gridSettings);
-		
-		mb.add(file);
-		mb.add(view);
-		
-		return mb;
-	}
 	public void focusGained(FocusEvent arg0)
 	{
 		requestFocus();
 	}
 	public void focusLost(FocusEvent arg0){}
+}
+/**
+ * the dialog for saving models
+ * @author Jack
+ *
+ */
+final class SaveDialog extends JDialog
+{
+	Model m;
+	
+	public SaveDialog(Frame owner, Model model)
+	{
+		super(owner, "Save...", true);
+		m = model;
+		setSize(500, 350);
+		setLocationRelativeTo(owner);
+		File dir = new File(System.getProperty("user.dir"));
+		JFileChooser fc = new JFileChooser(dir);
+		int save = fc.showSaveDialog(this);
+		
+		if(save == JFileChooser.APPROVE_OPTION && fc.getSelectedFile() != null)
+		{
+			try
+			{
+				File f = fc.getSelectedFile();
+				FileOutputStream fos = new FileOutputStream(f);
+				DataOutputStream dos = new DataOutputStream(fos);
+				m.writeModel(dos);
+			}
+			catch(IOException e){}
+		}
+	}
+}
+/**
+ * the dialog for loading models
+ * @author Jack
+ *
+ */
+final class LoadDialog extends JDialog
+{
+	Model m;
+	
+	public LoadDialog(Frame owner, Model model)
+	{
+		super(owner, "Load...", true);
+		m = model;
+		setSize(500, 350);
+		setLocationRelativeTo(owner);
+		File dir = new File(System.getProperty("user.dir"));
+		JFileChooser fc = new JFileChooser(dir);
+		int save = fc.showOpenDialog(this);
+		
+		if(save == JFileChooser.APPROVE_OPTION && fc.getSelectedFile() != null)
+		{
+			try
+			{
+				File f = fc.getSelectedFile();
+				FileInputStream fos = new FileInputStream(f);
+				DataInputStream dos = new DataInputStream(fos);
+				m.readModel(dos);
+			}
+			catch(IOException e){}
+		}
+	}
 }
 final class CenterViewDialog extends JDialog
 {
@@ -343,5 +371,90 @@ final class GridSettingsDialog extends JDialog
 		p.add(new JLabel(label));
 		p.add(c);
 		return p;
+	}
+}
+/**
+ * the menu bar for the model editor
+ * @author Jack
+ *
+ */
+final class ModelEditorMenuBar extends MenuBar
+{
+	Frame owner;
+	Model m;
+	Animator animator;
+	GLCamera c;
+	
+	public ModelEditorMenuBar(Frame o, Model mdl, Animator a, GLCamera camera)
+	{
+		owner = o;
+		m = mdl;
+		animator = a;
+		c = camera;
+		
+		Menu file = new Menu("File");
+		MenuItem save = new MenuItem("Save");
+		save.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				new SaveDialog(owner, m);
+			}
+		});
+		MenuItem load = new MenuItem("Load");
+		load.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				new LoadDialog(owner, m);
+			}
+		});
+		MenuItem exit = new MenuItem("Exit");
+		exit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				new ExitDialog(owner, animator);
+			}
+		});
+		file.add(save);
+		file.add(load);
+		file.addSeparator();
+		file.add(exit);
+		
+		Menu view = new Menu("View");
+		MenuItem centerView = new MenuItem("Center View");
+		centerView.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				new CenterViewDialog(owner, c);
+			}
+		});
+		view.add(centerView);
+		MenuItem gridSettings = new MenuItem("Grid Settings");
+		gridSettings.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				new GridSettingsDialog(owner);
+			}
+		});
+		view.add(gridSettings);
+		MenuItem cameraSettings = new MenuItem("Camera Settings");
+		view.add(cameraSettings);
+		
+		Menu model = new Menu("Model");
+		MenuItem removeVertex = new MenuItem("Remove Vertex");
+		model.add(removeVertex);
+		MenuItem translateVertex = new MenuItem("Translate Vertex");
+		model.add(translateVertex);
+		MenuItem translateOrigin = new MenuItem("Translate Origin");
+		model.add(translateOrigin);
+		
+		model.addSeparator();
+		MenuItem description = new MenuItem("Model Description");
+		model.add(description);
+		MenuItem modelDisplay = new MenuItem("Model Display");
+		model.add(modelDisplay);
+		
+		add(file);
+		add(view);
+		add(model);
 	}
 }
