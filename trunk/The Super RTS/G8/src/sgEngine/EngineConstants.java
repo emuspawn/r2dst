@@ -18,6 +18,8 @@ public final class EngineConstants
 	public static UnitFactory unitFactory = new UnitFactory();
 	
 	public static final boolean drawShots = true;
+	public static final boolean drawParticles = true;
+	
 	public static final Location mapCenter = new Location(0, 0, 0);
 	public static final boolean selectedUnitsAreWhite = true;
 	public static boolean cameraMode = false; //certain things arent drawn in camera mode to add to the games visuals

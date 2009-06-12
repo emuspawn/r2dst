@@ -1,5 +1,7 @@
 package world;
 
+import engine.PhysicsEngine;
+import force.Gravity;
 import graphics.GLCamera;
 import java.util.ArrayList;
 import world.shot.ShotEngine;
@@ -15,10 +17,13 @@ public class World
 {
 	UnitEngine ue;
 	ShotEngine se;
+	PhysicsEngine pe;
 	
 	int width;
 	int height;
 	int depth;
+	
+	double start = 0;
 	
 	public World(int width, int height, int depth)
 	{
@@ -27,6 +32,10 @@ public class World
 		this.depth = depth;
 		se = new ShotEngine(this);
 		ue = new UnitEngine(this, se);
+		
+		
+		pe = new PhysicsEngine();
+		pe.registerForce(new Gravity());
 	}
 	public ShotEngine getShotEngine()
 	{
@@ -36,10 +45,22 @@ public class World
 	{
 		return ue;
 	}
+	public PhysicsEngine getPhysicsEngine()
+	{
+		return pe;
+	}
 	public void performWorldFunctions()
 	{
+		
 		ue.performUnitFunctions();
 		se.performShotFunctions();
+		
+		double diff = System.currentTimeMillis()-start;
+		if(start != 0)
+		{
+			pe.updateEngine(diff/1000);
+		}
+		start = System.currentTimeMillis();
 	}
 	public ArrayList<Element> getElements(GLCamera c)
 	{
