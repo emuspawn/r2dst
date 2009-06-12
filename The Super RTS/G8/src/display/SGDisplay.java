@@ -4,10 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+
 import graphics.GLCamera;
 import javax.media.opengl.*;
+
+import particle.Particle;
 import sgEngine.EngineConstants;
 import sgEngine.SGEngine;
+import utilities.Prism;
+
 import com.sun.opengl.util.j2d.TextRenderer;
 import world.Element;
 import world.World;
@@ -95,6 +101,28 @@ public class SGDisplay implements GLEventListener
 			//System.out.println(EngineConstants.m.getWidth()/EngineConstants.m.getPartitionSize());
 			gl.glPopMatrix();
 		}
+		
+		
+		if(EngineConstants.drawParticles)
+		{
+			try
+			{
+				gl.glColor3d(.1, .1, .1);
+				LinkedList<Particle> p = new LinkedList<Particle>(w.getPhysicsEngine().getParticles());
+				Iterator<Particle> i = p.iterator();
+				while(i.hasNext())
+				{
+					Particle particle = i.next();
+					new Prism(particle.getLocation(), .6, .6, .6).drawPrism(gl);
+					if(particle.getLocation().y < 0)
+					{
+						particle.setDead();
+					}
+				}
+			}
+			catch(Exception a){}
+		}
+		
 		
 		gl.glPushMatrix();
 		gl.glRotated(angle, 0, 1, 0);
