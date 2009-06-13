@@ -59,6 +59,7 @@ public class UnitEngine
 					
 					dm3d.removeElement(u, u.getID());
 					u.getAction().cancelAction();
+					//w.getPhysicsEngine().registerEffect(new Explosion(u.getLocation(), 120, 70, 90));
 					//w.getPhysicsEngine().registerEffect(new Explosion(u.getLocation(), 40, 50, 70));
 					w.getPhysicsEngine().registerEffect(new Explosion(u.getLocation(), 20, 20, 25));
 					i.remove();

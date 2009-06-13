@@ -138,7 +138,7 @@ public class SGEngine implements Runnable
 		o.add(new Owner("test owner 7", Color.cyan));
 		o.get(2).setAI(new CrusherAI(o.get(2), w, this));
 		
-		/*o.add(new Owner("test owner 8", Color.magenta));
+		o.add(new Owner("test owner 8", Color.magenta));
 		o.get(3).setAI(new CrusherAI(o.get(3), w, this));
 		
 		o.add(new Owner("sd8", Color.orange));
@@ -148,7 +148,7 @@ public class SGEngine implements Runnable
 		o.get(5).setAI(new CrusherAI(o.get(5), w, this));
 		
 		o.add(new Owner("12153", Color.gray));
-		o.get(6).setAI(new CrusherAI(o.get(6), w, this));*/
+		o.get(6).setAI(new CrusherAI(o.get(6), w, this));
 		
 		
 		Iterator<Owner> q = o.iterator();
