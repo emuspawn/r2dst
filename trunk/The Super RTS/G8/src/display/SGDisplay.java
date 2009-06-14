@@ -141,8 +141,8 @@ public class SGDisplay implements GLEventListener
 	{
 		GL gl = d.getGL();
 		gl.glPushMatrix();
-		gl.glColor3d(0, 255, 0);
-		//gl.glColor3d(0, 128, 255);
+		//gl.glColor3d(0, 1, 0);
+		gl.glColor3d(.6, .3, .45);
 		gl.glScaled(1, 1, 1);
 		double y = -.5;
 		double hwidth = width/2;
@@ -160,6 +160,8 @@ public class SGDisplay implements GLEventListener
 	{
 		GL gl = d.getGL();
 		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		//gl.glEnable(GL.GL_BLEND);
 		//gl.glClearColor(0, 1f, 0, 0);
 	}

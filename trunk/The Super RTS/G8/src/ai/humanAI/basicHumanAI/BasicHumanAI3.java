@@ -3,10 +3,12 @@ package ai.humanAI.basicHumanAI;
 import graphics.GLCamera;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+
 import com.sun.opengl.util.j2d.TextRenderer;
 
 import sgEngine.EngineConstants;
@@ -23,28 +25,19 @@ import ai.AI;
  * a basic human ai, performs low level calls such as selecting units
  * by mouse click automatically
  * 
- * basic human UI:
+ * orders are not initiated if the UI has been clicked nor are units selected
  * 
- * commands:
- * l = selection key
- * j = deselect key
- * i = movement key
- * c = toggle camera mode
+ * clicking a unit selects it, if no units are clicked then selected units
+ * are given an order to move
  * 
- * clicking the selection key on a unit selects that unit, if several
- * units are on top of each other, only one unit is selected
+ * dragging the left mouse button selects all units under the mouse drag
  * 
- * movement orders are passed from where 'i' is clicked
- * 
- * dragging the selection keys creates a region that selects all friendly
- * units underneath it
- * 
- * pressing the deselect key deselects all friendly units
+ * right clicking deselects all units
  * 
  * @author Jack
  *
  */
-public abstract class BasicHumanAI2 extends AI
+public abstract class BasicHumanAI3 extends AI
 {
 	private static final double selectorSize = 2; //the width of the selector (used for when things are clicked)
 	
@@ -59,14 +52,20 @@ public abstract class BasicHumanAI2 extends AI
 	TextRenderer tr;
 	SGEngine sge;
 	
-	public BasicHumanAI2(Owner o, World w, SGEngine sge, GLCamera c)
+	BuilderDisplay bd;
+	
+	boolean uiClicked = false;
+	
+	public BasicHumanAI3(Owner o, World w, SGEngine sge, GLCamera c)
 	{
 		super(o, w, sge);
 		this.c = c;
 		this.sge = sge;
 		
 		Font font = new Font("SansSerif", Font.BOLD, 12);
-		tr = new TextRenderer(font, true, false);
+		tr = new TextRenderer(font, true, true);
+		
+		bd = new BuilderDisplay(c, sge);
 	}
 	public void drawUI(GLAutoDrawable d)
 	{
@@ -91,6 +90,30 @@ public abstract class BasicHumanAI2 extends AI
 		}
 		drawResources();
 		
+		bd.drawBuilderDisplay(gl);
+		drawBuildingLocations(gl);
+	}
+	/**
+	 * draws small reminders over top of the locations at which buildings
+	 * are to be built based off the building location hash map
+	 * @param gl
+	 */
+	private void drawBuildingLocations(GL gl)
+	{
+		HashMap<String, LinkedList<Location>> m = new HashMap<String, LinkedList<Location>>(bd.getBuildingLocations());
+		Iterator<String> i = m.keySet().iterator();
+		gl.glColor4d(0, .6, .2, .3);
+		//gl.glColor3d(1, 1, 1);
+		while(i.hasNext())
+		{
+			String key = i.next();
+			Iterator<Location> lli = m.get(key).iterator();
+			while(lli.hasNext())
+			{
+				//System.out.println("here");
+				new Prism(lli.next(), 10, 10, 10).drawPrism(gl);
+			}
+		}
 	}
 	private void drawResources()
 	{
@@ -106,22 +129,33 @@ public abstract class BasicHumanAI2 extends AI
 		{
 			EngineConstants.cameraMode = !EngineConstants.cameraMode;
 		}
-	}
-	public void interpretMousePress(MouseAction mc)
-	{
-		initialPress = mc.getLocation();
-		dragging = true;
-	}
-	public void interpretMouseRelease(MouseAction mc)
-	{
-		Location start = initialPress;
-		Location end = mc.getLocation();
-		dragging = false;
-		sge.getUserActionListener().nullMouseDragLocation();
-		if(start.compareTo(end) != 0)
+		else if(kp.getCharacter() == 'b')
 		{
-			pselections.add(getPrismSelectionRegion(start, end));
+			bd.setDisplay(!bd.isDisplayed());
 		}
+	}
+	public void interpretMousePress(MouseAction ma)
+	{
+		uiClicked = bd.interpretMousePress(ma);
+		if(!uiClicked)
+		{
+			initialPress = ma.getLocation();
+			dragging = true;
+		}
+	}
+	public void interpretMouseRelease(MouseAction ma)
+	{
+		if(!uiClicked)
+		{
+			Location start = initialPress;
+			Location end = ma.getLocation();
+			sge.getUserActionListener().nullMouseDragLocation();
+			if(start.compareTo(end) != 0)
+			{
+				pselections.add(getPrismSelectionRegion(start, end));
+			}
+		}
+		dragging = false;
 	}
 	public void interpretKeyRelease(KeyRelease kr){}
 	/**
@@ -140,19 +174,28 @@ public abstract class BasicHumanAI2 extends AI
 		Location middle = new Location(start.x+(end.x-start.x)/2, start.y+(end.y-start.y)/2+height/2, start.z+(end.z-start.z)/2);
 		return new Prism(middle, width, height, depth);
 	}
-	public void interpretMouseClick(MouseAction mc)
+	public void interpretMouseClick(MouseAction ma)
 	{
-		if(mc.isRightClick())
+		if(!uiClicked)
 		{
-			unSelect = true;
-		}
-		else
-		{
-			press = new Prism(mc.getLocation(), selectorSize, selectorSize, selectorSize);
+			if(ma.isRightClick())
+			{
+				unSelect = true;
+			}
+			else
+			{
+				press = new Prism(ma.getLocation(), selectorSize, selectorSize, selectorSize);
+			}
 		}
 	}
 	public void performAIFunctions()
 	{
+		/*
+		 * units that can build things, these units ar stored so the AI is able
+		 * to quickly cycle through them to carry out the user's build commands
+		 */
+		LinkedList<Unit> builders = new LinkedList<Unit>();
+		
 		LinkedList<Unit> units = getUnits();
 		Iterator<Unit> i = units.iterator();
 		
@@ -170,6 +213,10 @@ public abstract class BasicHumanAI2 extends AI
 		while(i.hasNext())
 		{
 			Unit u = i.next();
+			if(u.getBuildTree().size() > 0)
+			{
+				builders.add(u);
+			}
 			if(!unSelect)
 			{
 				if(!u.isSelected())
@@ -200,6 +247,7 @@ public abstract class BasicHumanAI2 extends AI
 			}
 		}
 		i = units.iterator();
+		
 		//orders units
 		while(i.hasNext())
 		{
@@ -218,6 +266,45 @@ public abstract class BasicHumanAI2 extends AI
 				}
 			}
 		}
+		
+		//builds units
+		HashMap<String, LinkedList<Location>> buildLocations = bd.getBuildingLocations();
+		Iterator<String> si = buildLocations.keySet().iterator();
+		while(si.hasNext())
+		{
+			/*
+			 * cycles through the units to be built, finds the first builder that
+			 * is able to build each unit and orders it to do so regardless of the
+			 * distance of that unit to its build order, if no builder is capable
+			 * of building the unit then the build order simply remains in the hash
+			 * map
+			 */
+			String name = si.next(); //the name of the building to be built
+			
+			if(buildLocations.get(name).size() > 0)
+			{
+				Iterator<Location> lli = buildLocations.get(name).iterator(); //the buildings to be built
+				while(lli.hasNext())
+				{
+					Location l = lli.next(); //where the building is to be built
+					boolean built = false;
+					i = builders.iterator();
+					while(i.hasNext() && !built)
+					{
+						Unit u = i.next();
+						if(u.canBuild(name))
+						{
+							built = buildAt(name, u, l);
+							if(built)
+							{
+								lli.remove();
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		pselections = new ArrayList<Prism>();
 		unSelect = false;
 		press = null;

@@ -19,7 +19,8 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 	Owner owner;
 	GLCamera c;
 	boolean networked;
-	Location mouseDrahLocation;
+	Location mouseDragLocation;
+	Location mouseLocation;
 	
 	Location mousePress; //for determining if a mouse was clicked or not
 	
@@ -96,13 +97,16 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 		{
 			runTime = sge.getIterationCount()+UserAction.advanceAmount;
 		}
-		sge.queueUserAction(new MouseAction(mapLocation, owner, rightClick, type, runTime));
+		sge.queueUserAction(new MouseAction(mapLocation, l, owner, rightClick, type, runTime));
 	}
 	public void mouseDragged(MouseEvent e)
 	{
-		mouseDrahLocation = new Location(e.getPoint());
+		mouseDragLocation = new Location(e.getPoint());
 	}
-	public void mouseMoved(MouseEvent e){}
+	public void mouseMoved(MouseEvent e)
+	{
+		mouseLocation = new Location(e.getPoint());
+	}
 	/**
 	 * gets where the mouse is on screen when it is being dragged
 	 * @return returns where the mouse is on screen when it is
@@ -110,13 +114,21 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 	 */
 	public Location getMouseDragLocation()
 	{
-		return mouseDrahLocation;
+		return mouseDragLocation;
+	}
+	/**
+	 * gets the location of where the mouse was last moved to on screen
+	 * @return
+	 */
+	public Location getMouseLocation()
+	{
+		return mouseLocation;
 	}
 	/**
 	 * resets the location of where the mouse was last dragged
 	 */
 	public void nullMouseDragLocation()
 	{
-		mouseDrahLocation = null;
+		mouseDragLocation = null;
 	}
 }
