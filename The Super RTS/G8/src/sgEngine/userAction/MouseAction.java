@@ -21,19 +21,22 @@ public class MouseAction extends UserAction
 	Location l;
 	boolean rightClick;
 	byte type;
+	Location screenLocation; //where the user clicked on the screen
 	
 	/**
 	 * creates a mouse click to be interpreted in the game world
 	 * @param l the location of the mouse click in the game world
+	 * @param screenLocation where the user clicked on screen
 	 * @param owner the user that initiated the mouse click
 	 * @param rightClick true if the user right cliced, false otherwise
 	 * @param type the type of click, press, release, or click (all constants)
 	 * @param runTime when the mouse click is to be put into effect
 	 */
-	public MouseAction(Location l, Owner owner, boolean rightClick, byte type, int runTime)
+	public MouseAction(Location l, Location screenLocation, Owner owner, boolean rightClick, byte type, int runTime)
 	{
 		super("mouse click", owner, runTime);
 		this.l = l;
+		this.screenLocation = screenLocation;
 		this.rightClick = rightClick;
 		this.type = type;
 	}
@@ -60,5 +63,13 @@ public class MouseAction extends UserAction
 	public byte getType()
 	{
 		return type;
+	}
+	/**
+	 * gets the location of where the user clicked on the screen
+	 * @return returns the location of where the user clicked on screen
+	 */
+	public Location getScreenLocation()
+	{
+		return screenLocation;
 	}
 }

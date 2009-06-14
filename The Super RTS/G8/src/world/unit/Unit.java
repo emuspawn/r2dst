@@ -250,7 +250,7 @@ public class Unit extends Element
 		double depth = getDepth();
 		
 		Owner owner = getOwner();
-		gl.glColor3d(owner.getColor().getRed(), owner.getColor().getGreen(), owner.getColor().getBlue());
+		gl.glColor3d(owner.getColor().getRed()/255.0, owner.getColor().getGreen()/255.0, owner.getColor().getBlue()/255.0);
 		
 		if(selected && EngineConstants.selectedUnitsAreWhite)
 		{

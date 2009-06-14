@@ -84,8 +84,10 @@ public abstract class AI
 	 * @param name the name of the unit to be built
 	 * @param builder the builder
 	 * @param location the location of where the unit is to be built
+	 * @return returns true if a build order was successfully registered in the engine,
+	 * false otherwise (at least one build requirment was not met)
 	 */
-	protected void buildAt(String name, Unit builder, Location location)
+	protected boolean buildAt(String name, Unit builder, Location location)
 	{
 		if(inWorld(location) && builder.canBuild(name) && builder.getAction() instanceof Idle && 
 				o.getPopulation() <= EngineConstants.maxPopulation)
@@ -96,8 +98,10 @@ public abstract class AI
 				builder.setAction(new Build(builder, name, location, sge), false);
 				o.setEnergy(o.getEnergy()-u.getEnergyCost());
 				o.setMetal(o.getMetal()-u.getMetalCost());
+				return true;
 			}
 		}
+		return false;
 	}
 	protected HashMap<String, LinkedList<Unit>> getEnemyUnits()
 	{
