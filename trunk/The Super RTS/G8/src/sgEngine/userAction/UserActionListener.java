@@ -55,7 +55,7 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 		{
 			runTime = sge.getIterationCount()+UserAction.advanceAmount;
 		}
-		sge.queueUserAction(new KeyPress(e.getKeyChar(), owner, c, runTime));
+		sge.queueUserAction(new KeyPress(e, owner, c, runTime));
 	}
 	public void keyReleased(KeyEvent e)
 	{
@@ -64,7 +64,7 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 		{
 			runTime = sge.getIterationCount()+UserAction.advanceAmount;
 		}
-		sge.queueUserAction(new KeyRelease(e.getKeyChar(), owner, c, runTime));
+		sge.queueUserAction(new KeyRelease(e, owner, c, runTime));
 	}
 	public void mouseEntered(MouseEvent arg0){}
 	public void mouseExited(MouseEvent arg0){}
@@ -97,7 +97,7 @@ public class UserActionListener implements MouseListener, KeyListener, MouseMoti
 		{
 			runTime = sge.getIterationCount()+UserAction.advanceAmount;
 		}
-		sge.queueUserAction(new MouseAction(mapLocation, l, owner, rightClick, type, runTime));
+		sge.queueUserAction(new MouseAction(mapLocation, l, e, owner, rightClick, type, runTime));
 	}
 	public void mouseDragged(MouseEvent e)
 	{
