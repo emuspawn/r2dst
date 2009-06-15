@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
-
 import com.sun.opengl.util.j2d.TextRenderer;
-
 import sgEngine.EngineConstants;
 import sgEngine.SGEngine;
 import sgEngine.userAction.*;
@@ -73,7 +71,7 @@ public abstract class BasicHumanAI3 extends AI
 		
 		try
 		{
-			gl.glColor4d(255, 128, 0, 40);
+			gl.glColor4d(1, .5, 0, .4);
 			Location ml = sge.getUserActionListener().getMouseDragLocation();
 			if(dragging && ml != null)
 			{
@@ -100,20 +98,24 @@ public abstract class BasicHumanAI3 extends AI
 	 */
 	private void drawBuildingLocations(GL gl)
 	{
-		HashMap<String, LinkedList<Location>> m = new HashMap<String, LinkedList<Location>>(bd.getBuildingLocations());
-		Iterator<String> i = m.keySet().iterator();
-		gl.glColor4d(0, .6, .2, .3);
-		//gl.glColor3d(1, 1, 1);
-		while(i.hasNext())
+		try
 		{
-			String key = i.next();
-			Iterator<Location> lli = m.get(key).iterator();
-			while(lli.hasNext())
+			HashMap<String, LinkedList<Location>> m = new HashMap<String, LinkedList<Location>>(bd.getBuildingLocations());
+			Iterator<String> i = m.keySet().iterator();
+			gl.glColor4d(0, .6, .2, .3);
+			//gl.glColor3d(1, 1, 1);
+			while(i.hasNext())
 			{
-				//System.out.println("here");
-				new Prism(lli.next(), 10, 10, 10).drawPrism(gl);
+				String key = i.next();
+				Iterator<Location> lli = m.get(key).iterator();
+				while(lli.hasNext())
+				{
+					//System.out.println("here");
+					new Prism(lli.next(), 10, 10, 10).drawPrism(gl);
+				}
 			}
 		}
+		catch(Exception e){}
 	}
 	private void drawResources()
 	{
@@ -267,7 +269,49 @@ public abstract class BasicHumanAI3 extends AI
 			}
 		}
 		
-		//builds units
+		contructBuildings(builders);
+		constructUnits(builders);
+		
+		pselections = new ArrayList<Prism>();
+		unSelect = false;
+		press = null;
+	}
+	/**
+	 * automatically constructs all the queued units for the user
+	 * @param all units that can build other units
+	 */
+	private void constructUnits(LinkedList<Unit> builders)
+	{
+		HashMap<String, Integer> counts = bd.getUnitConstructionCounts();
+		Iterator<String> si = counts.keySet().iterator();
+		while(si.hasNext())
+		{
+			String name = si.next();
+			
+			boolean built = false;
+			Iterator<Unit> i = builders.iterator();
+			while(i.hasNext() && !built)
+			{
+				Unit u = i.next();
+				if(u.canBuild(name) && counts.get(name) > 0)
+				{
+					built = buildAt(name, u, u.getLocation());
+					if(built)
+					{
+						counts.put(name, counts.get(name)-1);
+					}
+				}
+			}
+		}
+		
+	}
+	/**
+	 * constructs the queued buildings for the user, automatically assigns
+	 * a worker to build each building
+	 * @param all units that can build other units
+	 */
+	private void contructBuildings(LinkedList<Unit> builders)
+	{
 		HashMap<String, LinkedList<Location>> buildLocations = bd.getBuildingLocations();
 		Iterator<String> si = buildLocations.keySet().iterator();
 		while(si.hasNext())
@@ -288,7 +332,7 @@ public abstract class BasicHumanAI3 extends AI
 				{
 					Location l = lli.next(); //where the building is to be built
 					boolean built = false;
-					i = builders.iterator();
+					Iterator<Unit> i = builders.iterator();
 					while(i.hasNext() && !built)
 					{
 						Unit u = i.next();
@@ -304,10 +348,6 @@ public abstract class BasicHumanAI3 extends AI
 				}
 			}
 		}
-		
-		pselections = new ArrayList<Prism>();
-		unSelect = false;
-		press = null;
 	}
 	/**
 	 * called once per unit, units commands should be performed here

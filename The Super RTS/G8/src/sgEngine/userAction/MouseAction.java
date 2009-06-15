@@ -1,5 +1,7 @@
 package sgEngine.userAction;
 
+import java.awt.event.MouseEvent;
+
 import utilities.Location;
 import world.owner.Owner;
 
@@ -22,6 +24,7 @@ public class MouseAction extends UserAction
 	boolean rightClick;
 	byte type;
 	Location screenLocation; //where the user clicked on the screen
+	MouseEvent e;
 	
 	/**
 	 * creates a mouse click to be interpreted in the game world
@@ -32,13 +35,18 @@ public class MouseAction extends UserAction
 	 * @param type the type of click, press, release, or click (all constants)
 	 * @param runTime when the mouse click is to be put into effect
 	 */
-	public MouseAction(Location l, Location screenLocation, Owner owner, boolean rightClick, byte type, int runTime)
+	public MouseAction(Location l, Location screenLocation, MouseEvent e, Owner owner, boolean rightClick, byte type, int runTime)
 	{
 		super("mouse click", owner, runTime);
 		this.l = l;
 		this.screenLocation = screenLocation;
 		this.rightClick = rightClick;
 		this.type = type;
+		this.e = e;
+	}
+	public MouseEvent getMouseEvent()
+	{
+		return e;
 	}
 	/**
 	 * gets the location of the mouse click in the game world

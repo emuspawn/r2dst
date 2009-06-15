@@ -1,12 +1,14 @@
 package sgEngine.userAction;
 
+import java.awt.event.KeyEvent;
+
 import graphics.GLCamera;
 import world.owner.Owner;
 
 public class KeyPress extends KeyAction
 {
-	public KeyPress(char c, Owner owner, GLCamera camera, int runTime)
+	public KeyPress(KeyEvent e, Owner owner, GLCamera camera, int runTime)
 	{
-		super("key press", c, owner, camera, runTime);
+		super("key press", e, owner, camera, runTime);
 	}
 }
