@@ -1,0 +1,14 @@
+directions:
+
+to run:
+
+-in Game, make sure *** Unit[] u = new Unit[2]; *** has a length equal to the number of connecting clients (it's a global varaible)
+-likewise, in Server make sure *** ServerHelper[] sh = new ServerHelper[2]; *** has a length equal to the number of connecting clients (it's a global varaible)
+
+1. run GameServerStarter, type the port as 4444
+2. run Game to connect the clients (must be run as many times as there are clients before the game actually starts at the same time on all of them; thus, run game twice if there are a total of 2 connecting clients)
+
+
+to speed up/ make better:
+-dont repeatedly send the same key press (holding down a character will, after a second, send many of that character)
+-some commands are lost when the user action buffer in the server is cleared after every iteration of the main thread (main thread runs after the clients are connected); instead, preserve the unsent user actions
