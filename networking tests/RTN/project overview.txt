@@ -1,0 +1,26 @@
+Real Time Network (RTN)
+
+overview:
+this prject creates a fairly real time network with the aim of creating an infastructure to send commands
+such as key presses or mouse clicks over the network to all connected clients
+
+structure:
+
+server: accepts connections and creates server helpers, each server helper is assigned an id
+by the server upon its creation
+
+server helper: receives information from the clients and immediately relays the information to
+other server clients which in turn send it to their clients, each server helper is registered
+to one client, each server helper has one synchronized write method to ensure that information
+written to the output stream is in the correct order, when the server helper receives a packet
+from its associated client it automatically attaches the client's id to the packet when it relays
+it to the other connected clients
+
+client: receives data from the server helper that it is associated with, formats it into
+a data input stream and sends it through an interpreter method, also includes a synchronized
+write method to write data to its corresponding server helper, the write method is synchonized
+to ensured information is written in the correct order, if the client fails to connect to the
+server upon its creation it does not start its receiver thread and the method isConnected will
+return false
+
+server starter: a convenience class, simply creates a small gui to start a server on a specified port
